@@ -1,2 +1,2 @@
 # SFML
-# Trying to make something like a bullet-hell??
+Trying to make something like a bullet-hell??
