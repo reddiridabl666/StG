@@ -4,7 +4,8 @@
 #include <vector>
 
 #define CENTER window.getSize().x / 2.f, window.getSize().y / 2.f
-static constexpr unsigned int player_layer = 1;
+static constexpr uint32_t player_layer = 1;
+
 
 const sf::Vector2f left(-1.0, 0.0);
 const sf::Vector2f right(1.0, 0.0);
@@ -21,6 +22,7 @@ void open_fullscreen(sf::Window& window) {
                   sf::Style::Fullscreen);
     is_fullscreen = true;
 }
+
 void open_windowed(sf::Window& window) {
     // Потом надо научиться определять в зависимости от монитора
     window.create(sf::VideoMode(1280, 800),
@@ -29,7 +31,13 @@ void open_windowed(sf::Window& window) {
     is_fullscreen = false;
 }
 
+bool pressed_any_of(sf::Keyboard::Key A, sf::Keyboard::Key B) {
+    return sf::Keyboard::isKeyPressed(A) ||
+           sf::Keyboard::isKeyPressed(B);
+}
+
 float speed = 750.0;
+
 int main()
 {
     GameObject::objects_by_layer.resize(3);
@@ -40,13 +48,13 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Background initialization
-    GameObject bg("../images/bg.jpg");
+    GameObject bg("images/bg.jpg");
     bg.setPosition(CENTER);
     auto factor = static_cast<float>(window.getSize().x) / bg.getSize().x;
     bg.scale(factor);
 
     // Player initialization
-    GameObject player("../images/arapuzz.png", player_layer);
+    GameObject player("images/arapuzz.png", player_layer);
     player.setPosition(CENTER);
     player.scale(0.4f);
 
