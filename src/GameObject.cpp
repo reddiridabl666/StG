@@ -48,11 +48,15 @@ const sf::Sprite &GameObject::getSprite() const {
 }
 
 void GameObject::setPosition(float x, float y) {
-    sprite_.setPosition(x, y);
+    setPosition({x, y});
+}
+
+void GameObject::setPosition(sf::Vector2f offset) {
+    sprite_.setPosition(offset);
 }
 
 void GameObject::move(float x, float y) {
-    sprite_.move(x, y);
+    move({x, y});
 }
 
 void GameObject::move(sf::Vector2f offset) {

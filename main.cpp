@@ -15,7 +15,6 @@ static const sf::Vector2f right(1.0, 0.0);
 static const sf::Vector2f up(0.0, -1.0);
 static const sf::Vector2f down(0.0, 1.0);
 
-bool is_fullscreen = true;
 GameObject::objects GameObject::all_objects;
 std::vector<GameObject::objects> GameObject::objects_by_layer(layer_num);
 

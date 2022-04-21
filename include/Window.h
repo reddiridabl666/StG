@@ -9,7 +9,7 @@ class Window : public sf::RenderWindow {
     Window();
 
     Window(sf::VideoMode mode,
-            const sf::String &itle,
+            const sf::String &title,
             sf::Uint32 style = sf::Style::Default,
             const sf::ContextSettings &settings = sf::ContextSettings());
     

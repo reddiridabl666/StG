@@ -33,6 +33,7 @@ class GameObject {
     void setTexture(sf::Texture *texture);
 
     void setPosition(float x, float y);
+    void setPosition(sf::Vector2f offset);
     void move(float x, float y);
     void move(sf::Vector2f offset);
     void scale(float factor);

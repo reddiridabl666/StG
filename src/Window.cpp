@@ -14,6 +14,7 @@ Window::Window(sf::VideoMode mode, const sf::String &title,
 bool Window::is_fullscreen() {
     return is_fullscreen_;
 }
+
 void Window::sys_event_loop() {
     // OS events
     sf::Event event = {};
@@ -22,12 +23,6 @@ void Window::sys_event_loop() {
             case sf::Event::Closed:
                 close();
                 break;
-            /*case sf::Event::Resized: {
-                auto w = static_cast<float>(event.size.width);
-                auto h = static_cast<float>(event.size.height);
-                window.setView(sf::View(sf::FloatRect(0, 0, w, h)));
-                break;
-            }*/
             case sf::Event::KeyReleased:
                 if ((event.key.code == sf::Keyboard::Enter && event.key.alt) ||
                     event.key.code == sf::Keyboard::Escape) {
