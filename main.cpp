@@ -1,35 +1,23 @@
 #include <SFML/Graphics.hpp>
-#include <GameObject.h>
+
+#include "GameObject.h"
+#include "LoadTextures.hpp"
+#include "Window.h"
 
 #include <vector>
 
 #define CENTER window.getSize().x / 2.f, window.getSize().y / 2.f
-static constexpr uint32_t player_layer = 1;
+static constexpr sf::Uint8 player_layer = 1;
+static constexpr sf::Uint8 layer_num = 3;
 
-
-const sf::Vector2f left(-1.0, 0.0);
-const sf::Vector2f right(1.0, 0.0);
-const sf::Vector2f up(0.0, -1.0);
-const sf::Vector2f down(0.0, 1.0);
+static const sf::Vector2f left(-1.0, 0.0);
+static const sf::Vector2f right(1.0, 0.0);
+static const sf::Vector2f up(0.0, -1.0);
+static const sf::Vector2f down(0.0, 1.0);
 
 bool is_fullscreen = true;
 GameObject::objects GameObject::all_objects;
-std::vector<GameObject::objects> GameObject::objects_by_layer;
-
-void open_fullscreen(sf::Window& window) {
-    window.create(sf::VideoMode::getFullscreenModes()[0],
-                  "My window",
-                  sf::Style::Fullscreen);
-    is_fullscreen = true;
-}
-
-void open_windowed(sf::Window& window) {
-    // Потом надо научиться определять в зависимости от монитора
-    window.create(sf::VideoMode(1280, 800),
-                  "My window",
-                  sf::Style::Titlebar | sf::Style::Close);
-    is_fullscreen = false;
-}
+std::vector<GameObject::objects> GameObject::objects_by_layer(layer_num);
 
 bool pressed_any_of(sf::Keyboard::Key A, sf::Keyboard::Key B) {
     return sf::Keyboard::isKeyPressed(A) ||
@@ -40,21 +28,20 @@ float speed = 750.0;
 
 int main()
 {
-    GameObject::objects_by_layer.resize(3);
-
-    // Window initialization
-    sf::RenderWindow window;
-    open_fullscreen(window);
-    window.setVerticalSyncEnabled(true);
+    // Load all textures from a folder
+    auto textures = load_textures("images");
+    
+    // Init window
+    Window window;
 
     // Background initialization
-    GameObject bg("images/bg.jpg");
+    GameObject bg(&textures["images/bg.jpg"]);
     bg.setPosition(CENTER);
     auto factor = static_cast<float>(window.getSize().x) / bg.getSize().x;
     bg.scale(factor);
 
     // Player initialization
-    GameObject player("images/arapuzz.png", player_layer);
+    GameObject player(&textures["images/player.png"], player_layer);
     player.setPosition(CENTER);
     player.scale(0.4f);
 
@@ -66,46 +53,9 @@ int main()
     while (window.isOpen())
     {
         deltaTime = clock.restart().asSeconds();
-        // Windows events
-        sf::Event event = {};
-        while (window.pollEvent(event))
-        {
-            switch(event.type) {
-                case sf::Event::Closed:
-                    window.close();
-                    break;
-                /*case sf::Event::Resized: {
-                    auto w = static_cast<float>(event.size.width);
-                    auto h = static_cast<float>(event.size.height);
-                    window.setView(sf::View(sf::FloatRect(0, 0, w, h)));
-                    break;
-                }*/
-                case sf::Event::KeyReleased:
-                    if ((event.key.code == sf::Keyboard::Enter && event.key.alt) ||
-                        event.key.code == sf::Keyboard::Escape) {
-
-                        float width = static_cast<float>(window.getSize().x);
-                        auto center = window.getView().getCenter();
-
-                        if (is_fullscreen) {
-                            open_windowed(window);
-                        } else {
-                            if (event.key.code != sf::Keyboard::Escape) {
-                                open_fullscreen(window);
-                            }
-                        }
-
-                        float new_width = static_cast<float>(window.getSize().x);
-                        GameObject::scale_all(new_width / width);
-
-                        sf::View new_view(center, window.getView().getSize());
-                        window.setView(new_view);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
+       
+        // OS events
+        window.sys_event_loop();
 
         // Keyboard events
         if (window.hasFocus()) {

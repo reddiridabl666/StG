@@ -8,13 +8,13 @@
 
 class GameObject {
   protected:
-    sf::Texture texture_;
+    sf::Texture *texture_;
     sf::Sprite sprite_;
     sf::Vector2f size_;
     bool is_active_ = true;
 
   public:
-    unsigned int layer_ = 0;
+    sf::Uint8 layer_ = 0;
     using objects = std::unordered_set<GameObject*>;
 
     static objects all_objects;
@@ -24,11 +24,13 @@ class GameObject {
     static void scale_all(float factor);
 
     GameObject();
-    explicit GameObject(const std::string& image_path, unsigned int layer = 0);
+    explicit GameObject(sf::Texture* texture, sf::Uint8 layer = 0);
+    // explicit GameObject(const std::string& image_path, uint32_t layer = 0);
 
-    void loadFromFile(const std::string& image_path);
+    // void loadFromFile(const std::string& image_path);
     const sf::Sprite& getSprite() const;
     sf::Vector2f getSize() const;
+    void setTexture(sf::Texture *texture);
 
     void setPosition(float x, float y);
     void move(float x, float y);
@@ -39,7 +41,7 @@ class GameObject {
     void deactivate();
     bool is_active() const;
 
-    void change_layer(unsigned int layer);
+    void change_layer(sf::Uint8 layer);
 
     ~GameObject();
 };

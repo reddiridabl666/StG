@@ -14,8 +14,11 @@ add_compile_options(${error_flags})
 find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 
 # Add main
-add_library(GameObject SHARED src/GameObject.cpp)
 add_executable(main.out main.cpp)
+
+# Add lib
+set(SOURCES src/GameObject.cpp src/Window.cpp)
+add_library(GameObject SHARED ${SOURCES})
 
 # Add include dirs
 target_include_directories(main.out PRIVATE include)
