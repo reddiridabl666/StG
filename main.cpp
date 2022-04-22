@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "GameObject.h"
+#include "HitboxObject.h"
 #include "LoadTextures.hpp"
 #include "Window.h"
 
@@ -15,8 +16,8 @@ static const sf::Vector2f right(1.0, 0.0);
 static const sf::Vector2f up(0.0, -1.0);
 static const sf::Vector2f down(0.0, 1.0);
 
-GameObject::objects GameObject::all_objects;
-std::vector<GameObject::objects> GameObject::objects_by_layer(layer_num);
+GameObject::objects GameObjectBase::all_objects;
+std::vector<GameObject::objects> GameObjectBase::objects_by_layer(layer_num);
 
 bool pressed_any_of(sf::Keyboard::Key A, sf::Keyboard::Key B) {
     return sf::Keyboard::isKeyPressed(A) ||
@@ -33,16 +34,18 @@ int main()
     // Init window
     Window window;
 
+    RectHitbox hitbox({50.f, 50.f}, {750.f, 500.f});
+
     // Background initialization
-    GameObject bg(&textures["images/bg.jpg"]);
+    GameObject bg(textures["images/bg.jpg"]);
     bg.setPosition(CENTER);
     auto factor = static_cast<float>(window.getSize().x) / bg.getSize().x;
     bg.scale(factor);
 
     // Player initialization
-    GameObject player(&textures["images/player.png"], player_layer);
+    GameObject player(textures["images/player.png"], player_layer);
     player.setPosition(CENTER);
-    player.scale(0.4f);
+    player.scale(4.4f);
 
     // Time
     sf::Clock clock;
@@ -57,21 +60,19 @@ int main()
         window.sys_event_loop();
 
         // Keyboard events
+        using Key = sf::Keyboard;
+
         if (window.hasFocus()) {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) ||
-                sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+            if (pressed_any_of(Key::A, Key::Left)) {
                 player.move(left * speed * deltaTime);
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) ||
-                sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+            if (pressed_any_of(Key::D, Key::Right)) {
                 player.move(right * speed * deltaTime);
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) ||
-                sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+            if (pressed_any_of(Key::W, Key::Up)) {
                 player.move(up * speed * deltaTime);
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) ||
-                sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+            if (pressed_any_of(Key::S, Key::Down)) {
                 player.move(down * speed * deltaTime);
             }
         }
@@ -81,6 +82,7 @@ int main()
 
         // draw everything here
         GameObject::draw_all(window);
+        window.draw(hitbox);
 
         // end the current frame
         window.display();
