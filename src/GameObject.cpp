@@ -1,6 +1,6 @@
 #include <GameObject.h>
 
-GameObjectBase::GameObjectBase(sf::Uint8 layer) : layer_(layer) {
+GameObjectBase::GameObjectBase(Layer layer) : layer_(layer) {
     all_objects.insert(this);
     objects_by_layer[layer_].insert(this);
 }
@@ -17,15 +17,15 @@ bool GameObjectBase::is_active() const {
     return is_active_;
 }
 
-void GameObjectBase::change_layer(uint8_t layer) {
+void GameObjectBase::change_layer(Layer layer) {
     objects_by_layer[layer_].erase(this);
     layer_ = layer;
     objects_by_layer[layer_].insert(this);
 }
 
 void GameObjectBase::draw_all(sf::RenderWindow& window) {
-    for (const auto& layer : GameObjectBase::objects_by_layer) {
-        for (auto obj : layer) {
+    for (const auto& layer : Layers) {
+        for (auto obj : objects_by_layer[layer]) {
             if (obj->is_active()) {
                 window.draw(*obj->get_drawable());
             }
@@ -44,9 +44,9 @@ GameObjectBase::~GameObjectBase() {
     objects_by_layer[layer_].erase(this);
 }
 
-GameObject::GameObject(sf::Uint8 layer) : GameObjectBase(layer), sf::Sprite(), size_() {}
+GameObject::GameObject(Layer layer) : GameObjectBase(layer), sf::Sprite(), size_() {}
 
-GameObject::GameObject(const sf::Texture& texture, sf::Uint8 layer) : GameObject(layer) {
+GameObject::GameObject(const sf::Texture& texture, Layer layer) : GameObject(layer) {
     setTexture(texture);
 }
 

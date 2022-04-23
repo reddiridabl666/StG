@@ -1,13 +1,16 @@
 #include "HitboxObject.h"
 
-RectHitbox::RectHitbox(const sf::Vector2f &size, const sf::Vector2f &center) 
-  : sf::RectangleShape(size), top((center - size / 2.f).y), 
+static const sf::Color green = {5, 240, 75};
+static const sf::Color transp_green = {5, 240, 75, 200};
+
+RectHitbox::RectHitbox(const sf::Vector2f &size, const sf::Vector2f &center, Layer layer) 
+  : GameObjectBase(layer), sf::RectangleShape(size), top((center - size / 2.f).y), 
     left((center - size / 2.f).x), height(size.y), width(size.x) {
     setOrigin(size.x / 2.f, size.y / 2.f);
     setPosition(center);
-    setOutlineThickness(5);
-    setOutlineColor({5, 240, 75});
-    setFillColor({5, 240, 75, 200});
+    setOutlineThickness(4);
+    setOutlineColor(green);
+    setFillColor(transp_green);
 }
 
 bool RectHitbox::contains_point(const sf::Vector2f& point) {
@@ -24,9 +27,41 @@ bool RectHitbox::collides_with(const RectHitbox& target) {
     return false;
 }
 
+void RectHitbox::scale(float factor) {
+    sf::RectangleShape::scale(factor, factor);
+}
+
+const sf::Drawable* RectHitbox::get_drawable() const {
+    return this;
+}
+
 HitboxObject::HitboxObject() : GameObject() {}
 
-HitboxObject::HitboxObject(const sf::Texture& texture, sf::Vector2f hitbox_size, sf::Uint8 layer) 
-  : GameObject(texture, layer), hitbox_(hitbox_size) {
+HitboxObject::HitboxObject(const sf::Texture& texture, sf::Vector2f hitbox_size, Layer layer) 
+  : GameObject(texture, layer), hitbox_(hitbox_size) {}
 
+void HitboxObject::setPosition(const sf::Vector2f& offset) {
+    GameObject::setPosition(offset);
+    hitbox_.setPosition(offset);
+}
+
+void HitboxObject::setPosition(float x, float y) {
+    setPosition({x, y});
+}
+
+void HitboxObject::move(const sf::Vector2f& offset) {
+    GameObject::move(offset);
+    hitbox_.move(offset);
+}
+
+void HitboxObject::move(float x, float y) {
+    move({x, y});
+}
+
+bool HitboxObject::collides_with(const Hitbox& hitbox) {
+    return hitbox_.collides_with(hitbox);
+}
+
+bool HitboxObject::collides_with(const HitboxObject& obj) {
+    return hitbox_.collides_with(obj.hitbox_);
 }

@@ -1,23 +1,19 @@
 #include <SFML/Graphics.hpp>
 
+#include "Constants.h"
 #include "GameObject.h"
 #include "HitboxObject.h"
 #include "LoadTextures.hpp"
+#include "Player.h"
 #include "Window.h"
 
 #include <vector>
 
 #define CENTER window.getSize().x / 2.f, window.getSize().y / 2.f
-static constexpr sf::Uint8 player_layer = 1;
-static constexpr sf::Uint8 layer_num = 3;
 
-static const sf::Vector2f left(-1.0, 0.0);
-static const sf::Vector2f right(1.0, 0.0);
-static const sf::Vector2f up(0.0, -1.0);
-static const sf::Vector2f down(0.0, 1.0);
 
 GameObject::objects GameObjectBase::all_objects;
-std::vector<GameObject::objects> GameObjectBase::objects_by_layer(layer_num);
+std::unordered_map<Layer, GameObject::objects> GameObjectBase::objects_by_layer(layer_num);
 
 bool pressed_any_of(sf::Keyboard::Key A, sf::Keyboard::Key B) {
     return sf::Keyboard::isKeyPressed(A) ||
@@ -43,7 +39,7 @@ int main()
     bg.scale(factor);
 
     // Player initialization
-    GameObject player(textures["images/player.png"], player_layer);
+    Player player(textures["images/player.png"], {25, 40}, Layer::character);
     player.setPosition(CENTER);
     player.scale(4.4f);
 
@@ -60,21 +56,21 @@ int main()
         window.sys_event_loop();
 
         // Keyboard events
-        using Key = sf::Keyboard;
 
         if (window.hasFocus()) {
-            if (pressed_any_of(Key::A, Key::Left)) {
-                player.move(left * speed * deltaTime);
-            }
-            if (pressed_any_of(Key::D, Key::Right)) {
-                player.move(right * speed * deltaTime);
-            }
-            if (pressed_any_of(Key::W, Key::Up)) {
-                player.move(up * speed * deltaTime);
-            }
-            if (pressed_any_of(Key::S, Key::Down)) {
-                player.move(down * speed * deltaTime);
-            }
+            player.control(deltaTime);
+            // if (pressed_any_of(Key::A, Key::Left)) {
+            //     player.move(left * speed * deltaTime);
+            // }
+            // if (pressed_any_of(Key::D, Key::Right)) {
+            //     player.move(right * speed * deltaTime);
+            // }
+            // if (pressed_any_of(Key::W, Key::Up)) {
+            //     player.move(up * speed * deltaTime);
+            // }
+            // if (pressed_any_of(Key::S, Key::Down)) {
+            //     player.move(down * speed * deltaTime);
+            // }
         }
 
         // clear the window with black color
@@ -82,7 +78,6 @@ int main()
 
         // draw everything here
         GameObject::draw_all(window);
-        window.draw(hitbox);
 
         // end the current frame
         window.display();
