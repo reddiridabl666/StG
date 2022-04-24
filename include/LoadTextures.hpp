@@ -7,7 +7,7 @@
 
 #include <SFML/Graphics.hpp>
 
-static constexpr uint16_t texture_num = 20;
+static constexpr sf::Uint16 texture_num = 20;
 
 namespace fs = std::filesystem;
 
@@ -15,9 +15,9 @@ inline std::unordered_map<std::string, sf::Texture> load_textures(fs::path folde
     std::unordered_map<std::string, sf::Texture> result;
 
     for (const auto& file : fs::directory_iterator(folder_name)) {
-        auto filename = file.path().string();
+        auto filename = file.path().filename().string();
         result[filename] = {};
-        result[filename].loadFromFile(filename);
+        result[filename].loadFromFile(file.path().string());
     }
 
     return result;

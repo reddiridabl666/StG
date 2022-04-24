@@ -10,9 +10,6 @@
 
 #define CENTER window.getSize().x / 2.f, window.getSize().y / 2.f
 
-GameObject::objects GameObjectBase::all_objects;
-std::unordered_map<Layer, GameObject::objects> GameObjectBase::objects_by_layer(layer_num);
-
 int main()
 {
     // Load all textures from a folder
@@ -23,15 +20,14 @@ int main()
 
     RectHitbox hitbox({50.f, 50.f}, {750.f, 500.f});
     
-
     // Background initialization
-    GameObject bg(textures["images/bg.jpg"]);
+    GameObject bg(textures["bg.jpg"]);
     bg.setPosition(CENTER);
     auto factor = static_cast<float>(window.getSize().x) / bg.getSize().x;
     bg.scale(factor);
 
     // Player initialization
-    Player player(textures["images/player.png"], {30, 45}, Layer::character);
+    Player player(textures["player.png"], {30, 45});
     player.setPosition(CENTER);
     player.scale(4.4f);
 
