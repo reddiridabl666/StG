@@ -2,29 +2,59 @@
 
 static const sf::Color green = {5, 240, 75};
 static const sf::Color transp_green = {5, 240, 75, 200};
+static const sf::Color red = {191, 34, 51};
+static const sf::Color transp_red = {191, 34, 51, 200};
 
 RectHitbox::RectHitbox(const sf::Vector2f &size, const sf::Vector2f &center, Layer layer) 
-  : GameObjectBase(layer), sf::RectangleShape(size), top((center - size / 2.f).y), 
-    left((center - size / 2.f).x), height(size.y), width(size.x) {
+  : GameObjectBase(layer), sf::RectangleShape(size), height(size.y), width(size.x) {
     setOrigin(size.x / 2.f, size.y / 2.f);
     setPosition(center);
-    setOutlineThickness(4);
+    setOutlineThickness(-4);
     setOutlineColor(green);
     setFillColor(transp_green);
 }
 
-bool RectHitbox::contains_point(const sf::Vector2f& point) {
-    return (point.y <= top + height) && (point.y >= top) && 
-      (point.x <= left + width) && (point.x >= left);
+// bool RectHitbox::contains_point(const sf::Vector2f& point) {
+//     return (point.y <= top + height) && (point.y >= top) && 
+//       (point.x <= left + width) && (point.x >= left);
+// }
+
+bool RectHitbox::collides_with(const RectHitbox& other) {
+    if ((top >= other.top && top <= other.top + other.height) ||
+        (other.top >= top && other.top <= top + height))
+        if ((left >= other.left && left <= other.left + other.width) ||
+            (other.left >= left && other.left <= left + width)) {
+                return true;
+        }
+    return false;
 }
 
-bool RectHitbox::collides_with(const RectHitbox& target) {
-    if ((top <= target.top && top >= target.top + target.height) ||
-        (target.top <= top && target.top >= top + height))
-        if ((left <= target.left + target.width && left >= target.left) ||
-            (target.left <= left + width && target.left >= left))
-                return true;
-    return false;
+void RectHitbox::setPosition(const sf::Vector2f& center) {
+    sf::RectangleShape::setPosition(center);
+    top = center.y - height / 2;
+    left = center.x - width / 2;
+}
+
+void RectHitbox::setPosition(float x, float y) {
+    setPosition({x, y});
+}
+
+void RectHitbox::move(const sf::Vector2f& offset) {
+    setPosition(getPosition() + offset);
+}
+
+void RectHitbox::move(float x, float y) {
+    move({x, y});
+}
+
+void RectHitbox::on_collide() {
+    setOutlineColor(red);
+    setFillColor(transp_red);
+}
+
+void RectHitbox::on_collide_stop() {
+    setOutlineColor(green);
+    setFillColor(transp_green);
 }
 
 void RectHitbox::scale(float factor) {

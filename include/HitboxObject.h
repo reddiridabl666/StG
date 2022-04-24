@@ -1,28 +1,41 @@
 #pragma once
 
 #include "GameObject.h"
+#include "Window.h"
 
 // Пока сделаем только прямоугольные, но после хотелось бы придумать какое-нибудь 
 // наследование для окружностей и произвольных выпуклых многоугольников
 
 class RectHitbox : public GameObjectBase, public sf::RectangleShape {
-  protected:
+  public:
+  // protected:
     float top, left, height, width;
   public:
     RectHitbox(const sf::Vector2f &size = {0, 0}, 
       const sf::Vector2f &center = {0, 0}, 
       Layer layer = Layer::hitbox);
-    bool contains_point(const sf::Vector2f& point);
-    bool collides_with(const RectHitbox& target);
+      
+    // bool contains_point(const sf::Vector2f& point);
+    bool collides_with(const RectHitbox& other);
+
+    void setPosition(const sf::Vector2f& center);
+    void setPosition(float x, float y);
+    void move(const sf::Vector2f& center);
+    void move(float x, float y);
+
+    virtual void on_collide();
+    virtual void on_collide_stop();
 
     void scale(float factor) override;
     const sf::Drawable* get_drawable() const override;
+
 };
 
 using Hitbox = RectHitbox;
 
 class HitboxObject : public GameObject {
-  protected:
+  public:
+  // protected:
     Hitbox hitbox_;
 
   public:
