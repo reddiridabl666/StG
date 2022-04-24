@@ -2,7 +2,7 @@
 
 #include "HitboxObject.h"
 
-class Player : public HitboxObject {
+class Player : public HitboxObject<RectHitbox> {
   protected:  
     float speed_ = 750.f;
   public:

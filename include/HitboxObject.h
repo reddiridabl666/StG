@@ -1,53 +1,44 @@
 #pragma once
 
 #include "GameObject.h"
-#include "Window.h"
+#include "Hitbox.h"
 
-// Пока сделаем только прямоугольные, но после хотелось бы придумать какое-нибудь 
-// наследование для окружностей и произвольных выпуклых многоугольников
-
-class RectHitbox : public GameObjectBase, public sf::RectangleShape {
-  public:
-  // protected:
-    float top, left, height, width;
-  public:
-    RectHitbox(const sf::Vector2f &size = {0, 0}, 
-      const sf::Vector2f &center = {0, 0}, 
-      Layer layer = Layer::hitbox);
-      
-    // bool contains_point(const sf::Vector2f& point);
-    bool collides_with(const RectHitbox& other);
-
-    void setPosition(const sf::Vector2f& center);
-    void setPosition(float x, float y);
-    void move(const sf::Vector2f& center);
-    void move(float x, float y);
-
-    virtual void on_collide();
-    virtual void on_collide_stop();
-
-    void scale(float factor) override;
-    const sf::Drawable* get_drawable() const override;
-
-};
-
-using Hitbox = RectHitbox;
-
+template <typename HitboxType>
 class HitboxObject : public GameObject {
   public:
   // protected:
-    Hitbox hitbox_;
+    HitboxType hitbox_;
 
   public:
-    HitboxObject();
-    HitboxObject(const sf::Texture& texture, sf::Vector2f hitbox_size = {0, 0}, Layer layer = Layer::character);
+    HitboxObject(Layer layer = Layer::character) : GameObjectBase(layer) {}
+    HitboxObject(const sf::Texture& texture, sf::Vector2f hitbox_size = {0, 0}, Layer layer = Layer::character) 
+        : GameObject(texture, layer), hitbox_(hitbox_size) {};
 
-    void setPosition(const sf::Vector2f& offset);
-    void setPosition(float x, float y);
+    void setPosition(const sf::Vector2f& offset) {
+        GameObject::setPosition(offset);
+        hitbox_.setPosition(offset);
+    }
 
-    void move(const sf::Vector2f& offset);
-    void move(float x, float y);
+    void setPosition(float x, float y) {
+        setPosition({x, y});
+    }
 
-    bool collides_with(const Hitbox& hitbox);
-    bool collides_with(const HitboxObject& obj);
+    void move(const sf::Vector2f& offset) {
+        GameObject::move(offset);
+        hitbox_.move(offset);
+    }
+
+    void move(float x, float y) {
+        move({x, y});
+    }
+
+    bool collides_with(const Hitbox* hitbox) {
+        return hitbox_.collides_with(hitbox);
+    }
+
+    bool collides_with(const HitboxObject& obj) {
+        return hitbox_.collides_with(&obj.hitbox_);
+    }
 };
+
+// #include "HitboxObject.tpp"

@@ -19,6 +19,7 @@ int main()
     Window window;
 
     RectHitbox hitbox({50.f, 50.f}, {750.f, 500.f});
+    CircleHitbox c_hitbox(100, {1200.f, 700.f});
     
     // Background initialization
     GameObject bg(textures["bg.jpg"]);
@@ -49,13 +50,22 @@ int main()
         }
 
         // Collision checks
-        if (player.collides_with(hitbox)) {
+        if (player.collides_with(&hitbox)) {
             player.hitbox_.on_collide();
             hitbox.on_collide();
         } else {
             player.hitbox_.on_collide_stop();
             hitbox.on_collide_stop();
         }
+
+        if (player.collides_with(&c_hitbox)) {
+            player.hitbox_.on_collide();
+            c_hitbox.on_collide();
+        } else {
+            player.hitbox_.on_collide_stop();
+            c_hitbox.on_collide_stop();
+        }
+
 
         // clear the window with black color
         window.clear(sf::Color::Black);

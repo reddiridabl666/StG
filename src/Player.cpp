@@ -5,22 +5,24 @@ static bool pressed_any_of(sf::Keyboard::Key A, sf::Keyboard::Key B) {
            sf::Keyboard::isKeyPressed(B);
 }
 
-Player::Player(const sf::Texture& texture, sf::Vector2f hitbox_size, 
-        Layer layer, float speed) : HitboxObject(texture, hitbox_size, layer), speed_(speed) {}
+// template <typename HitboxType>
+Player/*<HitboxType>*/::Player(const sf::Texture& texture, sf::Vector2f hitbox_size, 
+        Layer layer, float speed) : HitboxObject<RectHitbox/*HitboxType*/>(texture, hitbox_size, layer), speed_(speed) {}
 
-void Player::control(float deltaTime) {
+// template <typename HitboxType>
+void Player/*<HitboxType>*/::control(float deltaTime) {
     using Key = sf::Keyboard;
 
     if (pressed_any_of(Key::A, Key::Left)) {
-        move(left * speed_ * deltaTime);
+        this->move(left * speed_ * deltaTime);
     }
     if (pressed_any_of(Key::D, Key::Right)) {
-        move(right * speed_ * deltaTime);
+        this->move(right * speed_ * deltaTime);
     }
     if (pressed_any_of(Key::W, Key::Up)) {
-        move(up * speed_ * deltaTime);
+        this->move(up * speed_ * deltaTime);
     }
     if (pressed_any_of(Key::S, Key::Down)) {
-        move(down * speed_ * deltaTime);
+        this->move(down * speed_ * deltaTime);
     }
 }

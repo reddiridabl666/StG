@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 #include <SFML/Graphics.hpp>
-#include "Utilities.h"
+#include "Utilities.hpp"
 
 class GameObjectBase {
   protected:
@@ -29,7 +29,7 @@ class GameObjectBase {
     void deactivate();
     bool is_active() const;
 
-    virtual const sf::Drawable* get_drawable() const  = 0;
+    virtual sf::Drawable* get_drawable() = 0;
     void change_layer(Layer layer);
 
     virtual ~GameObjectBase();
@@ -47,7 +47,7 @@ class GameObject : public GameObjectBase, public sf::Sprite {
     void setTexture(const sf::Texture& texture);
     void scale(float factor) override;
 
-    const sf::Drawable* get_drawable() const override;
+    sf::Drawable* get_drawable() override;
 
     ~GameObject() override;
 };

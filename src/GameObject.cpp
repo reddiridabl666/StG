@@ -64,7 +64,7 @@ void GameObject::setTexture(const sf::Texture& texture) {
     center(*this, texture);
 }
 
-const sf::Drawable* GameObject::get_drawable() const {
+sf::Drawable* GameObject::get_drawable() {
     return this;
 }
 
