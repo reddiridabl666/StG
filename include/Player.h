@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HitboxObject.h"
+#include "HitboxObject.hpp"
 
 class Player : public HitboxObject<RectHitbox> {
   protected:  

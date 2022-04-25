@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <list>
 #include <unordered_set>
 #include <unordered_map>
 

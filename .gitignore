@@ -30,6 +30,7 @@
 *.exe
 *.out
 *.app
+main
 
 # Clion
 cmake-build-debug

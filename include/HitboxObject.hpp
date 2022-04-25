@@ -32,13 +32,13 @@ class HitboxObject : public GameObject {
         move({x, y});
     }
 
-    bool collides_with(const Hitbox* hitbox) {
-        return hitbox_.collides_with(hitbox);
-    }
+    // bool collides_with(const Hitbox* hitbox) {
+    //     return hitbox_.collides_with(hitbox);
+    // }
 
-    bool collides_with(const HitboxObject& obj) {
-        return hitbox_.collides_with(&obj.hitbox_);
-    }
+    // bool collides_with(const HitboxObject& obj) {
+    //     return hitbox_.collides_with(&obj.hitbox_);
+    // }
 };
 
 // #include "HitboxObject.tpp"

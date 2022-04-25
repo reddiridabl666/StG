@@ -13,6 +13,12 @@ Player/*<HitboxType>*/::Player(const sf::Texture& texture, sf::Vector2f hitbox_s
 void Player/*<HitboxType>*/::control(float deltaTime) {
     using Key = sf::Keyboard;
 
+    // Change later!!!
+    if (pressed_any_of(Key::LShift, Key::RShift)) {
+        speed_ = 375.f;
+    } else {
+        speed_ = 750.f;
+    }
     if (pressed_any_of(Key::A, Key::Left)) {
         this->move(left * speed_ * deltaTime);
     }

@@ -1,25 +1,33 @@
 #pragma once
 
 #include "GameObject.h"
-
-// Пока сделаем только прямоугольные, но после хотелось бы придумать какое-нибудь 
-// наследование для окружностей и произвольных выпуклых многоугольников
+#include <set>
 
 class CircleHitbox;
 class RectHitbox;
 
 class Hitbox : public GameObjectBase {
   protected:
+    sf::Uint32 collision_num_ = 0;
     virtual bool collides_with_rect(const RectHitbox* other) const = 0;
     virtual bool collides_with_circle(const CircleHitbox* other) const = 0;
-
+  
+  private:
+    static void refresh_collision_num();
+  
   public:
-    using GameObjectBase::GameObjectBase;
+    static std::set<Hitbox*> all;
+
+    Hitbox(Layer layer = Layer::hitbox);
+    static void check_collisions();
+
     virtual bool contains_point(const sf::Vector2f& point) const = 0;
     virtual bool collides_with(const Hitbox* other);
 
     virtual void on_collide();
     virtual void on_collide_stop();
+
+    virtual ~Hitbox();
 };
 
 class RectHitbox : public Hitbox, public sf::RectangleShape {

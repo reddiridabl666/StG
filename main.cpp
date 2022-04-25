@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "GameObject.h"
-#include "HitboxObject.h"
+#include "HitboxObject.hpp"
 #include "LoadTextures.hpp"
 #include "Player.h"
 #include "Window.h"
@@ -50,22 +50,7 @@ int main()
         }
 
         // Collision checks
-        if (player.collides_with(&hitbox)) {
-            player.hitbox_.on_collide();
-            hitbox.on_collide();
-        } else {
-            player.hitbox_.on_collide_stop();
-            hitbox.on_collide_stop();
-        }
-
-        if (player.collides_with(&c_hitbox)) {
-            player.hitbox_.on_collide();
-            c_hitbox.on_collide();
-        } else {
-            player.hitbox_.on_collide_stop();
-            c_hitbox.on_collide_stop();
-        }
-
+        Hitbox::check_collisions();
 
         // clear the window with black color
         window.clear(sf::Color::Black);

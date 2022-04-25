@@ -1,9 +1,17 @@
 #include "Hitbox.h"
+#include <set>
 
 static const sf::Color green = {5, 240, 75};
 static const sf::Color transp_green = {5, 240, 75, 200};
 static const sf::Color red = {191, 34, 51};
 static const sf::Color transp_red = {191, 34, 51, 200};
+
+
+std::set<Hitbox*> Hitbox::all;
+
+Hitbox::Hitbox(Layer layer) : GameObjectBase(layer) {
+    all.insert(this);
+}
 
 bool Hitbox::collides_with(const Hitbox* other) {
     if (auto target = dynamic_cast<const RectHitbox*>(other)) {return collides_with_rect(target);}
@@ -19,6 +27,41 @@ void Hitbox::on_collide() {
 void Hitbox::on_collide_stop() {
     dynamic_cast<sf::Shape*>(get_drawable())->setOutlineColor(green);
     dynamic_cast<sf::Shape*>(get_drawable())->setFillColor(transp_green);
+}
+
+void Hitbox::refresh_collision_num() {
+    for (auto it : Hitbox::all) {
+        it->collision_num_ = 0;
+    }
+}
+
+void Hitbox::check_collisions() {
+    refresh_collision_num();
+    for (auto it = all.begin(); it != std::prev(all.end()); ++it) {
+        // std::cout << "Checking collisions of hitbox " << *it << std::endl;
+        for (auto jt = std::next(it); jt != all.end(); ++jt) {
+            // std::cout << "With hitbox " << *jt << std::endl;
+            if ((*it)->collides_with(*jt)) {
+                (*it)->on_collide();
+                (*jt)->on_collide();
+
+                (*it)->collision_num_++;
+                (*jt)->collision_num_++;
+            }
+
+            if ((*jt)->collision_num_ == 0) {
+                (*jt)->on_collide_stop();
+            }
+        }
+
+        if ((*it)->collision_num_ == 0) {
+            (*it)->on_collide_stop();
+        }
+    }
+} 
+
+Hitbox::~Hitbox() {
+    all.erase(this);
 }
 
 RectHitbox::RectHitbox(const sf::Vector2f &size, const sf::Vector2f &center, Layer layer) 
@@ -47,7 +90,7 @@ bool RectHitbox::collides_with_rect(const RectHitbox* other) const {
 }
 
 bool RectHitbox::collides_with_circle(const CircleHitbox* other) const {
-    return other->collides_with_rect(const_cast<const RectHitbox*>(this));
+    return other->collides_with_rect(this);
 }
 
 void RectHitbox::setPosition(const sf::Vector2f& center) {
@@ -88,7 +131,7 @@ sf::Drawable* RectHitbox::get_drawable() {
 
 CircleHitbox::CircleHitbox(float radius, const sf::Vector2f &center, Layer layer) 
   : Hitbox(layer), sf::CircleShape(radius) {
-    setOrigin(radius / 2, radius / 2);
+    setOrigin(radius, radius);
     setPosition(center);
     setOutlineThickness(-4);
     setOutlineColor(green);
@@ -96,17 +139,16 @@ CircleHitbox::CircleHitbox(float radius, const sf::Vector2f &center, Layer layer
 }
       
 bool CircleHitbox::contains_point(const sf::Vector2f& point) const {
-    if (distance(getPosition(), point) <= getRadius()) {
-        return true;
-    }
-    return false;
+    return distance(getPosition(), point) <= getRadius();
 }
 
 bool CircleHitbox::collides_with_rect(const RectHitbox* other) const {
-    if (contains_point({other->top_, other->left_}) || 
-        contains_point({other->top_ + other->height_, other->left_}) ||
-        contains_point({other->top_, other->left_ + other->width_}) || 
-        contains_point({other->top_ + other->height_, other->left_ + other->width_})) {
+    // TODO: Сделать через проекции, пока криво
+
+    if (contains_point({other->left_, other->top_}) || 
+        contains_point({other->left_, other->top_ + other->height_}) ||
+        contains_point({other->left_ + other->width_, other->top_}) || 
+        contains_point({other->left_ + other->width_, other->top_ + other->height_})) {
             return true;
     }
 
