@@ -18,13 +18,9 @@ class GameObjectBase {
     explicit GameObjectBase(Layer layer = Layer::bg);
     using objects = std::unordered_set<GameObjectBase*>;
 
-    static objects all_objects;
     static std::unordered_map<Layer, objects> objects_by_layer;
 
     static void draw_all(sf::RenderWindow& window);
-    static void scale_all(float factor);
-
-    virtual void scale(float factor) = 0;
 
     void activate();
     void deactivate();
@@ -46,9 +42,6 @@ class GameObject : public GameObjectBase, public sf::Sprite {
 
     sf::Vector2f getSize() const;
     void setTexture(const sf::Texture& texture);
-    void scale(float factor) override;
 
     sf::Drawable* get_drawable() override;
-
-    ~GameObject() override;
 };

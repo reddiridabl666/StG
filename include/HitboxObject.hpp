@@ -10,9 +10,9 @@ class HitboxObject : public GameObject {
     HitboxType hitbox_;
 
   public:
-    HitboxObject(Layer layer = Layer::character) : GameObjectBase(layer) {}
-    HitboxObject(const sf::Texture& texture, sf::Vector2f hitbox_size = {0, 0}, Layer layer = Layer::character) 
-        : GameObject(texture, layer), hitbox_(hitbox_size) {};
+    HitboxObject(Layer layer = Layer::character) : GameObject(layer) {}
+    HitboxObject(const sf::Texture& texture, const HitboxType& hitbox, Layer layer = Layer::character) 
+        : GameObject(texture, layer), hitbox_(hitbox) {};
 
     void setPosition(const sf::Vector2f& offset) {
         GameObject::setPosition(offset);
@@ -40,5 +40,3 @@ class HitboxObject : public GameObject {
     //     return hitbox_.collides_with(&obj.hitbox_);
     // }
 };
-
-// #include "HitboxObject.tpp"

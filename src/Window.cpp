@@ -38,10 +38,8 @@ void Window::sys_event_loop() {
                         }
                     }
 
-                    float new_width = static_cast<float>(getSize().x);
-                    GameObject::scale_all(new_width / width);
-
                     sf::View new_view(center, getView().getSize());
+                    if (!is_fullscreen_) new_view.zoom(width / getSize().x);
                     setView(new_view);
                 }
                 break;
@@ -58,7 +56,7 @@ void Window::show() {
 
 void Window::open_fullscreen() {
     create(sf::VideoMode::getFullscreenModes()[0],
-            "My window",
+            "STG",
             sf::Style::Fullscreen);
     is_fullscreen_ = true;
 }
@@ -66,7 +64,8 @@ void Window::open_fullscreen() {
 void Window::open_windowed() {
     // Потом надо научиться определять в зависимости от монитора
     create(sf::VideoMode(1280, 800),
-            "My window",
-            sf::Style::Titlebar | sf::Style::Close);
+           "STG",
+           sf::Style::Default);
+            // sf::Style::Titlebar | sf::Style::Close);
     is_fullscreen_ = false;
 }

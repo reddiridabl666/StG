@@ -1,10 +1,8 @@
 #include <GameObject.h>
 
-GameObjectBase::objects GameObjectBase::all_objects;
 std::unordered_map<Layer, GameObjectBase::objects> GameObjectBase::objects_by_layer(layer_num);
 
 GameObjectBase::GameObjectBase(Layer layer) : layer_(layer) {
-    all_objects.insert(this);
     objects_by_layer[layer_].insert(this);
 }
 
@@ -36,14 +34,7 @@ void GameObjectBase::draw_all(sf::RenderWindow& window) {
     }
 }
 
-void GameObjectBase::scale_all(float factor) {
-    for (auto obj : all_objects) {
-        obj->scale(factor);
-    }
-}
-
 GameObjectBase::~GameObjectBase() {
-    all_objects.erase(this);
     objects_by_layer[layer_].erase(this);
 }
 
@@ -68,13 +59,6 @@ sf::Drawable* GameObject::get_drawable() {
     return this;
 }
 
-void GameObject::scale(float factor) {
-    sf::Sprite::scale(factor, factor);
-    size_ *= factor;
-}
-
 sf::Vector2f GameObject::getSize() const {
     return size_;
 }
-
-GameObject::~GameObject() {}

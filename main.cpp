@@ -7,8 +7,9 @@
 #include "Window.h"
 
 #include <vector>
+#include <cassert>
 
-#define CENTER window.getSize().x / 2.f, window.getSize().y / 2.f
+#define CENTER static_cast<sf::Vector2f>(window.getSize()) / 2.f
 
 int main()
 {
@@ -17,6 +18,7 @@ int main()
     
     // Init window
     Window window;
+    // window.open_windowed();
 
     RectHitbox hitbox({50.f, 50.f}, {750.f, 500.f});
     CircleHitbox c_hitbox(100, {1200.f, 700.f});
@@ -25,12 +27,12 @@ int main()
     GameObject bg(textures["bg.jpg"]);
     bg.setPosition(CENTER);
     auto factor = static_cast<float>(window.getSize().x) / bg.getSize().x;
-    bg.scale(factor);
+    bg.scale(factor, factor);
 
     // Player initialization
     Player player(textures["player.png"], {30, 45});
     player.setPosition(CENTER);
-    player.scale(4.4f);
+    player.scale(4.4f, 4.4f);
 
     // Time
     sf::Clock clock;

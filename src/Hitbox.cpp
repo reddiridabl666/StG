@@ -9,7 +9,12 @@ static const sf::Color transp_red = {191, 34, 51, 200};
 
 std::set<Hitbox*> Hitbox::all;
 
-Hitbox::Hitbox(Layer layer) : GameObjectBase(layer) {
+Hitbox::Hitbox(Layer layer, float mass) : GameObjectBase(layer), mass_(mass) {
+    all.insert(this);
+}
+
+Hitbox::Hitbox(const Hitbox& hitbox) : GameObjectBase(hitbox.layer_) {
+    mass_ = hitbox.mass_;
     all.insert(this);
 }
 
@@ -20,6 +25,7 @@ bool Hitbox::collides_with(const Hitbox* other) {
 }
 
 void Hitbox::on_collide() {
+    collision_num_++;
     dynamic_cast<sf::Shape*>(get_drawable())->setOutlineColor(red);
     dynamic_cast<sf::Shape*>(get_drawable())->setFillColor(transp_red);
 }
@@ -37,23 +43,16 @@ void Hitbox::refresh_collision_num() {
 
 void Hitbox::check_collisions() {
     refresh_collision_num();
-    for (auto it = all.begin(); it != std::prev(all.end()); ++it) {
+    
+    for (auto it = all.begin(); it != all.end(); ++it) {
         // std::cout << "Checking collisions of hitbox " << *it << std::endl;
         for (auto jt = std::next(it); jt != all.end(); ++jt) {
             // std::cout << "With hitbox " << *jt << std::endl;
             if ((*it)->collides_with(*jt)) {
                 (*it)->on_collide();
                 (*jt)->on_collide();
-
-                (*it)->collision_num_++;
-                (*jt)->collision_num_++;
-            }
-
-            if ((*jt)->collision_num_ == 0) {
-                (*jt)->on_collide_stop();
             }
         }
-
         if ((*it)->collision_num_ == 0) {
             (*it)->on_collide_stop();
         }
@@ -65,7 +64,7 @@ Hitbox::~Hitbox() {
 }
 
 RectHitbox::RectHitbox(const sf::Vector2f &size, const sf::Vector2f &center, Layer layer) 
-  : Hitbox(layer), sf::RectangleShape(size), height_(size.y), width_(size.x) {
+  : Hitbox(layer), sf::RectangleShape(size) {
     setOrigin(size.x / 2.f, size.y / 2.f);
     setPosition(center);
     setOutlineThickness(-4);
@@ -74,55 +73,25 @@ RectHitbox::RectHitbox(const sf::Vector2f &size, const sf::Vector2f &center, Lay
 }
 
 bool RectHitbox::contains_point(const sf::Vector2f& point) const {
-    return (point.y <= top_ + height_) && (point.y >= top_) && 
-      (point.x <= left_ + width_) && (point.x >= left_);
+    // return (point.y <= top_ + height_) && (point.y >= top_) && 
+    //   (point.x <= left_ + width_) && (point.x >= left_);
+    return getGlobalBounds().contains(point);
 }
 
 bool RectHitbox::collides_with_rect(const RectHitbox* other) const {
-    if ((top_ >= other->top_ && top_ <= other->top_ + other->height_) ||
-        (other->top_ >= top_ && other->top_ <= top_ + height_)) {
-        if ((left_ >= other->left_ && left_ <= other->left_ + other->width_) ||
-            (other->left_ >= left_ && other->left_ <= left_ + width_)) {
-                return true;
-        }
-    }
-    return false;
+    // if ((top_ >= other->top_ && top_ <= other->top_ + other->height_) ||
+    //     (other->top_ >= top_ && other->top_ <= top_ + height_)) {
+    //     if ((left_ >= other->left_ && left_ <= other->left_ + other->width_) ||
+    //         (other->left_ >= left_ && other->left_ <= left_ + width_)) {
+    //             return true;
+    //     }
+    // }
+    // return false;
+    return getGlobalBounds().intersects(other->getGlobalBounds());
 }
 
 bool RectHitbox::collides_with_circle(const CircleHitbox* other) const {
     return other->collides_with_rect(this);
-}
-
-void RectHitbox::setPosition(const sf::Vector2f& center) {
-    sf::RectangleShape::setPosition(center);
-    top_ = center.y - height_ / 2;
-    left_ = center.x - width_ / 2;
-}
-
-void RectHitbox::setPosition(float x, float y) {
-    setPosition({x, y});
-}
-
-void RectHitbox::move(const sf::Vector2f& offset) {
-    setPosition(getPosition() + offset);
-}
-
-void RectHitbox::move(float x, float y) {
-    move({x, y});
-}
-
-// void RectHitbox::on_collide() {
-//     setOutlineColor(red);
-//     setFillColor(transp_red);
-// }
-
-// void RectHitbox::on_collide_stop() {
-//     setOutlineColor(green);
-//     setFillColor(transp_green);
-// }
-
-void RectHitbox::scale(float factor) {
-    sf::RectangleShape::scale(factor, factor);
 }
 
 sf::Drawable* RectHitbox::get_drawable() {
@@ -145,10 +114,12 @@ bool CircleHitbox::contains_point(const sf::Vector2f& point) const {
 bool CircleHitbox::collides_with_rect(const RectHitbox* other) const {
     // TODO: Сделать через проекции, пока криво
 
-    if (contains_point({other->left_, other->top_}) || 
-        contains_point({other->left_, other->top_ + other->height_}) ||
-        contains_point({other->left_ + other->width_, other->top_}) || 
-        contains_point({other->left_ + other->width_, other->top_ + other->height_})) {
+    auto rect = other->getGlobalBounds();
+
+    if (contains_point({rect.left, rect.top}) || 
+        contains_point({rect.left, rect.top + rect.height}) ||
+        contains_point({rect.left + rect.width, rect.top}) || 
+        contains_point({rect.left + rect.width, rect.top + rect.height})) {
             return true;
     }
 
@@ -164,13 +135,6 @@ bool CircleHitbox::collides_with_rect(const RectHitbox* other) const {
 
 bool CircleHitbox::collides_with_circle(const CircleHitbox* other) const {
     return distance(getPosition(), other->getPosition()) <= getRadius() + other->getRadius();
-}
-
-// void on_collide() override;
-// virtual void on_collide_stop() override;
-
-void CircleHitbox::scale(float factor) {
-    sf::CircleShape::scale(factor, factor);
 }
 
 sf::Drawable* CircleHitbox::get_drawable() {

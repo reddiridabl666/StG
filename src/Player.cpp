@@ -7,7 +7,7 @@ static bool pressed_any_of(sf::Keyboard::Key A, sf::Keyboard::Key B) {
 
 // template <typename HitboxType>
 Player/*<HitboxType>*/::Player(const sf::Texture& texture, sf::Vector2f hitbox_size, 
-        Layer layer, float speed) : HitboxObject<RectHitbox/*HitboxType*/>(texture, hitbox_size, layer), speed_(speed) {}
+        Layer layer, float speed) : HitboxObject<RectHitbox/*HitboxType*/>(texture, RectHitbox(hitbox_size), layer), speed_(speed) {}
 
 // template <typename HitboxType>
 void Player/*<HitboxType>*/::control(float deltaTime) {
@@ -15,7 +15,7 @@ void Player/*<HitboxType>*/::control(float deltaTime) {
 
     // Change later!!!
     if (pressed_any_of(Key::LShift, Key::RShift)) {
-        speed_ = 375.f;
+        speed_ = 320.f;
     } else {
         speed_ = 750.f;
     }
