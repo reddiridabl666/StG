@@ -44,6 +44,8 @@ GameObject::GameObject(const sf::Texture& texture, Layer layer) : GameObject(lay
     setTexture(texture);
 }
 
+GameObject::GameObject(const GameObject& other) : GameObject(*other.getTexture(), other.layer_) {}
+
 static void center(sf::Sprite &sprite, const sf::Texture &texture) {
     sprite.setOrigin(static_cast<float>(texture.getSize().x) / 2.f,
                      static_cast<float>(texture.getSize().y) / 2.f);

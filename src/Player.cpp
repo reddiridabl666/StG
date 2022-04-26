@@ -5,12 +5,10 @@ static bool pressed_any_of(sf::Keyboard::Key A, sf::Keyboard::Key B) {
            sf::Keyboard::isKeyPressed(B);
 }
 
-// template <typename HitboxType>
-Player/*<HitboxType>*/::Player(const sf::Texture& texture, sf::Vector2f hitbox_size, 
-        Layer layer, float speed) : HitboxObject<RectHitbox/*HitboxType*/>(texture, RectHitbox(hitbox_size), layer), speed_(speed) {}
+Player::Player(const sf::Texture& texture, sf::Vector2f hitbox_size, 
+        Layer layer, float speed) : HitboxObject(texture, hitbox_size, layer), speed_(speed) {}
 
-// template <typename HitboxType>
-void Player/*<HitboxType>*/::control(float deltaTime) {
+void Player::control(float deltaTime) {
     using Key = sf::Keyboard;
 
     // Change later!!!

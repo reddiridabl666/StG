@@ -39,6 +39,7 @@ class GameObject : public GameObjectBase, public sf::Sprite {
   public:
     explicit GameObject(Layer layer = Layer::bg);
     GameObject(const sf::Texture& texture, Layer layer = Layer::bg);
+    GameObject(const GameObject& other);
 
     sf::Vector2f getSize() const;
     void setTexture(const sf::Texture& texture);

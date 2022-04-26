@@ -6,13 +6,9 @@
 class CircleHitbox;
 class RectHitbox;
 
-template<typename HitboxType>
-class HitboxObject;
-
 class Hitbox : public GameObjectBase {
   protected:
     sf::Uint32 collision_num_ = 0;
-    float mass_ = 0;
 
     virtual bool collides_with_rect(const RectHitbox* other) const = 0;
     virtual bool collides_with_circle(const CircleHitbox* other) const = 0;
