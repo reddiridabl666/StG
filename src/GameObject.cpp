@@ -28,7 +28,7 @@ void GameObjectBase::draw_all(sf::RenderWindow& window) {
     for (const auto& layer : Layers) {
         for (auto obj : objects_by_layer[layer]) {
             if (obj->is_active()) {
-                window.draw(*obj->get_drawable());
+                window.draw(*obj->getDrawable());
             }
         }
     }
@@ -40,11 +40,12 @@ GameObjectBase::~GameObjectBase() {
 
 GameObject::GameObject(Layer layer) : GameObjectBase(layer), sf::Sprite(), size_() {}
 
-GameObject::GameObject(const sf::Texture& texture, Layer layer) : GameObject(layer) {
+GameObject::GameObject(const sf::Texture& texture, sf::Vector2f pos, Layer layer) : GameObject(layer) {
     setTexture(texture);
+    setPosition(pos);
 }
 
-GameObject::GameObject(const GameObject& other) : GameObject(*other.getTexture(), other.layer_) {}
+GameObject::GameObject(const GameObject& other) : GameObject(*other.getTexture(), other.getPosition(), other.layer_) {}
 
 static void center(sf::Sprite &sprite, const sf::Texture &texture) {
     sprite.setOrigin(static_cast<float>(texture.getSize().x) / 2.f,
@@ -57,7 +58,7 @@ void GameObject::setTexture(const sf::Texture& texture) {
     center(*this, texture);
 }
 
-sf::Drawable* GameObject::get_drawable() {
+sf::Drawable* GameObject::getDrawable() {
     return this;
 }
 

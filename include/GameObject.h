@@ -15,18 +15,17 @@ class GameObjectBase {
     bool is_active_ = true;
 
   public:
-    explicit GameObjectBase(Layer layer = Layer::bg);
+    explicit GameObjectBase(Layer layer = Layer::Bg);
     using objects = std::unordered_set<GameObjectBase*>;
 
     static std::unordered_map<Layer, objects> objects_by_layer;
-
     static void draw_all(sf::RenderWindow& window);
 
     void activate();
     void deactivate();
     bool is_active() const;
 
-    virtual sf::Drawable* get_drawable() = 0;
+    virtual sf::Drawable* getDrawable() = 0;
     void change_layer(Layer layer);
 
     virtual ~GameObjectBase();
@@ -37,12 +36,12 @@ class GameObject : public GameObjectBase, public sf::Sprite {
     sf::Vector2f size_;
 
   public:
-    explicit GameObject(Layer layer = Layer::bg);
-    GameObject(const sf::Texture& texture, Layer layer = Layer::bg);
+    explicit GameObject(Layer layer = Layer::Bg);
+    GameObject(const sf::Texture& texture, sf::Vector2f pos = {0, 0}, Layer layer = Layer::Bg);
     GameObject(const GameObject& other);
 
     sf::Vector2f getSize() const;
     void setTexture(const sf::Texture& texture);
 
-    sf::Drawable* get_drawable() override;
+    sf::Drawable* getDrawable() override;
 };

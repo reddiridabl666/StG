@@ -5,20 +5,28 @@
 #include <cmath>
 
 enum class Layer {
-    bg,
-    character,
-    hitbox,
-    bullet,
-    interface
+    Bg,
+    Character,
+    Hitbox,
+    Bullet,
+    Interface
+};
+
+enum class Tag {
+    None,
+    // Player,
+    Enemy,
+    Bullet,
+    Wall
 };
 
 static constexpr sf::Uint8 layer_num = 5;
 
-inline std::array<Layer, layer_num> Layers = {Layer::bg, Layer::character, Layer::hitbox, Layer::bullet, Layer::interface};
+inline std::array<Layer, layer_num> Layers = {Layer::Bg, Layer::Character, Layer::Hitbox, Layer::Bullet, Layer::Interface};
 
 template <typename T>
-inline T distance(sf::Vector2<T> a, sf::Vector2<T> b) {
-    return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2));
+inline T squared_distance(sf::Vector2<T> a, sf::Vector2<T> b) {
+    return pow(a.x - b.x, 2) + pow(a.y - b.y, 2);
 }
 
 static const sf::Vector2f left(-1.0, 0.0);

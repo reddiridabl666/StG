@@ -18,6 +18,7 @@ class Window : public sf::RenderWindow {
     void open_windowed();
 
   private:
+    void switch_view_mode();
     bool is_fullscreen_;
     void show();
 };

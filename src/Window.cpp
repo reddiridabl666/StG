@@ -14,6 +14,20 @@ Window::Window(sf::VideoMode mode, const sf::String &title,
 bool Window::is_fullscreen() {
     return is_fullscreen_;
 }
+void Window::switch_view_mode() {
+    float width = static_cast<float>(getSize().x);
+    auto center = getView().getCenter();
+
+    if (is_fullscreen()) {
+        open_windowed();
+    } else {
+        open_fullscreen();
+    }
+
+    sf::View new_view(center, getView().getSize());
+    if (!is_fullscreen_) new_view.zoom(width / getSize().x);
+    setView(new_view);
+}
 
 void Window::sys_event_loop() {
     // OS events
@@ -26,20 +40,19 @@ void Window::sys_event_loop() {
             case sf::Event::KeyReleased:
                 if ((event.key.code == sf::Keyboard::Enter && event.key.alt) ||
                     event.key.code == sf::Keyboard::Escape) {
-
-                    float width = static_cast<float>(getSize().x);
-                    auto center = getView().getCenter();
-
-                    if (is_fullscreen()) {
-                        open_windowed();
-                    } else {
-                        if (event.key.code != sf::Keyboard::Escape) {
-                            open_fullscreen();
-                        }
-                    }
-
-                    sf::View new_view(center, getView().getSize());
-                    if (!is_fullscreen_) new_view.zoom(width / getSize().x);
+                        if (event.key.code != sf::Keyboard::Escape || !is_fullscreen_)
+                        switch_view_mode();
+                }
+                if (event.key.code == sf::Keyboard::Equal ||
+                    event.key.code == sf::Keyboard::Add) {
+                    auto new_view = getView();
+                    new_view.zoom(0.8);
+                    setView(new_view);
+                }
+                if (event.key.code == sf::Keyboard::Subtract ||
+                    event.key.code == sf::Keyboard::Hyphen) {
+                    auto new_view = getView();
+                    new_view.zoom(1.25);
                     setView(new_view);
                 }
                 break;

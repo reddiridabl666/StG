@@ -17,7 +17,7 @@ find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 add_executable(main main.cpp)
 
 # Add lib
-set(SOURCES src/GameObject.cpp src/Window.cpp src/Player.cpp src/Hitbox.cpp)
+set(SOURCES src/GameObject.cpp src/Window.cpp src/Player.cpp src/Hitbox.cpp src/DynamicObject.cpp)
 add_library(GameLib SHARED ${SOURCES})
 
 # Add include dirs
