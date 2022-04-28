@@ -17,23 +17,23 @@ Player::Player(const sf::Texture& texture, sf::Vector2f pos, sf::Vector2f hitbox
  void Player::on_collide(const DynamicObject* obj) {
     DynamicObject::on_collide(obj);
     if (obj->getTag() == Tag::Wall) {
-        if (obj == &Wall::Bounds[0]) {
-        setPosition(Wall::Bounds[0].getPosition().x + 
-                    Wall::Bounds[0].getSize().x / 2 + hitbox_->getSize().x / 2,
+        if (obj == &Wall::Bounds.left) {
+        setPosition(Wall::Bounds.left.getPosition().x + 
+                    Wall::Bounds.left.getSize().x / 2 + hitbox_->getSize().x / 2,
                     getPosition().y);
         }
-        if (obj == &Wall::Bounds[1]) {
-            setPosition(Wall::Bounds[1].getPosition().x - 
-                        Wall::Bounds[1].getSize().x / 2 - hitbox_->getSize().x / 2,
+        if (obj == &Wall::Bounds.right) {
+            setPosition(Wall::Bounds.right.getPosition().x - 
+                        Wall::Bounds.right.getSize().x / 2 - hitbox_->getSize().x / 2,
                         getPosition().y);
         }
-        if (obj == &Wall::Bounds[2]) {
-            setPosition(getPosition().x, Wall::Bounds[2].getPosition().y - 
-                        Wall::Bounds[2].getSize().y / 2 + hitbox_->getSize().y / 2);
+        if (obj == &Wall::Bounds.up) {
+            setPosition(getPosition().x, Wall::Bounds.up.getPosition().y - 
+                        Wall::Bounds.up.getSize().y / 2 + hitbox_->getSize().y / 2);
         }
-        if (obj == &Wall::Bounds[3]) {
-            setPosition(getPosition().x, Wall::Bounds[3].getPosition().y + 
-                        Wall::Bounds[3].getSize().y / 2 - hitbox_->getSize().y / 2);
+        if (obj == &Wall::Bounds.low) {
+            setPosition(getPosition().x, Wall::Bounds.low.getPosition().y + 
+                        Wall::Bounds.low.getSize().y / 2 - hitbox_->getSize().y / 2);
         }
     }
  }

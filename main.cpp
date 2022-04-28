@@ -17,31 +17,22 @@
 Window window;
 auto win_size = window.getView().getSize();
 
-std::array<Wall, 4> Wall::Bounds = {
+Frame Wall::Bounds = {
     Wall({1, win_size.y}, {0, win_size.y / 2}),  // left
     Wall({1, win_size.y}, {win_size.x, win_size.y / 2}),  // right
-    Wall({win_size.x, 1}, {win_size.x / 2, 0}),  //upper
-    Wall({win_size.x, 1}, {win_size.x / 2, win_size.y})  // down
+    Wall({win_size.x, 1}, {win_size.x / 2, 0}),  //up
+    Wall({win_size.x, 1}, {win_size.x / 2, win_size.y})  // low
 };
+
 int main()
 {
     // Load all textures from a folder
     auto textures = load_textures("images");
-    
-    // Test rect hitbox_obj
-    // sf::RenderTexture transp;
-    // Wall wall({50, 50}, {750, 500});
 
     // Init screen borders
-    
 
-    // Wall left_wall({1, win_size.y}, {0, win_size.y / 2});
-    // Wall right_wall({1, win_size.y}, {win_size.x, win_size.y / 2});
-    // Wall up_wall({win_size.x, 1}, {win_size.x / 2, 0});
-    // Wall down_wall({win_size.x, 1}, {win_size.x / 2, win_size.y});
-
-    Wall test({100, 300}, {600, 400});
-    Wall te2st({50, 100}, {1000, 400});
+    // Wall test({100, 300}, {600, 400});
+    // Wall te2st({50, 100}, {1000, 400});
 
     // std::array<DynamicObject, 5> test_objs;
     // for (auto it : )
@@ -58,38 +49,43 @@ int main()
     sf::CircleShape circle(transp.getSize().x);
     circle.setFillColor(sf::Color::Transparent);
     transp.draw(circle);
-    // DynamicObject circle_obj(transp.getTexture(), {1200, 680}, static_cast<sf::Vector2f>(transp.getSize()).x);
 
-    // Test objs
-    std::array<DynamicObject, 50> bullets;
-    srand(42);
-    float start_pos = 40;
-
-    float delta = window.getView().getSize().x / (bullets.size() + 1);
-    float offset = 0;
-
-    for (auto &it : bullets) {
-        it = DynamicObject(transp.getTexture(), {start_pos + offset, 150});
-        it.setMass(1);
-        it.setVelocity({rand() % 200 - 100.f, rand() % 200 + 0.f});
-        it.setHitbox(transp.getSize().x);
-        offset += delta;
-    }
-
-    // DynamicObject it(transp.getTexture(), {150, 150});
-    // DynamicObject it;
-    // it = DynamicObject(transp.getTexture(), {150, 150});
-    // it.setHitbox(transp.getSize().x);
-    // // it.setPosition(150, 150);
+    // std::array<DynamicObject, 25> rects;
+    // offset = 0;
+    // for (auto &it : rects) {
+    //     it = DynamicObject(transp.getTexture(), {start_pos + offset, 230});
+    //     it.setMass(1);
+    //     it.setVelocity({rand() % 200 - 100.f, rand() % 250 + 0.f});
+    //     it.setHitbox(static_cast<sf::Vector2f>(transp.getSize()));
+    //     offset += delta;
+    // }
 
     // Background initialization
     GameObject bg(textures["bg.jpg"], CENTER);
-    auto factor = static_cast<float>(window.getSize().x) / bg.getSize().x;
+    auto factor = std::max(static_cast<float>(window.getSize().x) / bg.getSize().x,
+                           static_cast<float>(window.getSize().y) / bg.getSize().y);
     bg.scale(factor, factor);
 
     // Player initialization
     Player player(textures["player.png"], CENTER, {30, 45});
     player.scale(4.4f, 4.4f);
+
+    // Test objs
+    std::array<DynamicObject, 40> circles;
+    srand(time(nullptr));
+    float start_pos = 40;
+    float delta = window.getView().getSize().x / (circles.size() + 1);
+    float offset = 0;
+
+    for (auto &it : circles) {
+        it = DynamicObject(transp.getTexture(), {start_pos + offset, 150});
+        it.setMass(1);
+        sf::Vector2f v = {player.getPosition() - it.getPosition()};
+        // it.setVelocity({rand() % 200 - 100.f, rand() % 350 + 0.f});
+        it.setVelocity(v / 3.f);
+        it.setHitbox(transp.getSize().x);
+        offset += delta;
+    }
 
     // Time
     sf::Clock clock;

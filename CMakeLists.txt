@@ -9,7 +9,8 @@ set(ERROR_FLAGS -Wall -Wextra -Werror -Wpedantic)
 add_compile_options(${ERROR_FLAGS})
 # add_compile_options(-DDEBUG)
 
-
+# add memcheck
+add_custom_target(memcheck COMMAND valgrind --tool=memcheck --leak-check=full --suppressions=/lib/valgrind/sfml.supp ./main)
 # Find SFML
 find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 

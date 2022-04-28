@@ -14,6 +14,7 @@ Window::Window(sf::VideoMode mode, const sf::String &title,
 bool Window::is_fullscreen() {
     return is_fullscreen_;
 }
+
 void Window::switch_view_mode() {
     float width = static_cast<float>(getSize().x);
     auto center = getView().getCenter();
@@ -40,7 +41,7 @@ void Window::sys_event_loop() {
             case sf::Event::KeyReleased:
                 if ((event.key.code == sf::Keyboard::Enter && event.key.alt) ||
                     event.key.code == sf::Keyboard::Escape) {
-                        if (event.key.code != sf::Keyboard::Escape || !is_fullscreen_)
+                        if (event.key.code != sf::Keyboard::Escape || is_fullscreen_)
                         switch_view_mode();
                 }
                 if (event.key.code == sf::Keyboard::Equal ||
@@ -76,7 +77,8 @@ void Window::open_fullscreen() {
 
 void Window::open_windowed() {
     // Потом надо научиться определять в зависимости от монитора
-    create(sf::VideoMode(1280, 800),
+    create(sf::VideoMode(sf::VideoMode::getFullscreenModes()[0].width / 1.5,
+           sf::VideoMode::getFullscreenModes()[0].height / 1.5),
            "STG",
            sf::Style::Default);
             // sf::Style::Titlebar | sf::Style::Close);

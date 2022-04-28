@@ -146,7 +146,7 @@ bool CircleHitbox::collides_with_circle(const CircleHitbox* other) const {
 }
 
 sf::Vector2f CircleHitbox::getSize() const {
-    return {getRadius(), getRadius()};
+    return {getRadius() * 2, getRadius() * 2};
 }
 
 sf::Drawable* CircleHitbox::getDrawable() {
