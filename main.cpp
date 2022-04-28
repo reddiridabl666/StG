@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <cassert>
+#include <cstdlib>
 
 #define CENTER static_cast<sf::Vector2f>(window.getSize()) / 2.f
 
@@ -53,14 +54,33 @@ int main()
 
     // Test circle hitbox_obj
     sf::RenderTexture transp;
-    transp.create(75, 75);
-    sf::CircleShape circle(75);
+    transp.create(30, 30);
+    sf::CircleShape circle(transp.getSize().x);
     circle.setFillColor(sf::Color::Transparent);
     transp.draw(circle);
-    DynamicObject circle_obj(transp.getTexture(), {1200, 680}, static_cast<sf::Vector2f>(transp.getSize()).x);
+    // DynamicObject circle_obj(transp.getTexture(), {1200, 680}, static_cast<sf::Vector2f>(transp.getSize()).x);
 
-    // auto copy = circle_obj;
-    // copy.move(-50, -250);
+    // Test objs
+    std::array<DynamicObject, 50> bullets;
+    srand(42);
+    float start_pos = 40;
+
+    float delta = window.getView().getSize().x / (bullets.size() + 1);
+    float offset = 0;
+
+    for (auto &it : bullets) {
+        it = DynamicObject(transp.getTexture(), {start_pos + offset, 150});
+        it.setMass(1);
+        it.setVelocity({rand() % 200 - 100.f, rand() % 200 + 0.f});
+        it.setHitbox(transp.getSize().x);
+        offset += delta;
+    }
+
+    // DynamicObject it(transp.getTexture(), {150, 150});
+    // DynamicObject it;
+    // it = DynamicObject(transp.getTexture(), {150, 150});
+    // it.setHitbox(transp.getSize().x);
+    // // it.setPosition(150, 150);
 
     // Background initialization
     GameObject bg(textures["bg.jpg"], CENTER);
@@ -68,7 +88,7 @@ int main()
     bg.scale(factor, factor);
 
     // Player initialization
-    Player player(textures["player.png"], CENTER, {200, 300});
+    Player player(textures["player.png"], CENTER, {30, 45});
     player.scale(4.4f, 4.4f);
 
     // Time
@@ -91,7 +111,8 @@ int main()
         // Collision checks
         // Hitbox::check_collisions();
         DynamicObject::move_all(deltaTime);
-        DynamicObject::check_collisions_with(player);
+        // DynamicObject::check_collisions_with(player);
+        DynamicObject::check_collisions();
 
         // clear the window with black color
         window.clear(sf::Color::Black);

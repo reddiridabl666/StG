@@ -1,4 +1,5 @@
 #include "DynamicObject.hpp"
+#include "Wall.hpp"
 
 std::set<DynamicObject*> DynamicObject::all;
 
@@ -36,6 +37,26 @@ void DynamicObject::on_collide(const DynamicObject* obj) {
         //     setVelocity(2.f * obj->velocity_ - velocity_);
         // }
     }
+    if (obj->getTag() == Tag::Wall) {
+        if (obj == &Wall::Bounds[0]) {
+        setPosition(Wall::Bounds[0].getPosition().x + 
+                    Wall::Bounds[0].getSize().x / 2 + hitbox_->getSize().x / 2,
+                    getPosition().y);
+        }
+        if (obj == &Wall::Bounds[1]) {
+            setPosition(Wall::Bounds[1].getPosition().x - 
+                        Wall::Bounds[1].getSize().x / 2 - hitbox_->getSize().x / 2,
+                        getPosition().y);
+        }
+        if (obj == &Wall::Bounds[2]) {
+            setPosition(getPosition().x, Wall::Bounds[2].getPosition().y - 
+                        Wall::Bounds[2].getSize().y / 2 + hitbox_->getSize().y / 2);
+        }
+        if (obj == &Wall::Bounds[3]) {
+            setPosition(getPosition().x, Wall::Bounds[3].getPosition().y + 
+                        Wall::Bounds[3].getSize().y / 2 - hitbox_->getSize().y / 2);
+        }
+    }
     if (hitbox_)
         hitbox_->on_collide();
 }
@@ -50,18 +71,19 @@ void DynamicObject::check_collisions_with(DynamicObject& other) {
                 other.on_collide(it);
             }
         }
-        if (it->hitbox_->collision_num_ == 0) {
+        if (it->hitbox_ && it->hitbox_->collision_num_ == 0) {
             it->on_collide_stop();
         }
     }
-    if (other.hitbox_->collision_num_ == 0) {
+    if (other.hitbox_ && other.hitbox_->collision_num_ == 0) {
         other.on_collide_stop();
     }
 }
 
 void DynamicObject::refresh_collision_num() {
     for (auto it : DynamicObject::all) {
-            it->hitbox_->collision_num_ = 0;
+            if (it->hitbox_)
+                it->hitbox_->collision_num_ = 0;
     }
 }
 
@@ -77,7 +99,7 @@ void DynamicObject::check_collisions() {
                 (*jt)->on_collide(*it);
             }
         }
-        if ((*it)->hitbox_->collision_num_ == 0) {
+        if ( (*it)->hitbox_ && (*it)->hitbox_->collision_num_ == 0) {
             (*it)->hitbox_->on_collide_stop();
         }
     }

@@ -21,22 +21,21 @@ Player::Player(const sf::Texture& texture, sf::Vector2f pos, sf::Vector2f hitbox
         setPosition(Wall::Bounds[0].getPosition().x + 
                     Wall::Bounds[0].getSize().x / 2 + hitbox_->getSize().x / 2,
                     getPosition().y);
+        }
+        if (obj == &Wall::Bounds[1]) {
+            setPosition(Wall::Bounds[1].getPosition().x - 
+                        Wall::Bounds[1].getSize().x / 2 - hitbox_->getSize().x / 2,
+                        getPosition().y);
+        }
+        if (obj == &Wall::Bounds[2]) {
+            setPosition(getPosition().x, Wall::Bounds[2].getPosition().y - 
+                        Wall::Bounds[2].getSize().y / 2 + hitbox_->getSize().y / 2);
+        }
+        if (obj == &Wall::Bounds[3]) {
+            setPosition(getPosition().x, Wall::Bounds[3].getPosition().y + 
+                        Wall::Bounds[3].getSize().y / 2 - hitbox_->getSize().y / 2);
+        }
     }
-    if (obj == &Wall::Bounds[1]) {
-        setPosition(Wall::Bounds[1].getPosition().x - 
-                    Wall::Bounds[1].getSize().x / 2 - hitbox_->getSize().x / 2,
-                    getPosition().y);
-    }
-    if (obj == &Wall::Bounds[2]) {
-        setPosition(getPosition().x, Wall::Bounds[2].getPosition().y - 
-                    Wall::Bounds[2].getSize().y / 2 + hitbox_->getSize().y / 2);
-    }
-    if (obj == &Wall::Bounds[3]) {
-        setPosition(getPosition().x, Wall::Bounds[3].getPosition().y + 
-                    Wall::Bounds[3].getSize().y / 2 - hitbox_->getSize().y / 2);
-    }
-    }
-    
  }
 
 void Player::control() {

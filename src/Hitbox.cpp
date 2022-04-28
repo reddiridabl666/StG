@@ -114,6 +114,10 @@ bool CircleHitbox::contains_point(const sf::Vector2f& point) const {
     return squared_distance(getPosition(), point) <= getRadius() * getRadius();
 }
 
+static bool is_beetween(float a,float b, float c) {
+    return b >= a && b <= c;
+}
+
 bool CircleHitbox::collides_with_rect(const RectHitbox* other) const {
     auto rect = other->getGlobalBounds();
 
@@ -128,20 +132,12 @@ bool CircleHitbox::collides_with_rect(const RectHitbox* other) const {
             return true;
     }
 
-    if ((contains_point({getPosition().x, rect.top}) && rect.contains(getPosition().x, rect.top)) || 
-        (contains_point({getPosition().x, rect.top + rect.height}) && rect.contains(getPosition().x, rect.top + rect.height - 1e-3)) ||
-        (contains_point({rect.left, getPosition().y}) && rect.contains(rect.left, getPosition().y)) || 
-        (contains_point({rect.left + rect.width, getPosition().y}) && rect.contains(rect.left + rect.width - 1e-3, getPosition().y))) {
+    if (((std::abs(rect.top - getPosition().y) <= getRadius() || std::abs(rect.top + rect.height - getPosition().y) <= getRadius()) 
+            && is_beetween(0, getPosition().x - rect.left, rect.width)) ||
+        ((std::abs(rect.left - getPosition().x) <= getRadius() || std::abs(rect.left + rect.width - getPosition().x) <= getRadius())
+            && is_beetween(0, getPosition().y - rect.top, rect.height))) {
             return true;
     }
-
-    // if ((std::abs(rect.top - getPosition().y) <= getRadius() && rect.contains(getPosition().x, rect.top)) ||
-    //     (std::abs(rect.top + rect.height - getPosition().y) <= getRadius() && rect.contains(getPosition().x, rect.top + rect.height - 1e-7)) ||
-    //     (std::abs(rect.left - getPosition().x) <= getRadius() && rect.contains(rect.left, getPosition().y)) ||
-    //     (std::abs(rect.left + rect.width - getPosition().x) <= getRadius() && rect.contains(rect.left + rect.width - 1e-7, getPosition().y))) {
-    //         return true;
-    // }
-
     return false;
 }
 

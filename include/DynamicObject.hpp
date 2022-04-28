@@ -12,9 +12,9 @@ class DynamicObject : public GameObject {
     Hitbox* hitbox_ = nullptr;
     Tag tag_ = Tag::None;
 
-  private:
-    DynamicObject(const sf::Texture& texture, sf::Vector2f pos,
-        sf::Vector2f velocity, float mass,
+  public:
+    DynamicObject(const sf::Texture& texture, sf::Vector2f pos = {0, 0},
+        sf::Vector2f velocity = {0, 0}, float mass = 0,
         Layer layer = Layer::Character) 
         : GameObject(texture, pos, layer), mass_(mass), velocity_(velocity) {
             all.insert(this);
@@ -28,13 +28,12 @@ class DynamicObject : public GameObject {
     static void refresh_collision_num();
     static void for_each(std::function<void(DynamicObject*)> action);
 
-    explicit DynamicObject(Layer layer = Layer::Character) : GameObject(layer) {}
+    explicit DynamicObject(Layer layer = Layer::Character) : GameObject(layer) {all.insert(this);}
 
     DynamicObject(const DynamicObject& rhs) : DynamicObject(*rhs.getTexture(), rhs.getPosition(), 
                                                             rhs.velocity_, rhs.mass_, rhs.layer_) 
     {
         // TODO: Избавиться от каста, добавив виртуальный метод
-
         if (auto rect = dynamic_cast<const RectHitbox*>(rhs.getHitbox())) {
             hitbox_ = new RectHitbox(rect->getSize(), getPosition());
             return;
@@ -47,11 +46,13 @@ class DynamicObject : public GameObject {
 
     DynamicObject& operator=(const DynamicObject& rhs) {
         // TODO: Избавиться от каста, добавив виртуальный метод
+        if (rhs.getTexture())
+            setTexture(*rhs.getTexture());
 
-        setTexture(*rhs.getTexture());
         setVelocity(rhs.velocity_);
         setMass(rhs.mass_);
         change_layer(rhs.layer_);
+
         if (auto rect = dynamic_cast<const RectHitbox*>(rhs.getHitbox())) {
             hitbox_ = new RectHitbox(rect->getSize());
             return *this;
@@ -61,13 +62,14 @@ class DynamicObject : public GameObject {
             return *this;
         }
         setPosition(rhs.getPosition());
+        return *this;
     }
 
-    DynamicObject(const sf::Texture& texture, sf::Vector2f pos = {0, 0}, 
-                 const sf::Vector2f& hitbox_size = {35, 35}, sf::Vector2f velocity = {0, 0}, 
+    DynamicObject(const sf::Texture& texture, sf::Vector2f pos, 
+                 const sf::Vector2f& hitbox_size, sf::Vector2f velocity = {0, 0}, 
                  float mass = 0, Layer layer = Layer::Character);
 
-    DynamicObject(const sf::Texture& texture, sf::Vector2f pos = {0, 0}, float hitbox_radius = 20, 
+    DynamicObject(const sf::Texture& texture, sf::Vector2f pos, float hitbox_radius, 
         sf::Vector2f velocity = {0, 0}, float mass = 0, Layer layer = Layer::Character);
 
     void setPosition(const sf::Vector2f& offset) {
@@ -111,14 +113,14 @@ class DynamicObject : public GameObject {
         if (hitbox_) {
             delete hitbox_;
         }
-        hitbox_ = new RectHitbox(size);
+        hitbox_ = new RectHitbox(size, getPosition());
     }
 
     void setHitbox(float radius) {
         if (hitbox_) {
             delete hitbox_;
         }
-        hitbox_ = new CircleHitbox(radius);
+        hitbox_ = new CircleHitbox(radius, getPosition());
     }
 
     void setVelocity(sf::Vector2f velocity) {
