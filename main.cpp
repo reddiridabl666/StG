@@ -31,8 +31,10 @@ int main()
 
     // Init screen borders
 
-    // Wall test({100, 300}, {600, 400});
-    // Wall te2st({50, 100}, {1000, 400});
+    Wall test({100, 300}, {600, 400});
+    test.setMass(1);
+    Wall te2st({300, 100}, {1200, 700});
+    te2st.setMass(1);
 
     // std::array<DynamicObject, 5> test_objs;
     // for (auto it : )
@@ -71,7 +73,7 @@ int main()
     player.scale(4.4f, 4.4f);
 
     // Test objs
-    std::array<DynamicObject, 40> circles;
+    std::array<DynamicObject, 50> circles;
     srand(time(nullptr));
     float start_pos = 40;
     float delta = window.getView().getSize().x / (circles.size() + 1);
@@ -80,9 +82,9 @@ int main()
     for (auto &it : circles) {
         it = DynamicObject(transp.getTexture(), {start_pos + offset, 150});
         it.setMass(1);
-        sf::Vector2f v = {player.getPosition() - it.getPosition()};
-        // it.setVelocity({rand() % 200 - 100.f, rand() % 350 + 0.f});
-        it.setVelocity(v / 3.f);
+        // sf::Vector2f v = {player.getPosition() - it.getPosition()};
+        // it.setVelocity(v / 3.f);
+        it.setVelocity({rand() % 200 - 100.f, rand() % 350 + 50.f});
         it.setHitbox(transp.getSize().x);
         offset += delta;
     }

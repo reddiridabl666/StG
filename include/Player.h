@@ -10,6 +10,6 @@ class Player : public DynamicObject {
     Player(const sf::Texture& texture, sf::Vector2f pos = {0, 0}, 
            sf::Vector2f hitbox_size = {0, 0}, float speed = 750.f, 
            float mass = 0, Layer layer = Layer::Character);
-    void on_collide(const DynamicObject* obj) override;
+    void on_collide(DynamicObject* obj) override;
     void control();
 };

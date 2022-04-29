@@ -31,44 +31,45 @@ void DynamicObject::for_each(std::function<void(DynamicObject*)> action) {
     }
 }
 
-void DynamicObject::on_collide(const DynamicObject* obj) {
+void DynamicObject::on_collide(DynamicObject* obj) {
     if (obj->mass_ > 0 && mass_ > 0) {
-        // if (obj->tag_ == Tag::Wall) {
-        //     setVelocity(2.f * obj->velocity_ - velocity_);
-        // }
-    }
-    if (obj->getTag() == Tag::Wall) {
-        if (obj == &Wall::Bounds.left) {
-            // setPosition(Wall::Bounds.left.getPosition().x + 
-            //             Wall::Bounds.left.getSize().x / 2 + hitbox_->getSize().x / 2,
-            //             getPosition().y);
-            if (mass_ > 0 && obj->mass_ > 0) {
-                velocity_.x *= -1;
-            }
-        }
-        if (obj == &Wall::Bounds.right) {
-            // setPosition(Wall::Bounds.right.getPosition().x - 
-            //             Wall::Bounds.right.getSize().x / 2 - hitbox_->getSize().x / 2,
-            //             getPosition().y);
-            if (mass_ > 0 && obj->mass_ > 0) {
-                velocity_.x *= -1;
-            }
-        }
-        if (obj == &Wall::Bounds.up) {
-            // setPosition(getPosition().x, Wall::Bounds.up.getPosition().y - 
-            //             Wall::Bounds.up.getSize().y / 2 + hitbox_->getSize().y / 2);
-            if (mass_ > 0 && obj->mass_ > 0) {
-                velocity_.y *= -1;
-            }
-        }
-        if (obj == &Wall::Bounds.low) {
-            // setPosition(getPosition().x, Wall::Bounds.low.getPosition().y + 
-            //             Wall::Bounds.low.getSize().y / 2 - hitbox_->getSize().y / 2);
-            if (mass_ > 0 && obj->mass_ > 0) {
-                velocity_.y *= -1;
-            }
+        if (obj->getTag() == Tag::Wall) {
+
         }
     }
+
+    // if (obj->getTag() == Tag::Wall) {
+    //     if (obj == &Wall::Bounds.left) {
+    //         // setPosition(Wall::Bounds.left.getPosition().x + 
+    //         //             Wall::Bounds.left.getSize().x / 2 + hitbox_->getSize().x / 2,
+    //         //             getPosition().y);
+    //         if (mass_ > 0 && obj->mass_ > 0) {
+    //             velocity_.x *= -1;
+    //         }
+    //     }
+    //     if (obj == &Wall::Bounds.right) {
+    //         // setPosition(Wall::Bounds.right.getPosition().x - 
+    //         //             Wall::Bounds.right.getSize().x / 2 - hitbox_->getSize().x / 2,
+    //         //             getPosition().y);
+    //         if (mass_ > 0 && obj->mass_ > 0) {
+    //             velocity_.x *= -1;
+    //         }
+    //     }
+    //     if (obj == &Wall::Bounds.up) {
+    //         // setPosition(getPosition().x, Wall::Bounds.up.getPosition().y - 
+    //         //             Wall::Bounds.up.getSize().y / 2 + hitbox_->getSize().y / 2);
+    //         if (mass_ > 0 && obj->mass_ > 0) {
+    //             velocity_.y *= -1;
+    //         }
+    //     }
+    //     if (obj == &Wall::Bounds.low) {
+    //         // setPosition(getPosition().x, Wall::Bounds.low.getPosition().y + 
+    //         //             Wall::Bounds.low.getSize().y / 2 - hitbox_->getSize().y / 2);
+    //         if (mass_ > 0 && obj->mass_ > 0) {
+    //             velocity_.y *= -1;
+    //         }
+    //     }
+    // }
     if (hitbox_)
         hitbox_->on_collide();
 }

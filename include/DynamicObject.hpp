@@ -102,7 +102,7 @@ class DynamicObject : public GameObject {
         return false;
     }
 
-    virtual void on_collide(const DynamicObject* obj);
+    virtual void on_collide(DynamicObject* obj);
 
     virtual void on_collide_stop() {
         if (hitbox_)
@@ -127,6 +127,10 @@ class DynamicObject : public GameObject {
         velocity_ = velocity;
     }
 
+    void setVelocity(float x, float y) {
+        setVelocity({x, y});
+    }
+
     void setMass(float mass) {
         mass_ = mass;
     }
@@ -142,6 +146,15 @@ class DynamicObject : public GameObject {
     Tag getTag() const {
         return tag_;
     }
+
+    float getMass() const {
+        return mass_;
+    }
+
+    sf::Vector2f getVelocity() const {
+        return velocity_;
+    }
+
 
     virtual ~DynamicObject() {
         if (hitbox_) {

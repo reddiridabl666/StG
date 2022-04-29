@@ -14,7 +14,7 @@ Player::Player(const sf::Texture& texture, sf::Vector2f pos, sf::Vector2f hitbox
     // setTag(Tag::Player);
 }
 
- void Player::on_collide(const DynamicObject* obj) {
+ void Player::on_collide(DynamicObject* obj) {
     DynamicObject::on_collide(obj);
     if (obj->getTag() == Tag::Wall) {
         if (obj == &Wall::Bounds.left) {
