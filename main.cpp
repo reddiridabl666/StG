@@ -17,50 +17,10 @@
 Window window;
 auto win_size = window.getView().getSize();
 
-Frame Wall::Bounds = {
-    Wall({1, win_size.y}, {0, win_size.y / 2}),  // left
-    Wall({1, win_size.y}, {win_size.x, win_size.y / 2}),  // right
-    Wall({win_size.x, 1}, {win_size.x / 2, 0}),  //up
-    Wall({win_size.x, 1}, {win_size.x / 2, win_size.y})  // low
-};
-
 int main()
 {
     // Load all textures from a folder
     auto textures = load_textures("images");
-
-    // Init screen borders
-
-    Wall test({100, 300}, {600, 400});
-    test.setMass(1);
-    Wall te2st({300, 100}, {1200, 700});
-    te2st.setMass(1);
-
-    // std::array<DynamicObject, 5> test_objs;
-    // for (auto it : )
-
-    // transp.create(50, 50);
-    // sf::RectangleShape rect({50.f, 50.f});
-    // rect.setFillColor(sf::Color::Transparent);
-    // transp.draw(rect);
-    // DynamicObject rect_obj(transp.getTexture(), {750, 500}, static_cast<sf::Vector2f>(transp.getSize()));
-
-    // Test circle hitbox_obj
-    sf::RenderTexture transp;
-    transp.create(30, 30);
-    sf::CircleShape circle(transp.getSize().x);
-    circle.setFillColor(sf::Color::Transparent);
-    transp.draw(circle);
-
-    // std::array<DynamicObject, 25> rects;
-    // offset = 0;
-    // for (auto &it : rects) {
-    //     it = DynamicObject(transp.getTexture(), {start_pos + offset, 230});
-    //     it.setMass(1);
-    //     it.setVelocity({rand() % 200 - 100.f, rand() % 250 + 0.f});
-    //     it.setHitbox(static_cast<sf::Vector2f>(transp.getSize()));
-    //     offset += delta;
-    // }
 
     // Background initialization
     GameObject bg(textures["bg.jpg"], CENTER);
@@ -72,7 +32,26 @@ int main()
     Player player(textures["player.png"], CENTER, {30, 45});
     player.scale(4.4f, 4.4f);
 
-    // Test objs
+    // Test walls
+    Wall test({100, 300}, {600, 400});
+    Wall test2({300, 100}, {1200, 700});
+    Wall test3({100, 100}, {800, 900});
+    Wall test4({100, 100}, {1650, 400});
+
+    // Frame walls
+    float bound_width = 300;
+    Wall left_bound({bound_width, win_size.y}, {-bound_width / 2, win_size.y / 2});
+    Wall right_bound({bound_width, win_size.y}, {win_size.x + bound_width / 2, win_size.y / 2});
+    Wall low_bound({win_size.x, bound_width}, {win_size.x / 2, -bound_width / 2});
+    Wall up_bound({win_size.x, bound_width}, {win_size.x / 2, win_size.y + bound_width / 2});
+
+    // Test circle objs
+    sf::RenderTexture transp;
+    transp.create(30, 30);
+    sf::CircleShape circle(transp.getSize().x);
+    circle.setFillColor(sf::Color::Transparent);
+    transp.draw(circle);
+
     std::array<DynamicObject, 50> circles;
     srand(time(nullptr));
     float start_pos = 40;
@@ -83,16 +62,46 @@ int main()
         it = DynamicObject(transp.getTexture(), {start_pos + offset, 150});
         it.setMass(1);
         // sf::Vector2f v = {player.getPosition() - it.getPosition()};
-        // it.setVelocity(v / 3.f);
-        it.setVelocity({rand() % 200 - 100.f, rand() % 350 + 50.f});
+        // it.setVelocity(v / 2.f);
+        it.setVelocity({rand() % 200 - 100.f, rand() % 250 + 225.f});
         it.setHitbox(transp.getSize().x);
         offset += delta;
     }
 
+    // std::array<DynamicObject, 25> rects;
+    // offset = 0;
+    // for (auto &it : rects) {
+    //     it = DynamicObject(transp.getTexture(), {start_pos + offset, 230});
+    //     it.setMass(1);
+    //     it.setVelocity({rand() % 200 - 100.f, rand() % 250 + 150.f});
+    //     it.setHitbox(static_cast<sf::Vector2f>(transp.getSize()));
+    //     offset += delta;
+    // }
+
+    // std::array<DynamicObject, 25> circles2;
+    // delta = window.getView().getSize().x / (circles2.size() + 1);
+
+    // transp.create(50, 50);
+    // sf::CircleShape circle2(transp.getSize().x);
+    // circle2.setFillColor(sf::Color::Transparent);
+    // transp.draw(circle2);
+    // offset = 0;
+    // start_pos += 15;
+
+    // for (auto &it : circles2) {
+    //     it = DynamicObject(transp.getTexture(), {start_pos + offset, 150});
+    //     it.setMass(1);
+    //     // sf::Vector2f v = {player.getPosition() - it.getPosition()};
+    //     // it.setVelocity(v / 2.f);
+    //     it.setVelocity({rand() % 200 - 100.f, rand() % 250 + 225.f});
+    //     it.setHitbox(transp.getSize().x);
+    //     offset += delta;
+    // }
+
     // Time
     sf::Clock clock;
     float deltaTime;
-
+    
     // Event loop
     while (window.isOpen())
     {
@@ -107,7 +116,6 @@ int main()
         }
 
         // Collision checks
-        // Hitbox::check_collisions();
         DynamicObject::move_all(deltaTime);
         // DynamicObject::check_collisions_with(player);
         DynamicObject::check_collisions();

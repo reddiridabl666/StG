@@ -2,20 +2,13 @@
 #include <set>
 
 static const sf::Color green = {5, 240, 75};
-static const sf::Color transp_green = {5, 240, 75, 200};
+static const sf::Color transp_green = {5, 240, 75, 170};
 static const sf::Color red = {191, 34, 51};
-static const sf::Color transp_red = {191, 34, 51, 200};
+static const sf::Color transp_red = {191, 34, 51, 170};
 
+Hitbox::Hitbox(Layer layer) : GameObjectBase(layer) {}
 
-// std::set<Hitbox*> Hitbox::all;
-
-Hitbox::Hitbox(Layer layer) : GameObjectBase(layer) {
-    // all.insert(this);
-}
-
-Hitbox::Hitbox(const Hitbox& hitbox) : GameObjectBase(hitbox.layer_) {
-    // all.insert(this);
-}
+Hitbox::Hitbox(const Hitbox& hitbox) : GameObjectBase(hitbox.layer_) {}
 
 bool Hitbox::collides_with(const Hitbox* other) {
     if (auto target = dynamic_cast<const RectHitbox*>(other)) {return collides_with_rect(target);}
@@ -34,34 +27,6 @@ void Hitbox::on_collide_stop() {
     dynamic_cast<sf::Shape*>(getDrawable())->setFillColor(transp_green);
 }
 
-// void Hitbox::refresh_collision_num() {
-//     for (auto it : Hitbox::all) {
-//         it->collision_num_ = 0;
-//     }
-// }
-
-// void Hitbox::check_collisions() {
-//     refresh_collision_num();
-    
-//     for (auto it = all.begin(); it != all.end(); ++it) {
-//         // std::cout << "Checking collisions of hitbox " << *it << std::endl;
-//         for (auto jt = std::next(it); jt != all.end(); ++jt) {
-//             // std::cout << "With hitbox " << *jt << std::endl;
-//             if ((*it)->collides_with(*jt)) {
-//                 (*it)->on_collide();
-//                 (*jt)->on_collide();
-//             }
-//         }
-//         if ((*it)->collision_num_ == 0) {
-//             (*it)->on_collide_stop();
-//         }
-//     }
-// } 
-
-Hitbox::~Hitbox() {
-    // all.erase(this);
-}
-
 RectHitbox::RectHitbox(const sf::Vector2f &size, const sf::Vector2f &center, Layer layer) 
   : Hitbox(layer), sf::RectangleShape(size) {
     setOrigin(size.x / 2.f, size.y / 2.f);
@@ -72,20 +37,10 @@ RectHitbox::RectHitbox(const sf::Vector2f &size, const sf::Vector2f &center, Lay
 }
 
 bool RectHitbox::contains_point(const sf::Vector2f& point) const {
-    // return (point.y <= top_ + height_) && (point.y >= top_) && 
-    //   (point.x <= left_ + width_) && (point.x >= left_);
     return getGlobalBounds().contains(point);
 }
 
 bool RectHitbox::collides_with_rect(const RectHitbox* other) const {
-    // if ((top_ >= other->top_ && top_ <= other->top_ + other->height_) ||
-    //     (other->top_ >= top_ && other->top_ <= top_ + height_)) {
-    //     if ((left_ >= other->left_ && left_ <= other->left_ + other->width_) ||
-    //         (other->left_ >= left_ && other->left_ <= left_ + width_)) {
-    //             return true;
-    //     }
-    // }
-    // return false;
     return getGlobalBounds().intersects(other->getGlobalBounds());
 }
 

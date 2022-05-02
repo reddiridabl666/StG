@@ -14,29 +14,60 @@ Player::Player(const sf::Texture& texture, sf::Vector2f pos, sf::Vector2f hitbox
     // setTag(Tag::Player);
 }
 
- void Player::on_collide(DynamicObject* obj) {
+void Player::on_collide(DynamicObject* obj) {
     DynamicObject::on_collide(obj);
+    
     if (obj->getTag() == Tag::Wall) {
-        if (obj == &Wall::Bounds.left) {
-        setPosition(Wall::Bounds.left.getPosition().x + 
-                    Wall::Bounds.left.getSize().x / 2 + hitbox_->getSize().x / 2,
-                    getPosition().y);
-        }
-        if (obj == &Wall::Bounds.right) {
-            setPosition(Wall::Bounds.right.getPosition().x - 
-                        Wall::Bounds.right.getSize().x / 2 - hitbox_->getSize().x / 2,
+        // if (obj == &Wall::Bounds.left) {
+        // setPosition(Wall::Bounds.left.getPosition().x + 
+        //             Wall::Bounds.left.getSize().x / 2 + hitbox_->getSize().x / 2,
+        //             getPosition().y);
+        // }
+        // if (obj == &Wall::Bounds.right) {
+        //     setPosition(Wall::Bounds.right.getPosition().x - 
+        //                 Wall::Bounds.right.getSize().x / 2 - hitbox_->getSize().x / 2,
+        //                 getPosition().y);
+        // }
+        // if (obj == &Wall::Bounds.up) {
+        //     setPosition(getPosition().x, Wall::Bounds.up.getPosition().y - 
+        //                 Wall::Bounds.up.getSize().y / 2 + hitbox_->getSize().y / 2);
+        // }
+        // if (obj == &Wall::Bounds.low) {
+        //     setPosition(getPosition().x, Wall::Bounds.low.getPosition().y + 
+        //                 Wall::Bounds.low.getSize().y / 2 - hitbox_->getSize().y / 2);
+        // }
+
+        float tan = obj->getSize().y  / obj->getSize().x;
+        auto diag = [obj] (float x, float tan) {return obj->getPosition().y + (x - obj->getPosition().x) * tan;};
+        auto diag2 = [obj] (float x, float tan) {return obj->getPosition().x + (x - obj->getPosition().y) * tan;};
+
+        float tan2 = obj->getSize().x  / obj->getSize().x;
+
+        if (getPosition().x >= obj->getPosition().x + obj->getSize().x / 2 &&
+            obj->getPosition().y <= diag(obj->getPosition().x, tan) && 
+            obj->getPosition().y >= diag(obj->getPosition().x, tan2)) {
+            setPosition(obj->getPosition().x + 
+                        obj->getSize().x / 2 + hitbox_->getSize().x / 2,
                         getPosition().y);
-        }
-        if (obj == &Wall::Bounds.up) {
-            setPosition(getPosition().x, Wall::Bounds.up.getPosition().y - 
-                        Wall::Bounds.up.getSize().y / 2 + hitbox_->getSize().y / 2);
-        }
-        if (obj == &Wall::Bounds.low) {
-            setPosition(getPosition().x, Wall::Bounds.low.getPosition().y + 
-                        Wall::Bounds.low.getSize().y / 2 - hitbox_->getSize().y / 2);
+        } else if (getPosition().x <= obj->getPosition().x - obj->getSize().x / 2 &&
+                   obj->getPosition().y >= diag(obj->getPosition().x, tan) && 
+                   obj->getPosition().y <= diag(obj->getPosition().x, tan2)) {
+            setPosition(obj->getPosition().x - 
+                        obj->getSize().x / 2 - hitbox_->getSize().x / 2,
+                        getPosition().y);
+        } else if (getPosition().y >= obj->getPosition().y + obj->getSize().y / 2 &&
+                   obj->getPosition().x <= diag2(obj->getPosition().y, 1 / tan) && 
+                   obj->getPosition().x >= diag2(obj->getPosition().y, 1 / tan2)) {
+            setPosition(getPosition().x, obj->getPosition().y + 
+                        obj->getSize().y / 2 + hitbox_->getSize().y / 2);
+        } else if (getPosition().y <= obj->getPosition().y - obj->getSize().y / 2 &&
+                   obj->getPosition().x <= diag2(obj->getPosition().y, 1 / tan) && 
+                   obj->getPosition().x >= diag2(obj->getPosition().y, 1 / tan2)) {
+            setPosition(getPosition().x, obj->getPosition().y -
+                        obj->getSize().y / 2 - hitbox_->getSize().y / 2);
         }
     }
- }
+}
 
 void Player::control() {
     setVelocity({0, 0});

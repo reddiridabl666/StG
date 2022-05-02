@@ -14,15 +14,10 @@ class Hitbox : public GameObjectBase {
     virtual bool collides_with_rect(const RectHitbox* other) const = 0;
     virtual bool collides_with_circle(const CircleHitbox* other) const = 0;
   
-  private:
-    // static void refresh_collision_num();
-  
   public:
-    // static std::set<Hitbox*> all;
 
     explicit Hitbox(Layer layer = Layer::Hitbox);
     Hitbox(const Hitbox& hitbox);
-    // static void check_collisions();
 
     virtual bool contains_point(const sf::Vector2f& point) const = 0;
     virtual bool collides_with(const Hitbox* other);
@@ -30,8 +25,9 @@ class Hitbox : public GameObjectBase {
     virtual void on_collide();
     virtual void on_collide_stop();
     virtual sf::Vector2f getSize() const = 0;
+    virtual void setFillColor(sf::Color color) = 0;
      
-    virtual ~Hitbox();
+    virtual ~Hitbox() = default;
 
     friend DynamicObject;
 };
@@ -51,6 +47,10 @@ class RectHitbox : public Hitbox, public sf::RectangleShape {
     sf::Drawable* getDrawable() override;
     sf::Vector2f getSize() const override;
 
+    void setFillColor(sf::Color color) override {
+      sf::RectangleShape::setFillColor(color);
+    }
+
     friend CircleHitbox;
 };
 
@@ -68,6 +68,10 @@ class CircleHitbox : public Hitbox, public sf::CircleShape {
 
     sf::Drawable* getDrawable() override;
     sf::Vector2f getSize() const override;
+
+    void setFillColor(sf::Color color) override {
+      sf::CircleShape::setFillColor(color);
+    }
 
     friend RectHitbox;
 };

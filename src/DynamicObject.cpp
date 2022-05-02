@@ -6,9 +6,9 @@ std::set<DynamicObject*> DynamicObject::all;
 DynamicObject::DynamicObject(const sf::Texture& texture, sf::Vector2f pos, 
                  const sf::Vector2f& hitbox_size, sf::Vector2f velocity, 
                  float mass, Layer layer) 
-            : DynamicObject(texture, pos, velocity, mass, layer) {
-            hitbox_ = new RectHitbox(hitbox_size, pos);
-    }
+    : DynamicObject(texture, pos, velocity, mass, layer) {
+    hitbox_ = new RectHitbox(hitbox_size, pos);
+}
 
 DynamicObject::DynamicObject(const sf::Texture& texture, sf::Vector2f pos, 
                     float hitbox_radius, sf::Vector2f velocity, 
@@ -25,53 +25,16 @@ void DynamicObject::move_all(float deltaTime) {
     });
 }
 
-void DynamicObject::for_each(std::function<void(DynamicObject*)> action) {
+inline void DynamicObject::for_each(std::function<void(DynamicObject*)> action) {
     for (auto it : all) {
         action(it);
     }
 }
 
 void DynamicObject::on_collide(DynamicObject* obj) {
-    if (obj->mass_ > 0 && mass_ > 0) {
-        if (obj->getTag() == Tag::Wall) {
-
-        }
-    }
-
-    // if (obj->getTag() == Tag::Wall) {
-    //     if (obj == &Wall::Bounds.left) {
-    //         // setPosition(Wall::Bounds.left.getPosition().x + 
-    //         //             Wall::Bounds.left.getSize().x / 2 + hitbox_->getSize().x / 2,
-    //         //             getPosition().y);
-    //         if (mass_ > 0 && obj->mass_ > 0) {
-    //             velocity_.x *= -1;
-    //         }
-    //     }
-    //     if (obj == &Wall::Bounds.right) {
-    //         // setPosition(Wall::Bounds.right.getPosition().x - 
-    //         //             Wall::Bounds.right.getSize().x / 2 - hitbox_->getSize().x / 2,
-    //         //             getPosition().y);
-    //         if (mass_ > 0 && obj->mass_ > 0) {
-    //             velocity_.x *= -1;
-    //         }
-    //     }
-    //     if (obj == &Wall::Bounds.up) {
-    //         // setPosition(getPosition().x, Wall::Bounds.up.getPosition().y - 
-    //         //             Wall::Bounds.up.getSize().y / 2 + hitbox_->getSize().y / 2);
-    //         if (mass_ > 0 && obj->mass_ > 0) {
-    //             velocity_.y *= -1;
-    //         }
-    //     }
-    //     if (obj == &Wall::Bounds.low) {
-    //         // setPosition(getPosition().x, Wall::Bounds.low.getPosition().y + 
-    //         //             Wall::Bounds.low.getSize().y / 2 - hitbox_->getSize().y / 2);
-    //         if (mass_ > 0 && obj->mass_ > 0) {
-    //             velocity_.y *= -1;
-    //         }
-    //     }
-    // }
-    if (hitbox_)
-        hitbox_->on_collide();
+    if (obj)
+        if (hitbox_)
+            hitbox_->on_collide();
 }
 
 void DynamicObject::check_collisions_with(DynamicObject& other) {
