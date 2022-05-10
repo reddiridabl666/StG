@@ -46,6 +46,7 @@ class RectHitbox : public Hitbox, public sf::RectangleShape {
 
     sf::Drawable* getDrawable() override;
     sf::Vector2f getSize() const override;
+    sf::Vector2f getHalfSize() const override;
 
     void setFillColor(sf::Color color) override {
       sf::RectangleShape::setFillColor(color);
@@ -68,6 +69,7 @@ class CircleHitbox : public Hitbox, public sf::CircleShape {
 
     sf::Drawable* getDrawable() override;
     sf::Vector2f getSize() const override;
+    sf::Vector2f getHalfSize() const override;
 
     void setFillColor(sf::Color color) override {
       sf::CircleShape::setFillColor(color);

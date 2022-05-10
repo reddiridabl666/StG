@@ -56,6 +56,10 @@ sf::Vector2f RectHitbox::getSize() const {
     return sf::RectangleShape::getSize();
 }
 
+sf::Vector2f RectHitbox::getHalfSize() const {
+    return getSize() / 2.f;
+}
+
 CircleHitbox::CircleHitbox(float radius, const sf::Vector2f &center, Layer layer) 
   : Hitbox(layer), sf::CircleShape(radius) {
     setOrigin(radius, radius);
@@ -101,7 +105,11 @@ bool CircleHitbox::collides_with_circle(const CircleHitbox* other) const {
 }
 
 sf::Vector2f CircleHitbox::getSize() const {
-    return {getRadius() * 2, getRadius() * 2};
+    return getHalfSize() * 2.f;
+}
+
+sf::Vector2f CircleHitbox::getHalfSize() const {
+    return {getRadius(), getRadius()};
 }
 
 sf::Drawable* CircleHitbox::getDrawable() {

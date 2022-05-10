@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 
+#include "BulletGenerator.hpp"
 #include "GameObject.h"
 #include "DynamicObject.hpp"
 #include "Wall.hpp"
@@ -13,14 +14,14 @@
 
 #define CENTER static_cast<sf::Vector2f>(window.getSize()) / 2.f
 
-// Init window
-Window window;
-auto win_size = window.getView().getSize();
-
 int main()
 {
     // Load all textures from a folder
     auto textures = load_textures("images");
+
+    // Init window
+    Window window;
+    auto win_size = window.getView().getSize();
 
     // Background initialization
     GameObject bg(textures["bg.jpg"], CENTER);
@@ -35,8 +36,9 @@ int main()
     // Test walls
     Wall test({100, 300}, {600, 400});
     Wall test2({300, 100}, {1200, 700});
-    Wall test3({100, 100}, {800, 900});
-    Wall test4({100, 100}, {1650, 400});
+    Wall test3({100, 100}, {400, 900});
+    Wall test4({100, 100}, {1650, 300});
+    // Wall test5({800, 800}, CENTER);
 
     // Frame walls
     float bound_width = 300;
@@ -52,51 +54,24 @@ int main()
     circle.setFillColor(sf::Color::Transparent);
     transp.draw(circle);
 
-    std::array<DynamicObject, 50> circles;
     srand(time(nullptr));
+    size_t size = 50;
     float start_pos = 40;
-    float delta = window.getView().getSize().x / (circles.size() + 1);
+    float delta = window.getView().getSize().x / (size + 1);
     float offset = 0;
-    
-    for (auto &it : circles) {
-        it = DynamicObject(transp.getTexture(), {start_pos + offset, 150});
-        it.setMass(1);
-        // sf::Vector2f v = {player.getPosition() - it.getPosition()};
-        // it.setVelocity(v / 2.f);
-        it.setVelocity({rand() % 300 - 150.f, rand() % 250 + 225.f});
-        it.setHitbox(transp.getSize().x);
-        offset += delta;
+
+    BulletGenerator test_gen;
+    test_gen.add_bullet("circle", {&transp.getTexture(), transp.getSize().x});
+    for (size_t i = 0; i < size; ++i) {
+        test_gen.shoot("circle");
     }
 
-    // std::array<DynamicObject, 25> rects;
-    // offset = 0;
-    // for (auto &it : rects) {
-    //     it = DynamicObject(transp.getTexture(), {start_pos + offset, 230});
-    //     it.setMass(1);
-    //     it.setVelocity({rand() % 200 - 100.f, rand() % 250 + 150.f});
-    //     it.setHitbox(static_cast<sf::Vector2f>(transp.getSize()));
-    //     offset += delta;
-    // }
-
-    // std::array<DynamicObject, 25> circles2;
-    // delta = window.getView().getSize().x / (circles2.size() + 1);
-
-    // transp.create(50, 50);
-    // sf::CircleShape circle2(transp.getSize().x);
-    // circle2.setFillColor(sf::Color::Transparent);
-    // transp.draw(circle2);
-    // offset = 0;
-    // start_pos += 15;
-
-    // for (auto &it : circles2) {
-    //     it = DynamicObject(transp.getTexture(), {start_pos + offset, 150});
-    //     it.setMass(1);
-    //     // sf::Vector2f v = {player.getPosition() - it.getPosition()};
-    //     // it.setVelocity(v / 2.f);
-    //     it.setVelocity({rand() % 200 - 100.f, rand() % 250 + 225.f});
-    //     it.setHitbox(transp.getSize().x);
-    //     offset += delta;
-    // }
+    test_gen.for_each([&] (Bullet* it) {
+        it->setMass(1);
+        it->setPosition(start_pos + offset, 150);
+        it->setVelocity(rand() % 1000 - 500.f, rand() % 250 + 350.f);
+        offset += delta;
+    });
 
     // Time
     sf::Clock clock;

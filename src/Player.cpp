@@ -17,36 +17,23 @@ Player::Player(const sf::Texture& texture, sf::Vector2f pos, sf::Vector2f hitbox
 void Player::on_collide(DynamicObject* obj) {
     DynamicObject::on_collide(obj);
     
-    if (obj->getTag() == Tag::Wall) {
-        float tan = obj->getSize().y  / obj->getSize().x;
-        auto diag = [obj] (float x, float tan) {return obj->getPosition().y + (x - obj->getPosition().x) * tan;};
-        auto diag2 = [obj] (float x, float tan) {return obj->getPosition().x + (x - obj->getPosition().y) * tan;};
-
-        float tan2 = obj->getSize().x  / obj->getSize().y;
+    if (auto wall = dynamic_cast<Wall*>(obj)) {
         // Right wall
-        if (getPosition().x >= obj->getPosition().x + obj->getSize().x / 2 &&
-            obj->getPosition().y <= diag(obj->getPosition().x, tan) && 
-            obj->getPosition().y >= diag(obj->getPosition().x, tan2)) {
-            setPosition(obj->getPosition().x + obj->getSize().x / 2 + 
-                        hitbox_->getSize().x / 2, getPosition().y);
+        if (wall->is_in_right_sector(this)) {
+            setPosition(obj->getPosition().x + obj->getHalfSize().x + 
+                        hitbox_->getHalfSize().x, getPosition().y);
         // Left wall
-        } else if (getPosition().x <= obj->getPosition().x - obj->getSize().x / 2 &&
-                   obj->getPosition().y >= diag(obj->getPosition().x, tan) && 
-                   obj->getPosition().y <= diag(obj->getPosition().x, tan2)) {
-            setPosition(obj->getPosition().x - obj->getSize().x / 2 - 
-                        hitbox_->getSize().x / 2, getPosition().y);
+        } else if (wall->is_in_left_sector(this)) {
+            setPosition(obj->getPosition().x - obj->getHalfSize().x - 
+                        hitbox_->getHalfSize().x, getPosition().y);
         // Upper wall
-        } else if (getPosition().y >= obj->getPosition().y + obj->getSize().y / 2 &&
-                   obj->getPosition().x <= diag2(obj->getPosition().y, 1 / tan) && 
-                   obj->getPosition().x >= diag2(obj->getPosition().y, 1 / tan2)) {
-            setPosition(getPosition().x, obj->getPosition().y + 
-                        obj->getSize().y / 2 + hitbox_->getSize().y / 2);
-        // Lower wall
-        } else if (getPosition().y <= obj->getPosition().y - obj->getSize().y / 2 &&
-                   obj->getPosition().x <= diag2(obj->getPosition().y, 1 / tan) && 
-                   obj->getPosition().x >= diag2(obj->getPosition().y, 1 / tan2)) {
+        } else if (wall->is_in_upper_sector(this)) {
             setPosition(getPosition().x, obj->getPosition().y -
-                        obj->getSize().y / 2 - hitbox_->getSize().y / 2);
+                        obj->getHalfSize().y - hitbox_->getHalfSize().y);
+        // Lower wall
+        } else if (wall->is_in_lower_sector(this)) {
+            setPosition(getPosition().x, obj->getPosition().y +
+                        obj->getHalfSize().y + hitbox_->getHalfSize().y);
         }
     }
 }

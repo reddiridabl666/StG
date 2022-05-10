@@ -65,3 +65,7 @@ sf::Drawable* GameObject::getDrawable() {
 sf::Vector2f GameObject::getSize() const {
     return size_;
 }
+
+sf::Vector2f GameObject::getHalfSize() const {
+    return size_ / 2.f;
+}
