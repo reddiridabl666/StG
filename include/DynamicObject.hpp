@@ -48,6 +48,10 @@ class DynamicObject : public GameObject {
         // TODO: Избавиться от каста, добавив виртуальный метод
         if (rhs.getTexture())
             setTexture(*rhs.getTexture());
+        
+        if (hitbox_) {
+            delete hitbox_;
+        }
 
         setVelocity(rhs.velocity_);
         setMass(rhs.mass_);
@@ -55,12 +59,11 @@ class DynamicObject : public GameObject {
 
         if (auto rect = dynamic_cast<const RectHitbox*>(rhs.getHitbox())) {
             hitbox_ = new RectHitbox(rect->getSize());
-            return *this;
         }
         if (auto circle = dynamic_cast<const CircleHitbox*>(rhs.getHitbox())) {
             hitbox_ = new CircleHitbox(circle->getRadius());
-            return *this;
         }
+
         setPosition(rhs.getPosition());
         return *this;
     }
@@ -76,7 +79,7 @@ class DynamicObject : public GameObject {
         // TODO: Избавиться от каста, добавив get_transformable в базу
 
         GameObject::setPosition(offset);
-        if (hitbox_ != nullptr)
+        if (hitbox_)
             dynamic_cast<sf::Transformable*>(hitbox_)->setPosition(offset);
     }
 
@@ -154,7 +157,6 @@ class DynamicObject : public GameObject {
     sf::Vector2f getVelocity() const {
         return velocity_;
     }
-
 
     virtual ~DynamicObject() {
         if (hitbox_) {

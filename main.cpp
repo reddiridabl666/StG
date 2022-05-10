@@ -57,13 +57,13 @@ int main()
     float start_pos = 40;
     float delta = window.getView().getSize().x / (circles.size() + 1);
     float offset = 0;
-
+    
     for (auto &it : circles) {
         it = DynamicObject(transp.getTexture(), {start_pos + offset, 150});
         it.setMass(1);
         // sf::Vector2f v = {player.getPosition() - it.getPosition()};
         // it.setVelocity(v / 2.f);
-        it.setVelocity({rand() % 200 - 100.f, rand() % 250 + 225.f});
+        it.setVelocity({rand() % 300 - 150.f, rand() % 250 + 225.f});
         it.setHitbox(transp.getSize().x);
         offset += delta;
     }

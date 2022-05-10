@@ -18,23 +18,28 @@ class Wall : public DynamicObject {
 	// DynamicObject::on_collide(obj);
 	
     if (mass_ > 0 && obj->getMass() > 0 && obj->getTag() != Tag::Wall) {
-      if (std::abs(obj->getPosition().x - getPosition().x) >= getSize().x / 2 &&
-          std::abs(obj->getPosition().y - getPosition().y) >= getSize().y / 2) {
-            // obj->move(-obj->getVelocity().x / std::abs(obj->getVelocity().x), 
-            //           -obj->getVelocity().y / std::abs(obj->getVelocity().y));
-            obj->setVelocity(-obj->getVelocity());
-      } else if (std::abs(obj->getPosition().x - getPosition().x) < getSize().x / 2 &&
-                 std::abs(obj->getPosition().y - getPosition().y) > getSize().y / 2) {
-            // obj->move(0, -obj->getVelocity().y / std::abs(obj->getVelocity().y));
-            obj->setVelocity(obj->getVelocity().x, -obj->getVelocity().y);
-      } else if (std::abs(obj->getPosition().x - getPosition().x) > getSize().x / 2 &&
-                 std::abs(obj->getPosition().y - getPosition().y) < getSize().y / 2) {
-            // obj->move(-obj->getVelocity().x / std::abs(obj->getVelocity().x), 0);
-        	obj->setVelocity(-obj->getVelocity().x, obj->getVelocity().y);
-      }
+		// TODO: Wall bounce seems to work, but it needs to be done cleaner
+
+		// Edge bounce
+		if (std::abs(obj->getPosition().x - getPosition().x) >= getSize().x / 2 &&
+			std::abs(obj->getPosition().y - getPosition().y) >= getSize().y / 2) {
+				obj->move(-obj->getVelocity() / 1000.f);
+				obj->setVelocity(-obj->getVelocity());
+		// Horizontal walls
+		} else if (std::abs(obj->getPosition().x - getPosition().x) < getSize().x / 2 &&
+					std::abs(obj->getPosition().y - getPosition().y) > getSize().y / 2) {
+				obj->move(0, -obj->getVelocity().y / 1000.f);
+				obj->setVelocity(obj->getVelocity().x, -obj->getVelocity().y);
+		// Vertical walls
+		} else if (std::abs(obj->getPosition().x - getPosition().x) > getSize().x / 2 &&
+					std::abs(obj->getPosition().y - getPosition().y) < getSize().y / 2) {
+				obj->move(-obj->getVelocity().x / 1000.f, 0);
+				obj->setVelocity(-obj->getVelocity().x, obj->getVelocity().y);
+		}
     }
   }
 
+  // Doesn't work for some reason
   void on_collide_stop() override {
     hitbox_->setFillColor(sf::Color::Black);
   }

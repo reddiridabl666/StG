@@ -16,6 +16,7 @@ DynamicObject::DynamicObject(const sf::Texture& texture, sf::Vector2f pos,
     : DynamicObject(texture, pos, velocity, mass, layer) {    
     hitbox_ = new CircleHitbox(hitbox_radius, pos);
 }
+
 void DynamicObject::move_all(float deltaTime) {
     // for (auto it : all) {
     //     it->move(it->velocity_ * deltaTime);
