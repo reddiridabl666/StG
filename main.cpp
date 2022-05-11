@@ -29,10 +29,6 @@ int main()
                            static_cast<float>(window.getSize().y) / bg.getSize().y);
     bg.scale(factor, factor);
 
-    // Player initialization
-    Player player(textures["player.png"], CENTER, {30, 45});
-    player.scale(4.4f, 4.4f);
-
     // Test walls
     Wall test({100, 300}, {600, 400});
     Wall test2({300, 100}, {1200, 700});
@@ -44,8 +40,30 @@ int main()
     float bound_width = 300;
     Wall left_bound({bound_width, win_size.y}, {-bound_width / 2, win_size.y / 2});
     Wall right_bound({bound_width, win_size.y}, {win_size.x + bound_width / 2, win_size.y / 2});
-    Wall low_bound({win_size.x, bound_width}, {win_size.x / 2, -bound_width / 2});
-    Wall up_bound({win_size.x, bound_width}, {win_size.x / 2, win_size.y + bound_width / 2});
+    Wall up_bound({win_size.x, bound_width}, {win_size.x / 2, -bound_width / 2});
+    Wall low_bound({win_size.x, bound_width}, {win_size.x / 2, win_size.y + bound_width / 2});
+
+    std::function<void(Bullet* it)> delete_when_out_of_bounds = [&] (Bullet* bullet) {
+        float offset = 100;
+        if (bullet->getPosition().x > right_bound.getPosition().x + offset ||
+            bullet->getPosition().x < left_bound.getPosition().x - offset ||
+            bullet->getPosition().y > low_bound.getPosition().y + offset ||
+            bullet->getPosition().y < up_bound.getPosition().y - offset) {
+                bullet->deactivate();
+        }
+        // std::cout << "right: " << right_bound.getPosition().x + offset << " left: " << left_bound.getPosition().x - offset 
+        //     << " up: " << up_bound.getPosition().y - offset << " low: " << low_bound.getPosition().y + offset << std::endl;
+        // std::cout << bullet->getPosition().x << ", " << bullet->getPosition().y << std::endl;
+    };
+
+    // Player initialization
+    sf::RenderTexture bullet;
+    bullet.create(20, 40);
+    bullet.clear(sf::Color::Transparent);
+    BulletInfo info = {&bullet.getTexture(), static_cast<sf::Vector2f>(bullet.getSize()), 
+                        {0, -600}, &delete_when_out_of_bounds};
+    Player player(textures["player.png"], CENTER, {30, 45}, info);
+    player.scale(4.4f, 4.4f);
 
     // Test circle objs
     sf::RenderTexture transp;
@@ -69,7 +87,8 @@ int main()
     test_gen.for_each([&] (Bullet* it) {
         it->setMass(1);
         it->setPosition(start_pos + offset, 150);
-        it->setVelocity(rand() % 1000 - 500.f, rand() % 250 + 350.f);
+        it->setVelocity(rand() % 700 - 350.f, rand() % 250 + 350.f);
+        it->setUpdateFunc(delete_when_out_of_bounds);
         offset += delta;
     });
 
@@ -90,8 +109,13 @@ int main()
             player.control();
         }
 
-        // Collision checks
+        // Bullet update
+        BulletGenerator::update_all();
+
+        // Movement
         DynamicObject::move_all(deltaTime);
+
+        // Collision checks
         // DynamicObject::check_collisions_with(player);
         DynamicObject::check_collisions();
 

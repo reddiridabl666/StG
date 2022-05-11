@@ -7,6 +7,7 @@
 
 class BulletGenerator {
   private:
+    // sf::Vector2f pos_ = {0, 0};
     std::list<Bullet*> bullets;
     std::unordered_map<std::string, BulletInfo> bullet_types;
 
@@ -18,7 +19,11 @@ class BulletGenerator {
         }
     }
 
-    BulletGenerator() {
+    std::list<Bullet*> getBullets() {
+        return bullets;
+    };
+
+    explicit BulletGenerator(/*sf::Vector2f pos = {0, 0}*/)/*: pos_(pos)*/ {
         all.insert(this);
     }
 
@@ -26,30 +31,51 @@ class BulletGenerator {
         bullet_types[name] = info;
     }
     
-    void shoot(std::string name) { 
-        bullets.push_back(new Bullet(bullet_types[name]));
+    void shoot(std::string name, sf::Vector2f pos = {0, 0}) {
+        auto bullet = new Bullet(bullet_types[name]);
+        bullet->setPosition(pos);
+        bullets.push_back(bullet);
     }  
 
     void for_each(std::function<void(Bullet*)> action) {
         for (auto it : bullets) {
-            action(it);
+            if (it)
+                action(it);
         }
     }
 
     void update() {
-        for (auto it = bullets.begin(); it != bullets.end(); ++it) {
-            auto bullet = *it;
-            bullet->update();
-            if (!bullet->is_active()) {
-                delete bullet;
-                bullet = nullptr;
-                bullets.erase(it);
-            }
+        if (bullets.empty()) {
+            return;
         }
+        // size_t deleted_num = 0;
+        for (auto it = bullets.begin(); it != bullets.end();) {
+            auto next = std::next(it);
+            auto bullet = *it;
+            if (bullet) {
+                bullet->update_(bullet);
+                if (bullet->is_active() == false) {
+                    // ++deleted_num;
+                    delete bullet;
+                    bullet = nullptr;
+                    bullets.erase(it);
+                }
+            }
+            it = next;
+        }
+        // if (deleted_num > 0 ) std::cout << deleted_num << " bullets were deleted\n";
     }
 
+    // sf::Vector2f getPosition() {
+    //     return pos_;
+    // }
+
+    // void setPosition(sf::Vector2f pos) {
+    //     pos_ = pos;
+    // }
+
     ~BulletGenerator() {
-        for_each([](Bullet* it) {if (it) delete it;});
+        for_each([](Bullet* it) {delete it;});
         all.erase(this);
     }
 };

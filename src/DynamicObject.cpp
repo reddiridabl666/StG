@@ -1,5 +1,4 @@
 #include "DynamicObject.hpp"
-#include "Wall.hpp"
 
 std::set<DynamicObject*> DynamicObject::all;
 

@@ -50,20 +50,15 @@ class Wall : public DynamicObject {
     void on_collide(DynamicObject* obj) override {
 	// DynamicObject::on_collide(obj);
         if (mass_ > 0 && obj->getMass() > 0 && obj->getTag() != Tag::Wall) {
-            // TODO: Wall bounce seems to work, but it needs to be done cleaner
-
             // Edge bounce
             if (std::abs(obj->getPosition().x - getPosition().x) >= getHalfSize().x &&
                 std::abs(obj->getPosition().y - getPosition().y) >= getHalfSize().y) {
-                // obj->move(-obj->getVelocity() / 1000.f);
                 obj->setVelocity(-obj->getVelocity());
             // Horizontal walls
             } else if (is_in_lower_sector(obj) || is_in_upper_sector(obj)) {
-                // obj->move(0, -obj->getVelocity().y / 1000.f);
                 obj->setVelocity(obj->getVelocity().x, -obj->getVelocity().y);
             // Vertical walls
             } else if (is_in_left_sector(obj) || is_in_right_sector(obj)) {
-                // obj->move(-obj->getVelocity().x / 1000.f, 0);
                 obj->setVelocity(-obj->getVelocity().x, obj->getVelocity().y);
             }
 
@@ -98,7 +93,7 @@ class Wall : public DynamicObject {
         }
     }
 
-    // Doesn't work for some reason
+    // TODO: Wall textures don't work really well
     void on_collide_stop() override {
         hitbox_->setFillColor(sf::Color::Black);
     }
@@ -108,8 +103,6 @@ inline sf::RenderTexture Wall::Rect;
 
 inline const sf::Texture& Wall::get_rect(sf::Vector2f size, sf::Color color) {
     Rect.create(size.x, size.y);
-    sf::RectangleShape rect(size);
-    rect.setFillColor(color);
-    Rect.draw(rect);
+    Rect.clear(color);
     return Rect.getTexture();
 }
