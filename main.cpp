@@ -34,21 +34,13 @@ int main()
     auto frame = Wall::get_frame(window);
     GameState::getState().set_frame(frame);
 
+    auto bullets = Bullet::getBulletTypes();
+
     // Player initialization
-    sf::RenderTexture bullet;
-    bullet.create(20, 40);
-    bullet.clear(sf::Color::Transparent);
-    BulletInfo info = {&bullet.getTexture(), static_cast<sf::Vector2f>(bullet.getSize()), 
-                        {0, -600}, &delete_when_out_of_bounds};
-    Player player(textures["player.png"], window.getCenter(), {30, 45}, info);
+    Player player(textures["player.png"], window.getCenter(), 
+                  {30, 45}, bullets["test_player"]);
 
     // Test circle objs
-    sf::RenderTexture transp;
-    transp.create(30, 30);
-    sf::CircleShape circle(transp.getSize().x);
-    circle.setFillColor(sf::Color::Transparent);
-    transp.draw(circle);
-
     srand(time(nullptr));
     size_t size = 50;
     float start_pos = 40;
@@ -56,16 +48,14 @@ int main()
     float offset = 0;
 
     BulletGenerator test_gen;
-    test_gen.add_bullet("circle", {&transp.getTexture(), transp.getSize().x});
+    test_gen.add_bullet("circle", bullets["test_circle"]/*{&transp.getTexture(), transp.getSize().x}*/);
     for (size_t i = 0; i < size; ++i) {
         test_gen.shoot("circle");
     }
 
     test_gen.for_each([&] (Bullet* it) {
-        it->setMass(1);
         it->setPosition(start_pos + offset, 150);
         it->setVelocity(rand() % 700 - 350.f, rand() % 250 + 350.f);
-        it->setUpdateFunc(delete_when_out_of_bounds);
         offset += delta;
     });
 

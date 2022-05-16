@@ -1,15 +1,16 @@
 #pragma once
 
 #include "ShootingObject.hpp"
+#include "UpdateFunctions.hpp"
 
 class Player : public ShootingObject {
-  protected:
+protected:
     float speed_ = 750.f;
     float normal_speed_ = speed_;
     float slow_speed_ = 320.f;
     float shot_interval = 0.1;
 
-  public:
+public:
     Player() = default;
     Player(const Player&) = delete;
     Player& operator=(const Player& other) = delete;

@@ -10,11 +10,11 @@ using TexturePtr = std::unique_ptr<sf::RenderTexture>;
 struct Frame;
 
 class Wall : public DynamicObject {
-  private:
+private:
     static std::list<TexturePtr> wall_textures;
     static const TexturePtr* get_rect(sf::Vector2f size, sf::Color color = sf::Color::Transparent);
 
-  public:
+public:
     static Frame get_frame(const sf::RenderWindow& window, float bound_width = 300);
 
     explicit Wall(sf::Vector2f size, sf::Vector2f pos = {0, 0}, 

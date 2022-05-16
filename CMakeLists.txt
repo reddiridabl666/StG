@@ -18,12 +18,13 @@ find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 add_executable(main main.cpp)
 
 # Add lib
-set(SOURCES src/GameObject.cpp src/Window.cpp src/Player.cpp src/Hitbox.cpp src/DynamicObject.cpp src/Wall.cpp)
+set(SOURCES src/GameObject.cpp src/Window.cpp src/Player.cpp src/Hitbox.cpp src/DynamicObject.cpp src/Wall.cpp src/Bullet.cpp)
 add_library(GameLib SHARED ${SOURCES})
 
 # Add include dirs
-target_include_directories(main PRIVATE include)
-target_include_directories(GameLib PRIVATE include)
+set(INCLUDE_DIRS include include/utilities include/bullets include/base_classes)
+target_include_directories(main PRIVATE ${INCLUDE_DIRS})
+target_include_directories(GameLib PRIVATE ${INCLUDE_DIRS})
 
 # Link libraries
 target_link_libraries(GameLib sfml-graphics sfml-audio)

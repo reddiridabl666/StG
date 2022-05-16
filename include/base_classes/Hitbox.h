@@ -8,13 +8,13 @@ class RectHitbox;
 class DynamicObject;
 
 class Hitbox : public GameObjectBase {
-  protected:
+protected:
     sf::Uint32 collision_num_ = 0;
 
     virtual bool collides_with_rect(const RectHitbox* other) const = 0;
     virtual bool collides_with_circle(const CircleHitbox* other) const = 0;
   
-  public:
+public:
     explicit Hitbox(Layer layer = Layer::Hitbox);
     Hitbox(const Hitbox& hitbox);
 
@@ -32,11 +32,11 @@ class Hitbox : public GameObjectBase {
 };
 
 class RectHitbox : public Hitbox, public sf::RectangleShape {
-  protected:
+ protected:
     bool collides_with_rect(const RectHitbox* other) const override;
     bool collides_with_circle(const CircleHitbox* other) const override;
 
-  public:
+public:
     explicit RectHitbox(const sf::Vector2f &size = {0, 0}, 
       const sf::Vector2f &center = {0, 0}, 
       Layer layer = Layer::Hitbox);
@@ -57,11 +57,11 @@ class RectHitbox : public Hitbox, public sf::RectangleShape {
 };
 
 class CircleHitbox : public Hitbox, public sf::CircleShape {
-  protected:
+protected:
     bool collides_with_rect(const RectHitbox* other) const override;
     bool collides_with_circle(const CircleHitbox* other) const override;
 
-  public:
+public:
     explicit CircleHitbox(float radius = 0, 
       const sf::Vector2f &center = {0, 0}, 
       Layer layer = Layer::Hitbox);

@@ -76,11 +76,9 @@ class DynamicObject : public GameObject {
         sf::Vector2f velocity = {0, 0}, float mass = 0, Layer layer = Layer::Character);
 
     void setPosition(const sf::Vector2f& offset) {
-        // TODO: Избавиться от каста, добавив get_transformable в базу
-
         GameObject::setPosition(offset);
         if (hitbox_)
-            dynamic_cast<sf::Transformable*>(hitbox_)->setPosition(offset);
+            hitbox_->getTransformable()->setPosition(offset);
     }
 
     void setPosition(float x, float y) {

@@ -21,7 +21,7 @@ class BulletGenerator {
 
     std::list<Bullet*>& getBullets() {
         return bullets;
-    };
+    }
 
     explicit BulletGenerator(/*sf::Vector2f pos = {0, 0}*/)/*: pos_(pos)*/ {
         all.insert(this);
