@@ -26,6 +26,7 @@ class GameObjectBase {
     bool is_active() const;
 
     virtual sf::Drawable* getDrawable() = 0;
+    virtual sf::Transformable* getTransformable() = 0;
     virtual sf::Vector2f getHalfSize() const = 0;
     void change_layer(Layer layer);
 
@@ -46,4 +47,5 @@ class GameObject : public GameObjectBase, public sf::Sprite {
     void setTexture(const sf::Texture& texture);
 
     sf::Drawable* getDrawable() override;
+    sf::Transformable* getTransformable() override;
 };

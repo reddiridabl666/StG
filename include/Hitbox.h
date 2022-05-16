@@ -15,7 +15,6 @@ class Hitbox : public GameObjectBase {
     virtual bool collides_with_circle(const CircleHitbox* other) const = 0;
   
   public:
-
     explicit Hitbox(Layer layer = Layer::Hitbox);
     Hitbox(const Hitbox& hitbox);
 
@@ -45,11 +44,13 @@ class RectHitbox : public Hitbox, public sf::RectangleShape {
     bool contains_point(const sf::Vector2f& point) const override;
 
     sf::Drawable* getDrawable() override;
+    sf::Transformable* getTransformable() override;
+
     sf::Vector2f getSize() const override;
     sf::Vector2f getHalfSize() const override;
 
     void setFillColor(sf::Color color) override {
-      sf::RectangleShape::setFillColor(color);
+        sf::RectangleShape::setFillColor(color);
     }
 
     friend CircleHitbox;
@@ -68,11 +69,13 @@ class CircleHitbox : public Hitbox, public sf::CircleShape {
     bool contains_point(const sf::Vector2f& point) const override;
 
     sf::Drawable* getDrawable() override;
+    sf::Transformable* getTransformable() override;
+    
     sf::Vector2f getSize() const override;
     sf::Vector2f getHalfSize() const override;
 
     void setFillColor(sf::Color color) override {
-      sf::CircleShape::setFillColor(color);
+        sf::CircleShape::setFillColor(color);
     }
 
     friend RectHitbox;

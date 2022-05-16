@@ -52,6 +52,10 @@ sf::Drawable* RectHitbox::getDrawable() {
     return this;
 }
 
+sf::Transformable* RectHitbox::getTransformable() {
+    return this;
+}
+
 sf::Vector2f RectHitbox::getSize() const {
     return sf::RectangleShape::getSize();
 }
@@ -113,5 +117,9 @@ sf::Vector2f CircleHitbox::getHalfSize() const {
 }
 
 sf::Drawable* CircleHitbox::getDrawable() {
+    return this;
+}
+
+sf::Transformable* CircleHitbox::getTransformable() {
     return this;
 }

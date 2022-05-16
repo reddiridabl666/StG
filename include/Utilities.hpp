@@ -29,6 +29,16 @@ inline T squared_distance(sf::Vector2<T> a, sf::Vector2<T> b) {
     return pow(a.x - b.x, 2) + pow(a.y - b.y, 2);
 }
 
+template <typename T>
+inline T max(sf::Vector2<T> a) {
+    return a.x > a.y ? a.x : a.y;
+}
+
+template <typename T>
+inline T min(sf::Vector2<T> a) {
+    return a.x < a.y ? a.x : a.y;
+}
+
 static const sf::Vector2f left(-1.0, 0.0);
 static const sf::Vector2f right(1.0, 0.0);
 static const sf::Vector2f up(0.0, -1.0);

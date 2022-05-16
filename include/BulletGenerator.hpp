@@ -19,7 +19,7 @@ class BulletGenerator {
         }
     }
 
-    std::list<Bullet*> getBullets() {
+    std::list<Bullet*>& getBullets() {
         return bullets;
     };
 
@@ -27,17 +27,23 @@ class BulletGenerator {
         all.insert(this);
     }
 
-    void add_bullet(std::string name, const BulletInfo& info) {
+    void add_bullet(const std::string& name, const BulletInfo& info) {
         bullet_types[name] = info;
     }
     
-    void shoot(std::string name, sf::Vector2f pos = {0, 0}) {
+    void shoot(const std::string& name, sf::Vector2f pos = {0, 0}) {
         auto bullet = new Bullet(bullet_types[name]);
         bullet->setPosition(pos);
         bullets.push_back(bullet);
-    }  
+    }
 
-    void for_each(std::function<void(Bullet*)> action) {
+    // void shoot(std::string name, sf::Vector2f pos = {0, 0}) {
+    //     auto bullet = new Bullet(bullet_types[name]);
+    //     bullet->setPosition(pos);
+    //     bullets.push_back(bullet);
+    // }  
+
+    void for_each(const std::function<void(Bullet*)>& action) {
         for (auto it : bullets) {
             if (it)
                 action(it);

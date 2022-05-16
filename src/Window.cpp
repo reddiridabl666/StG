@@ -11,6 +11,10 @@ Window::Window(sf::VideoMode mode, const sf::String &title,
     show();
 }
 
+sf::Vector2f Window::getCenter() const {
+    return static_cast<sf::Vector2f>(getSize()) / 2.f;
+}
+
 bool Window::is_fullscreen() {
     return is_fullscreen_;
 }

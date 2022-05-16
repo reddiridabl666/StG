@@ -2,6 +2,8 @@
 #include "Wall.hpp"
 
 using Key = sf::Keyboard;
+static const sf::Vector2f player_hitbox_size = {30, 45};
+static constexpr float player_size = 32 * 4.4;
 
 static bool pressed_any_of(Key::Key A, Key::Key B) {
     return Key::isKeyPressed(A) ||
@@ -11,8 +13,10 @@ static bool pressed_any_of(Key::Key A, Key::Key B) {
 Player::Player(const sf::Texture& texture, sf::Vector2f pos,
                sf::Vector2f hitbox_size, const BulletInfo& info,
                float speed, float mass, Layer layer) 
-    : DynamicObject(texture, pos, hitbox_size, {0, 0}, mass, layer), speed_(speed), gen_() {
+    : ShootingObject(texture, pos, hitbox_size, {0, 0}, mass, layer), speed_(speed) {
         gen_.add_bullet("normal", info);
+        auto factor = player_size / min(texture.getSize());
+        scale(factor, factor);
 }
 
 void Player::on_collide(DynamicObject* obj) {
@@ -65,9 +69,15 @@ void Player::control() {
         setVelocity(velocity_ + down * speed_);
     }
 
-    if (clock.getElapsedTime().asSeconds() > shot_interval && Key::isKeyPressed(Key::Space)) {
-        clock.restart();
-        gen_.shoot("normal", getPosition() - sf::Vector2f{15, 40});
-        gen_.shoot("normal", getPosition() - sf::Vector2f{-15, 40});
+    if (clock_.getElapsedTime().asSeconds() > shot_interval && 
+            Key::isKeyPressed(Key::Space)) {
+        Player::shoot("normal");
     }
+}
+
+
+void Player::shoot(std::string name) {
+    clock_.restart();
+    gen_.shoot(name, getPosition() - sf::Vector2f{15, 40});
+    gen_.shoot(name, getPosition() - sf::Vector2f{-15, 40});
 }

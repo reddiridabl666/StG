@@ -146,6 +146,10 @@ class DynamicObject : public GameObject {
         return hitbox_;
     }
 
+    Hitbox* getHitbox() {
+        return const_cast<Hitbox*>(const_cast<const DynamicObject*>(this)->getHitbox());
+    }
+
     Tag getTag() const {
         return tag_;
     }

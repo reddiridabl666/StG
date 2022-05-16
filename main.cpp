@@ -1,60 +1,38 @@
 #include <SFML/Graphics.hpp>
 
 #include "BulletGenerator.hpp"
-#include "GameObject.h"
-#include "DynamicObject.hpp"
-#include "Wall.hpp"
+#include "Background.hpp"
+#include "GameState.hpp"
 #include "LoadTextures.hpp"
 #include "Player.h"
+#include "UpdateFunctions.hpp"
+#include "Wall.hpp"
 #include "Window.h"
 
-#include <vector>
 #include <cassert>
 #include <cstdlib>
-
-#define CENTER static_cast<sf::Vector2f>(window.getSize()) / 2.f
+#include <vector>
 
 int main()
 {
     // Load all textures from a folder
     auto textures = load_textures("images");
 
-    // Init window
+    // Window initialization
     Window window;
-    auto win_size = window.getView().getSize();
 
     // Background initialization
-    GameObject bg(textures["bg.jpg"], CENTER);
-    auto factor = std::max(static_cast<float>(window.getSize().x) / bg.getSize().x,
-                           static_cast<float>(window.getSize().y) / bg.getSize().y);
-    bg.scale(factor, factor);
+    Background bg(textures["bg.jpg"], window);
 
     // Test walls
     Wall test({100, 300}, {600, 400});
     Wall test2({300, 100}, {1200, 700});
     Wall test3({100, 100}, {400, 900});
     Wall test4({100, 100}, {1650, 300});
-    // Wall test5({800, 800}, CENTER);
+    // // Wall test5({800, 800}, CENTER);
 
-    // Frame walls
-    float bound_width = 300;
-    Wall left_bound({bound_width, win_size.y}, {-bound_width / 2, win_size.y / 2});
-    Wall right_bound({bound_width, win_size.y}, {win_size.x + bound_width / 2, win_size.y / 2});
-    Wall up_bound({win_size.x, bound_width}, {win_size.x / 2, -bound_width / 2});
-    Wall low_bound({win_size.x, bound_width}, {win_size.x / 2, win_size.y + bound_width / 2});
-
-    std::function<void(Bullet* it)> delete_when_out_of_bounds = [&] (Bullet* bullet) {
-        float offset = 100;
-        if (bullet->getPosition().x > right_bound.getPosition().x + offset ||
-            bullet->getPosition().x < left_bound.getPosition().x - offset ||
-            bullet->getPosition().y > low_bound.getPosition().y + offset ||
-            bullet->getPosition().y < up_bound.getPosition().y - offset) {
-                bullet->deactivate();
-        }
-        // std::cout << "right: " << right_bound.getPosition().x + offset << " left: " << left_bound.getPosition().x - offset 
-        //     << " up: " << up_bound.getPosition().y - offset << " low: " << low_bound.getPosition().y + offset << std::endl;
-        // std::cout << bullet->getPosition().x << ", " << bullet->getPosition().y << std::endl;
-    };
+    auto frame = Wall::get_frame(window);
+    GameState::getState().set_frame(frame);
 
     // Player initialization
     sf::RenderTexture bullet;
@@ -62,8 +40,7 @@ int main()
     bullet.clear(sf::Color::Transparent);
     BulletInfo info = {&bullet.getTexture(), static_cast<sf::Vector2f>(bullet.getSize()), 
                         {0, -600}, &delete_when_out_of_bounds};
-    Player player(textures["player.png"], CENTER, {30, 45}, info);
-    player.scale(4.4f, 4.4f);
+    Player player(textures["player.png"], window.getCenter(), {30, 45}, info);
 
     // Test circle objs
     sf::RenderTexture transp;
@@ -114,6 +91,8 @@ int main()
 
         // Movement
         DynamicObject::move_all(deltaTime);
+
+        GameState::getState().update(player.getPosition());
 
         // Collision checks
         // DynamicObject::check_collisions_with(player);

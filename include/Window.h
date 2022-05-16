@@ -12,6 +12,8 @@ class Window : public sf::RenderWindow {
             const sf::String &title,
             sf::Uint32 style = sf::Style::Default,
             const sf::ContextSettings &settings = sf::ContextSettings());
+
+    sf::Vector2f getCenter() const;
     
     void sys_event_loop();
     void open_fullscreen(); 

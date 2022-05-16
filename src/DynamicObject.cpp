@@ -32,9 +32,8 @@ inline void DynamicObject::for_each(std::function<void(DynamicObject*)> action) 
 }
 
 void DynamicObject::on_collide(DynamicObject* obj) {
-    if (obj)
-        if (hitbox_)
-            hitbox_->on_collide();
+    if (obj && hitbox_)
+        hitbox_->on_collide();
 }
 
 void DynamicObject::check_collisions_with(DynamicObject& other) {

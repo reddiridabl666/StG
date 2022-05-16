@@ -62,6 +62,10 @@ sf::Drawable* GameObject::getDrawable() {
     return this;
 }
 
+sf::Transformable* GameObject::getTransformable() {
+    return this;
+}
+
 sf::Vector2f GameObject::getSize() const {
     return size_;
 }
