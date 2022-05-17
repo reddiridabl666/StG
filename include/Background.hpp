@@ -4,7 +4,8 @@
 #include "Window.h"
 
 class Background : GameObject {
-  public:
+public:
+    Background() : GameObject(Layer::Bg) {}
     Background(const sf::Texture& texture, const Window& window) :
         GameObject(texture, window.getCenter(), Layer::Bg) {
         auto factor = std::max(static_cast<float>(window.getSize().x) / getSize().x,
