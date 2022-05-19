@@ -1,11 +1,11 @@
 #pragma once
 
-#include "GameObject.h"
+#include "SpriteObject.h"
 #include "Hitbox.h"
 
 #include <functional>
 
-class DynamicObject : public GameObject {
+class DynamicObject : public SpriteObject {
   protected:
     float mass_ = 0;
     sf::Vector2f velocity_ = {0, 0};
@@ -16,7 +16,8 @@ class DynamicObject : public GameObject {
     DynamicObject(const sf::Texture& texture, sf::Vector2f pos = {0, 0},
         sf::Vector2f velocity = {0, 0}, float mass = 0,
         Layer layer = Layer::Character) 
-        : GameObject(texture, pos, layer), mass_(mass), velocity_(velocity) {
+        : SpriteObject (texture, pos, layer), mass_(mass), velocity_(velocity) {
+            getTransformable()->setPosition(pos);
             all.insert(this);
     }
 
@@ -28,7 +29,7 @@ class DynamicObject : public GameObject {
     static void refresh_collision_num();
     static void for_each(std::function<void(DynamicObject*)> action);
 
-    explicit DynamicObject(Layer layer = Layer::Character) : GameObject(layer) {all.insert(this);}
+    explicit DynamicObject(Layer layer = Layer::Character) : SpriteObject(layer) {all.insert(this);}
 
     DynamicObject(const DynamicObject& rhs) : DynamicObject(*rhs.getTexture(), rhs.getPosition(), 
                                                             rhs.velocity_, rhs.mass_, rhs.layer_) 
@@ -75,10 +76,10 @@ class DynamicObject : public GameObject {
     DynamicObject(const sf::Texture& texture, sf::Vector2f pos, float hitbox_radius, 
         sf::Vector2f velocity = {0, 0}, float mass = 0, Layer layer = Layer::Character);
 
-    void setPosition(const sf::Vector2f& offset) {
-        GameObject::setPosition(offset);
+    void setPosition(const sf::Vector2f& pos) {
+        SpriteObject::setPosition(pos);
         if (hitbox_)
-            hitbox_->getTransformable()->setPosition(offset);
+            hitbox_->getTransformable()->setPosition(pos);
     }
 
     void setPosition(float x, float y) {

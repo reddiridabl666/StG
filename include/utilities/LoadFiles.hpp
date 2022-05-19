@@ -11,11 +11,12 @@ static constexpr sf::Uint16 texture_num = 20;  // ???
 
 namespace fs = std::filesystem;
 
-inline std::unordered_map<std::string, sf::Texture> load_textures(fs::path folder_name){
-    std::unordered_map<std::string, sf::Texture> result;
+template<typename T>
+inline std::unordered_map<std::string, T> load_from_folder(fs::path folder_name){
+    std::unordered_map<std::string, T> result;
 
     for (const auto& file : fs::directory_iterator(folder_name)) {
-        auto filename = file.path().filename().string();
+        auto filename = file.path().stem().string();
         result[filename] = {};
         result[filename].loadFromFile(file.path().string());
     }

@@ -11,17 +11,27 @@ static bool pressed_any_of(Key::Key A, Key::Key B) {
 }
 
 Player::Player(const sf::Texture& texture, sf::Vector2f pos,
-               sf::Vector2f hitbox_size, const BulletInfo& info,
+               sf::Vector2f hitbox_size, const std::string bullet_name/*const BulletInfo& info*/,
                float speed, float mass, Layer layer) 
-    : ShootingObject(texture, pos, hitbox_size, {0, 0}, mass, layer), speed_(speed) {
-        gen_.add_bullet("normal", info);
+    : ShootingObject(texture, pos, hitbox_size, {0, 0}, mass, layer), speed_(speed), normal_shot_(bullet_name) {
+        // gen_.add_bullet("normal", info);
         auto factor = player_size / min(texture.getSize());
         scale(factor, factor);
+}
+
+void Player::on_collide_stop() {
+    DynamicObject::on_collide_stop();
 }
 
 void Player::on_collide(DynamicObject* obj) {
     DynamicObject::on_collide(obj);
     
+    if (obj->getTag() == Tag::Enemy && !is_invincible_) {
+        loseHP();
+        invincibility_clock_.restart();
+        is_invincible_ = true;
+    }
+
     if (auto wall = dynamic_cast<Wall*>(obj)) {
         // Right wall
         if (wall->is_in_right_sector(this)) {
@@ -49,13 +59,12 @@ void Player::setSpeed(float normal, float slow) {
 }
 
 void Player::control() {
-    setVelocity(0, 0);
-
     if (pressed_any_of(Key::LShift, Key::RShift)) {
         speed_ = slow_speed_;
     } else {
         speed_ = normal_speed_;
     }
+
     if (pressed_any_of(Key::A, Key::Left)) {
         setVelocity(velocity_ + left * speed_);
     }
@@ -69,15 +78,46 @@ void Player::control() {
         setVelocity(velocity_ + down * speed_);
     }
 
-    if (clock_.getElapsedTime().asSeconds() > shot_interval && 
+    if (shoot_clock_.getElapsedTime().asSeconds() > shot_interval && 
             Key::isKeyPressed(Key::Space)) {
-        Player::shoot("normal");
+        Player::shoot(normal_shot_);
     }
 }
 
+void Player::update() {
+    setVelocity(0, 0);
+
+    if (is_invincible_ && 
+        invincibility_clock_.getElapsedTime().asSeconds() >= invincibility_time_) {
+        is_invincible_ = false;
+    }
+
+    control();
+}
 
 void Player::shoot(std::string name) {
-    clock_.restart();
-    gen_.shoot(name, getPosition() - sf::Vector2f{15, 40});
-    gen_.shoot(name, getPosition() - sf::Vector2f{-15, 40});
+    shoot_clock_.restart();
+    gen_.shoot(Bullet::BulletTypes[name], getPosition() - sf::Vector2f{15, 40});
+    gen_.shoot(Bullet::BulletTypes[name], getPosition() - sf::Vector2f{-15, 40});
+}
+
+int Player::gainHP(int n) {
+    hp_ += n;
+    return HP();
+}
+
+int Player::HP() const {
+    return hp_;
+}
+
+int Player::loseHP(int n) {
+    return gainHP(-n);
+}
+
+bool Player::is_invincible() const {
+    return is_invincible_;
+}
+
+float Player::get_invinc_time() const {
+    return is_invincible() ? invincibility_clock_.getElapsedTime().asSeconds() : 0;
 }

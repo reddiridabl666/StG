@@ -31,30 +31,31 @@ Bullet& Bullet::operator=(const Bullet& other) {
     return *this;
 }
 
-
-std::unordered_map<std::string, sf::Texture> Bullet::textures;
-
-void Bullet::init_textures() {
+std::unordered_map<std::string, sf::Texture> Bullet::getBulletTextures() {
+    std::unordered_map<std::string, sf::Texture> res;
     sf::RenderTexture texture;
 
     texture.create(30, 30);
     texture.clear(sf::Color::Transparent);
-    textures["test_circle"] = texture.getTexture();
+    res["test_circle"] = texture.getTexture();
 
     texture.create(20, 40);
     texture.clear(sf::Color::Transparent);
-    textures["player_bullet"] = texture.getTexture();
+    res["player_bullet"] = texture.getTexture();
+    return res;
 }
 
 std::unordered_map<std::string, BulletInfo> Bullet::getBulletTypes() {
-    init_textures();
+    textures = getBulletTextures();
     std::unordered_map<std::string, BulletInfo> res;
 
     res["test_circle"] = BulletInfo{&textures["test_circle"], textures["test_circle"].getSize().x, 
-                          {0, 0}, &delete_when_out_of_bounds, 1};
+                          {0, 0}, &gravity, 1};
 
     res["test_player"] = BulletInfo{&textures["player_bullet"], 
                                 static_cast<sf::Vector2f>(textures["player_bullet"].getSize()), 
                                 {0, -600}, &delete_when_out_of_bounds};
     return res;
 }
+
+std::unordered_map<std::string, BulletInfo> Bullet::BulletTypes = Bullet::getBulletTypes();

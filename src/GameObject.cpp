@@ -1,30 +1,30 @@
 #include <GameObject.h>
 
-std::unordered_map<Layer, GameObjectBase::objects> GameObjectBase::objects_by_layer(layer_num);
+std::unordered_map<Layer, GameObject::objects> GameObject::objects_by_layer(layer_num);
 
-GameObjectBase::GameObjectBase(Layer layer) : layer_(layer) {
+GameObject::GameObject(Layer layer) : layer_(layer) {
     objects_by_layer[layer_].insert(this);
 }
 
-void GameObjectBase::activate() {
+void GameObject::activate() {
     is_active_ = true;
 }
 
-void GameObjectBase::deactivate() {
+void GameObject::deactivate() {
     is_active_ = false;
 }
 
-bool GameObjectBase::is_active() const {
+bool GameObject::is_active() const {
     return is_active_;
 }
 
-void GameObjectBase::change_layer(Layer layer) {
+void GameObject::change_layer(Layer layer) {
     objects_by_layer[layer_].erase(this);
     layer_ = layer;
     objects_by_layer[layer_].insert(this);
 }
 
-void GameObjectBase::draw_all(sf::RenderWindow& window) {
+void GameObject::draw_all(sf::RenderWindow& window) {
     for (const auto& layer : Layers) {
         for (auto obj : objects_by_layer[layer]) {
             if (obj->is_active()) {
@@ -34,42 +34,6 @@ void GameObjectBase::draw_all(sf::RenderWindow& window) {
     }
 }
 
-GameObjectBase::~GameObjectBase() {
+GameObject::~GameObject() {
     objects_by_layer[layer_].erase(this);
-}
-
-GameObject::GameObject(Layer layer) : GameObjectBase(layer), sf::Sprite(), size_() {}
-
-GameObject::GameObject(const sf::Texture& texture, sf::Vector2f pos, Layer layer) : GameObject(layer) {
-    setTexture(texture);
-    setPosition(pos);
-}
-
-GameObject::GameObject(const GameObject& other) : GameObject(*other.getTexture(), other.getPosition(), other.layer_) {}
-
-static void center(sf::Sprite &sprite, const sf::Texture &texture) {
-    sprite.setOrigin(static_cast<float>(texture.getSize().x) / 2.f,
-                     static_cast<float>(texture.getSize().y) / 2.f);
-}
-
-void GameObject::setTexture(const sf::Texture& texture) {
-    sf::Sprite::setTexture(texture);
-    size_ = static_cast<sf::Vector2f>(texture.getSize());
-    center(*this, texture);
-}
-
-sf::Drawable* GameObject::getDrawable() {
-    return this;
-}
-
-sf::Transformable* GameObject::getTransformable() {
-    return this;
-}
-
-sf::Vector2f GameObject::getSize() const {
-    return size_;
-}
-
-sf::Vector2f GameObject::getHalfSize() const {
-    return size_ / 2.f;
 }

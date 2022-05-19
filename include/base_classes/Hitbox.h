@@ -7,7 +7,7 @@ class CircleHitbox;
 class RectHitbox;
 class DynamicObject;
 
-class Hitbox : public GameObjectBase {
+class Hitbox : public GameObject {
 protected:
     sf::Uint32 collision_num_ = 0;
 

@@ -31,7 +31,7 @@ class GameState {
 		return player_pos_;
 	}
 
-	bool is_out_of_bounds(GameObjectBase* obj) {
+	bool is_out_of_bounds(GameObject* obj) {
 		return !bounds_.contains(obj->getTransformable()->getPosition());
 	}
 };

@@ -9,13 +9,14 @@ class BulletGenerator {
   private:
     // sf::Vector2f pos_ = {0, 0};
     std::list<Bullet*> bullets;
-    std::unordered_map<std::string, BulletInfo> bullet_types;
+    // std::unordered_map<std::string, BulletInfo> bullet_types;
 
   public:
     static std::unordered_set<BulletGenerator*> all;
-    static void update_all() {
+
+    static void update_all(float deltaTime) {
         for (auto it : all) {
-            it->update();
+            it->update(deltaTime);
         }
     }
 
@@ -27,21 +28,23 @@ class BulletGenerator {
         all.insert(this);
     }
 
-    void add_bullet(const std::string& name, const BulletInfo& info) {
-        bullet_types[name] = info;
-    }
-    
-    void shoot(const std::string& name, sf::Vector2f pos = {0, 0}) {
-        auto bullet = new Bullet(bullet_types[name]);
-        bullet->setPosition(pos);
+    virtual Bullet* shoot(const BulletInfo& info) {
+        auto bullet = new Bullet(info);
         bullets.push_back(bullet);
+        return bullet;
     }
 
-    // void shoot(std::string name, sf::Vector2f pos = {0, 0}) {
-    //     auto bullet = new Bullet(bullet_types[name]);
-    //     bullet->setPosition(pos);
-    //     bullets.push_back(bullet);
-    // }  
+    Bullet* shoot(const BulletInfo& info, sf::Vector2f pos) {
+        auto bullet = shoot(info);
+        bullet->setPosition(pos);
+        return bullet;
+    }    
+
+    Bullet* shoot(const BulletInfo& info, sf::Vector2f pos, sf::Vector2f velocity) {
+        auto bullet = shoot(info, pos);
+        bullet->setVelocity(velocity);
+        return bullet;
+    }
 
     void for_each(const std::function<void(Bullet*)>& action) {
         for (auto it : bullets) {
@@ -50,7 +53,7 @@ class BulletGenerator {
         }
     }
 
-    void update() {
+    void update(float deltaTime) {
         if (bullets.empty()) {
             return;
         }
@@ -59,7 +62,7 @@ class BulletGenerator {
             auto next = std::next(it);
             auto bullet = *it;
             if (bullet) {
-                bullet->update_(bullet);
+                bullet->update_(bullet, deltaTime);
                 if (bullet->is_active() == false) {
                     // ++deleted_num;
                     delete bullet;
@@ -72,18 +75,23 @@ class BulletGenerator {
         // if (deleted_num > 0 ) std::cout << deleted_num << " bullets were deleted\n";
     }
 
-    // sf::Vector2f getPosition() {
-    //     return pos_;
-    // }
-
-    // void setPosition(sf::Vector2f pos) {
-    //     pos_ = pos;
-    // }
-
-    ~BulletGenerator() {
+    virtual ~BulletGenerator() {
         for_each([](Bullet* it) {delete it;});
         all.erase(this);
     }
 };
 
 inline std::unordered_set<BulletGenerator*> BulletGenerator::all;
+
+class EnemyBulletGenerator : public BulletGenerator {
+public:
+    using BulletGenerator::BulletGenerator;
+    using BulletGenerator::shoot;
+
+    Bullet* shoot(const BulletInfo& info) override {
+        auto bullet = BulletGenerator::shoot(info);
+        bullet->setTag(Tag::Enemy);
+        // std::cout << "Enemy bullet shot!\n";
+        return bullet;
+    }
+};

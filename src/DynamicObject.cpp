@@ -27,6 +27,7 @@ void DynamicObject::move_all(float deltaTime) {
 
 inline void DynamicObject::for_each(std::function<void(DynamicObject*)> action) {
     for (auto it : all) {
+        if (!it) continue;
         action(it);
     }
 }
@@ -40,12 +41,15 @@ void DynamicObject::check_collisions_with(DynamicObject& other) {
     DynamicObject::refresh_collision_num();
 
     for (auto it : all) {
+        if (!it) continue;
+
         if (it != &other) {
             if (it->collides_with(other)) {
                 it->on_collide(&other);
                 other.on_collide(it);
             }
         }
+        
         if (it->hitbox_ && it->hitbox_->collision_num_ == 0) {
             it->on_collide_stop();
         }
@@ -57,7 +61,7 @@ void DynamicObject::check_collisions_with(DynamicObject& other) {
 
 void DynamicObject::refresh_collision_num() {
     for (auto it : DynamicObject::all) {
-            if (it->hitbox_)
+            if (it && it->hitbox_)
                 it->hitbox_->collision_num_ = 0;
     }
 }
@@ -74,8 +78,8 @@ void DynamicObject::check_collisions() {
                 (*jt)->on_collide(*it);
             }
         }
-        if ( (*it)->hitbox_ && (*it)->hitbox_->collision_num_ == 0) {
-            (*it)->hitbox_->on_collide_stop();
+        if (*it && (*it)->hitbox_ && (*it)->hitbox_->collision_num_ == 0) {
+            (*it)->on_collide_stop();
         }
     }
 }

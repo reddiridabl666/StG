@@ -6,9 +6,9 @@ static const sf::Color transp_green = {5, 240, 75, 170};
 static const sf::Color red = {191, 34, 51};
 static const sf::Color transp_red = {191, 34, 51, 170};
 
-Hitbox::Hitbox(Layer layer) : GameObjectBase(layer) {}
+Hitbox::Hitbox(Layer layer) : GameObject(layer) {}
 
-Hitbox::Hitbox(const Hitbox& hitbox) : GameObjectBase(hitbox.layer_) {}
+Hitbox::Hitbox(const Hitbox& hitbox) : GameObject(hitbox.layer_) {}
 
 bool Hitbox::collides_with(const Hitbox* other) {
     if (auto target = dynamic_cast<const RectHitbox*>(other)) {return collides_with_rect(target);}
