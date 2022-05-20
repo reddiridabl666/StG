@@ -31,43 +31,8 @@ class DynamicObject : public SpriteObject {
 
     explicit DynamicObject(Layer layer = Layer::Character) : SpriteObject(layer) {all.insert(this);}
 
-    DynamicObject(const DynamicObject& rhs) : DynamicObject(*rhs.getTexture(), rhs.getPosition(), 
-                                                            rhs.velocity_, rhs.mass_, rhs.layer_) 
-    {
-        // TODO: Избавиться от каста, добавив виртуальный метод
-        if (auto rect = dynamic_cast<const RectHitbox*>(rhs.getHitbox())) {
-            hitbox_ = new RectHitbox(rect->getSize(), getPosition());
-            return;
-        }
-        if (auto circle = dynamic_cast<const CircleHitbox*>(rhs.getHitbox())) {
-            hitbox_ = new CircleHitbox(circle->getRadius(), getPosition());
-            return;
-        }
-    }
-
-    DynamicObject& operator=(const DynamicObject& rhs) {
-        // TODO: Избавиться от каста, добавив виртуальный метод
-        if (rhs.getTexture())
-            setTexture(*rhs.getTexture());
-        
-        if (hitbox_) {
-            delete hitbox_;
-        }
-
-        setVelocity(rhs.velocity_);
-        setMass(rhs.mass_);
-        change_layer(rhs.layer_);
-
-        if (auto rect = dynamic_cast<const RectHitbox*>(rhs.getHitbox())) {
-            hitbox_ = new RectHitbox(rect->getSize());
-        }
-        if (auto circle = dynamic_cast<const CircleHitbox*>(rhs.getHitbox())) {
-            hitbox_ = new CircleHitbox(circle->getRadius());
-        }
-
-        setPosition(rhs.getPosition());
-        return *this;
-    }
+    DynamicObject(const DynamicObject& rhs);
+    DynamicObject& operator=(const DynamicObject& rhs);
 
     DynamicObject(const sf::Texture& texture, sf::Vector2f pos, 
                  const sf::Vector2f& hitbox_size, sf::Vector2f velocity = {0, 0}, 
@@ -84,6 +49,18 @@ class DynamicObject : public SpriteObject {
 
     void setPosition(float x, float y) {
         setPosition({x, y});
+    }
+
+    void show() override {
+        GameObject::show();
+#ifdef DEBUG
+        if (hitbox_) hitbox_->show();
+#endif
+    }
+
+    void hide() override {
+        GameObject::hide();
+        if (hitbox_) hitbox_->hide();
     }
 
     void move(const sf::Vector2f& offset) {

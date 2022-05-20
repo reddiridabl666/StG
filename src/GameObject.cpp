@@ -18,6 +18,25 @@ bool GameObject::is_active() const {
     return is_active_;
 }
 
+void GameObject::hide() {
+    is_hidden_ = true;
+}
+
+void GameObject::show() {
+    is_hidden_ = false;
+}
+
+bool GameObject::is_hidden() const {
+    return is_hidden_;
+}
+void GameObject::switch_show_mode() {
+    if (is_hidden()) {
+        show();
+    } else {
+        hide();
+    }
+}
+
 void GameObject::change_layer(Layer layer) {
     objects_by_layer[layer_].erase(this);
     layer_ = layer;
@@ -27,7 +46,7 @@ void GameObject::change_layer(Layer layer) {
 void GameObject::draw_all(sf::RenderWindow& window) {
     for (const auto& layer : Layers) {
         for (auto obj : objects_by_layer[layer]) {
-            if (obj->is_active()) {
+            if (!obj->is_hidden()) {
                 window.draw(*obj->getDrawable());
             }
         }

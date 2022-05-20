@@ -6,8 +6,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
 
 set(ERROR_FLAGS -Wall -Wextra -Werror -Wpedantic)
-add_compile_options(${ERROR_FLAGS})
-# add_compile_options(-DDEBUG)
+set(FLAGS -pthread)
+add_compile_options(${ERROR_FLAGS} ${FLAGS})
+add_compile_options(-DDEBUG)
 
 # add memcheck
 add_custom_target(memcheck COMMAND valgrind --tool=memcheck --leak-check=full --suppressions=/lib/valgrind/sfml.supp ./main)
@@ -18,7 +19,9 @@ find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 add_executable(main main.cpp)
 
 # Add lib
-set(SOURCES src/GameObject.cpp src/Window.cpp src/SpriteObject.cpp src/Player.cpp src/Hitbox.cpp src/DynamicObject.cpp src/Wall.cpp src/Bullet.cpp)
+set(SOURCES src/GameObject.cpp src/Window.cpp src/SpriteObject.cpp 
+            src/Player.cpp src/Hitbox.cpp src/DynamicObject.cpp 
+            src/Wall.cpp src/Bullet.cpp)
 add_library(GameLib SHARED ${SOURCES})
 
 # Add include dirs

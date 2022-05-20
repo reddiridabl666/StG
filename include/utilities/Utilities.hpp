@@ -18,7 +18,7 @@ enum class Layer {
 
 enum class Tag {
     None,
-    // Player,
+    PlayerBullet,
     Enemy,
     Bullet,
     Wall
@@ -26,7 +26,7 @@ enum class Tag {
 
 static constexpr sf::Uint8 layer_num = 5;
 
-inline std::array<Layer, layer_num> Layers = {Layer::Bg, Layer::Character, Layer::Hitbox, Layer::Bullet, Layer::Interface};
+inline std::array<Layer, layer_num> Layers = {Layer::Bg, Layer::Character, Layer::Bullet, Layer::Hitbox, Layer::Interface};
 
 template <typename T>
 inline T squared_distance(sf::Vector2<T> a, sf::Vector2<T> b) {
@@ -43,7 +43,12 @@ inline T min(sf::Vector2<T> a) {
     return a.x < a.y ? a.x : a.y;
 }
 
-static const sf::Vector2f left(-1.0, 0.0);
+template <typename T>
+inline T sign(T x) {
+    return (x > 0) - (x < 0);
+}
+
+// static const sf::Vector2f left(-1.0, 0.0);
 static const sf::Vector2f right(1.0, 0.0);
-static const sf::Vector2f up(0.0, -1.0);
+// static const sf::Vector2f up(0.0, -1.0);
 static const sf::Vector2f down(0.0, 1.0);

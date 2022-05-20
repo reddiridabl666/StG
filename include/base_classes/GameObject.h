@@ -13,6 +13,7 @@ class GameObject {
   protected:
     Layer layer_;
     bool is_active_ = true;
+    bool is_hidden_ = false;
 
   public:
     explicit GameObject(Layer layer = Layer::Bg);
@@ -24,6 +25,11 @@ class GameObject {
     void activate();
     void deactivate();
     bool is_active() const;
+
+    virtual void hide();
+    virtual void show();
+    bool is_hidden() const;
+    void switch_show_mode();
 
     virtual sf::Drawable* getDrawable() = 0;
     virtual sf::Transformable* getTransformable() = 0;

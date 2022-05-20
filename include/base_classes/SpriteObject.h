@@ -15,6 +15,9 @@ class SpriteObject : public GameObject, public sf::Sprite {
     sf::Vector2f getHalfSize() const override;
     void setTexture(const sf::Texture& texture);
 
+    void scale(float a, float b);
+    void scale(float a);
+
     sf::Drawable* getDrawable() override;
     sf::Transformable* getTransformable() override;
 };

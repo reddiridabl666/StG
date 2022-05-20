@@ -4,11 +4,12 @@
 
 template <typename GeneratorType>
 class ShootingObject : public DynamicObject {
-  protected:
+protected:
     GeneratorType gen_;
     sf::Clock shoot_clock_;
+    float shot_interval = 0.1;
 
-  public:
+public:
     using DynamicObject::DynamicObject;
     virtual void shoot(std::string name) = 0;
 };

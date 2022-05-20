@@ -16,6 +16,8 @@ inline std::unordered_map<std::string, T> load_from_folder(fs::path folder_name)
     std::unordered_map<std::string, T> result;
 
     for (const auto& file : fs::directory_iterator(folder_name)) {
+        if (file.is_directory())
+            continue;
         auto filename = file.path().stem().string();
         result[filename] = {};
         result[filename].loadFromFile(file.path().string());

@@ -1,4 +1,5 @@
 #include "Wall.hpp"
+#include <thread>
 
 std::list<TexturePtr> Wall::wall_textures;
 
@@ -63,11 +64,14 @@ void Wall::on_collide(DynamicObject* obj) {
 
         if (is_in_left_sector(obj)) {
             obj->setPosition(getPosition().x - getHalfSize().x - obj->getHalfSize().x - offset, obj->getPosition().y);
-        } else if (is_in_right_sector(obj)) {
+        }
+        if (is_in_right_sector(obj)) {
             obj->setPosition(getPosition().x + getHalfSize().x + obj->getHalfSize().x + offset, obj->getPosition().y);
-        } else if (is_in_lower_sector(obj)) {
+        }
+        if (is_in_lower_sector(obj)) {
             obj->setPosition(obj->getPosition().x, getPosition().y + getHalfSize().y + obj->getHalfSize().y + offset);
-        } else if (is_in_upper_sector(obj)) {
+        }
+        if (is_in_upper_sector(obj)) {
             obj->setPosition(obj->getPosition().x, getPosition().y - getHalfSize().y - obj->getHalfSize().y - offset);
         }
     }

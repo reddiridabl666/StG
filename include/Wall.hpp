@@ -19,6 +19,8 @@ public:
 
     explicit Wall(sf::Vector2f size, sf::Vector2f pos = {0, 0}, 
          sf::Color color = sf::Color::Transparent);
+         
+    explicit Wall() : DynamicObject() {}
 
     explicit Wall(const sf::Texture& texture, sf::Vector2f pos = {0, 0});
 
@@ -35,11 +37,6 @@ public:
     bool is_in_lower_sector(DynamicObject* obj);
 
     void on_collide(DynamicObject* obj) override;
-
-    // TODO: Wall textures don't work really well
-    // void on_collide_stop() override {
-    //     hitbox_->setFillColor(sf::Color::Black);
-    // }
 };
 
 struct Frame {
@@ -47,4 +44,8 @@ struct Frame {
 	Wall right;
 	Wall up;
 	Wall low;
+
+    std::array<Wall*, 4> iter() {
+        return {&left, &right, &up, &low};
+    }
 };

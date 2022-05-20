@@ -2,6 +2,45 @@
 
 std::set<DynamicObject*> DynamicObject::all;
 
+DynamicObject::DynamicObject(const DynamicObject& rhs) : DynamicObject(*rhs.getTexture(), rhs.getPosition(), 
+                                                         rhs.velocity_, rhs.mass_, rhs.layer_) {
+    // TODO: Избавиться от каста, добавив виртуальный метод
+    if (auto rect = dynamic_cast<const RectHitbox*>(rhs.getHitbox())) {
+        hitbox_ = new RectHitbox(rect->getSize(), getPosition());
+        return;
+    }
+    if (auto circle = dynamic_cast<const CircleHitbox*>(rhs.getHitbox())) {
+        hitbox_ = new CircleHitbox(circle->getRadius(), getPosition());
+        return;
+    }
+    setTag(rhs.getTag());
+}
+
+DynamicObject& DynamicObject::operator=(const DynamicObject& rhs) {
+    // TODO: Избавиться от каста, добавив виртуальный метод
+    if (rhs.getTexture())
+        setTexture(*rhs.getTexture());
+    
+    if (hitbox_) {
+        delete hitbox_;
+    }
+
+    setVelocity(rhs.getVelocity());
+    setMass(rhs.getMass());
+    setTag(rhs.getTag());
+    change_layer(rhs.layer_);
+
+    if (auto rect = dynamic_cast<const RectHitbox*>(rhs.getHitbox())) {
+        hitbox_ = new RectHitbox(rect->getSize());
+    }
+    if (auto circle = dynamic_cast<const CircleHitbox*>(rhs.getHitbox())) {
+        hitbox_ = new CircleHitbox(circle->getRadius());
+    }
+
+    setPosition(rhs.getPosition());
+    return *this;
+}
+
 DynamicObject::DynamicObject(const sf::Texture& texture, sf::Vector2f pos, 
                  const sf::Vector2f& hitbox_size, sf::Vector2f velocity, 
                  float mass, Layer layer) 

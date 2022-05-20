@@ -35,3 +35,13 @@ sf::Vector2f SpriteObject::getSize() const {
 sf::Vector2f SpriteObject::getHalfSize() const {
     return size_ / 2.f;
 }
+
+void SpriteObject::scale(float a, float b) {
+    sf::Sprite::scale(a, b);
+    size_.x *= a;
+    size_.y *= b;
+}
+
+void SpriteObject::scale(float a) {
+    scale(a, a);
+}

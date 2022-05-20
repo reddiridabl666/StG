@@ -1,5 +1,6 @@
 #include "Bullet.hpp"
 #include "UpdateFunctions.hpp"
+#include "Resources.hpp"
 
 Bullet::Bullet(BulletInfo info, Layer layer) : Bullet(layer) {
     if (info.texture) {
@@ -22,7 +23,9 @@ Bullet::Bullet(const Bullet& other) :
                     dynamic_cast<const CircleHitbox*>(other.getHitbox()) ? 
                     HitboxInfo(other.getHitbox()->getHalfSize().x) : 
                     HitboxInfo(other.getHitbox()->getSize()),
-                    other.getVelocity()}) {}
+                    other.getVelocity(),}) {
+    setTag(other.getTag());
+}
 
 Bullet& Bullet::operator=(const Bullet& other) {
     clock.restart();
@@ -31,17 +34,16 @@ Bullet& Bullet::operator=(const Bullet& other) {
     return *this;
 }
 
+std::unordered_map<std::string, sf::Texture> Bullet::textures;
+
 std::unordered_map<std::string, sf::Texture> Bullet::getBulletTextures() {
     std::unordered_map<std::string, sf::Texture> res;
-    sf::RenderTexture texture;
+    // sf::RenderTexture texture;
+    sf::Image &bullets = Resources::sprite_sheets["bullets"];
 
-    texture.create(30, 30);
-    texture.clear(sf::Color::Transparent);
-    res["test_circle"] = texture.getTexture();
+    res["test_circle"].loadFromImage(bullets, {198, 466, 62, 62});
 
-    texture.create(20, 40);
-    texture.clear(sf::Color::Transparent);
-    res["player_bullet"] = texture.getTexture();
+    res["player_bullet"].loadFromImage(bullets, {233, 71, 8, 14});
     return res;
 }
 
@@ -49,12 +51,11 @@ std::unordered_map<std::string, BulletInfo> Bullet::getBulletTypes() {
     textures = getBulletTextures();
     std::unordered_map<std::string, BulletInfo> res;
 
-    res["test_circle"] = BulletInfo{&textures["test_circle"], textures["test_circle"].getSize().x, 
-                          {0, 0}, &gravity, 1};
+    res["test_circle"] = BulletInfo{&textures["test_circle"], 25,
+                          {0, 0}, &gravity, 1, 1};
 
     res["test_player"] = BulletInfo{&textures["player_bullet"], 
-                                static_cast<sf::Vector2f>(textures["player_bullet"].getSize()), 
-                                {0, -600}, &delete_when_out_of_bounds};
+                                sf::Vector2f{32.f, 56.f}, {0, -600}, &delete_when_out_of_bounds, 50, 0};
     return res;
 }
 

@@ -6,7 +6,7 @@
 #include "GameState.hpp"
 
 inline const UpdateFunc delete_when_out_of_bounds = [] (Bullet* bullet, float) {
-    if (GameState::getState().is_out_of_bounds(bullet)) {
+    if (GameState::is_out_of_bounds(bullet)) {
         bullet->deactivate();
     }
 };

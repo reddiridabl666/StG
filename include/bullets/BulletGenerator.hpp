@@ -46,6 +46,12 @@ class BulletGenerator {
         return bullet;
     }
 
+    Bullet* shoot(const BulletInfo& info, sf::Vector2f pos, sf::Vector2f velocity, sf::Vector2f size) {
+        auto bullet = shoot(info, pos, velocity);
+        bullet->setSize(size);
+        return bullet;
+    }
+
     void for_each(const std::function<void(Bullet*)>& action) {
         for (auto it : bullets) {
             if (it)

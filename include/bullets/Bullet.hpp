@@ -2,6 +2,7 @@
 
 #include <variant>
 #include "DynamicObject.hpp"
+#include "Damage.hpp"
 
 class Bullet;
 
@@ -14,12 +15,15 @@ struct BulletInfo {
     HitboxInfo hitbox_info = 0;
     sf::Vector2f velocity = {0, 0};
     const UpdateFunc* update = nullptr;
+    size_t damage = 1;
+    // sf::Vector2f size = static_cast<sf::Vector2f>(texture->getSize());
     float mass = 0;
     // std::string name;
 };
 
-class Bullet : public DynamicObject {
+class Bullet : public DynamicObject, public DamageDealing {
 protected:
+    // size_t damage_;
     sf::Clock clock;
     UpdateFunc update_ = [] (Bullet*, float) {};
 
@@ -30,9 +34,7 @@ protected:
 public:
     static std::unordered_map<std::string, BulletInfo> BulletTypes; 
 
-    Bullet(Layer layer = Layer::Bullet) : DynamicObject(layer) {
-        clock.restart();  // I think it isn't needed?
-    }
+    Bullet(Layer layer = Layer::Bullet) : DynamicObject(layer) {}
 
     Bullet(BulletInfo info, Layer layer = Layer::Bullet);
     Bullet(const Bullet&);
@@ -41,12 +43,14 @@ public:
     void setUpdateFunc(const UpdateFunc& new_func) {
         update_ = new_func;
     }
+    
+    void setSize(const sf::Vector2f& size) {
+        scale(size.x / getSize().x, size.y / getSize().y);
+    }
 
-    sf::Time getTime() {
+    sf::Time getTime() const {
         return clock.getElapsedTime();
     }
 
     friend class BulletGenerator;
 };
-
-inline std::unordered_map<std::string, sf::Texture> Bullet::textures;
