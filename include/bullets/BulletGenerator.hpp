@@ -48,7 +48,12 @@ class BulletGenerator {
 
     Bullet* shoot(const BulletInfo& info, sf::Vector2f pos, sf::Vector2f velocity, sf::Vector2f size) {
         auto bullet = shoot(info, pos, velocity);
+        // std::cout << size.x;
         bullet->setSize(size);
+        // if (bullet->frame_hitbox_) {
+        //     delete bullet->frame_hitbox_;
+        // }
+        // bullet->frame_hitbox_ = Hitbox::getHitbox(bullet->getSize());
         return bullet;
     }
 

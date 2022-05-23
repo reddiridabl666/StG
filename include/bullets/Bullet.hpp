@@ -1,12 +1,12 @@
 #pragma once
 
 #include <variant>
-#include "DynamicObject.hpp"
+// #include "DynamicObject.hpp"
+#include "FramedObject.hpp"
 #include "Damage.hpp"
 
 class Bullet;
 
-using HitboxInfo = std::variant<sf::Vector2f, float>;
 using UpdateFunc = std::function<void(Bullet*, float)>;
 
 struct BulletInfo {
@@ -15,13 +15,14 @@ struct BulletInfo {
     HitboxInfo hitbox_info = 0;
     sf::Vector2f velocity = {0, 0};
     const UpdateFunc* update = nullptr;
-    size_t damage = 1;
+    int damage = 1;
     // sf::Vector2f size = static_cast<sf::Vector2f>(texture->getSize());
     float mass = 0;
+    HitboxInfo phys_info = {};
     // std::string name;
 };
 
-class Bullet : public DynamicObject, public DamageDealing {
+class Bullet : public /* DynamicObject */FramedObject, public DamageDealing {
 protected:
     // size_t damage_;
     sf::Clock clock;
@@ -34,7 +35,7 @@ protected:
 public:
     static std::unordered_map<std::string, BulletInfo> BulletTypes; 
 
-    Bullet(Layer layer = Layer::Bullet) : DynamicObject(layer) {}
+    Bullet(Layer layer = Layer::Bullet) : /* DynamicObject */FramedObject(layer) {}
 
     Bullet(BulletInfo info, Layer layer = Layer::Bullet);
     Bullet(const Bullet&);

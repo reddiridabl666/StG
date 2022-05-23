@@ -23,4 +23,5 @@ inline const UpdateFunc gravity = [] (Bullet* bullet, float deltaTime) {
     auto y = bullet->getVelocity().y + constants::g * deltaTime * 80;
     auto x = bullet->getVelocity().x;
     bullet->setVelocity(x, y);
+    // bullet->getFrame()->setFillColor(sf::Color::Transparent);
 };

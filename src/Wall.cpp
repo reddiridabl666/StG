@@ -1,4 +1,5 @@
 #include "Wall.hpp"
+#include "Player.hpp"
 #include <thread>
 
 std::list<TexturePtr> Wall::wall_textures;
@@ -47,6 +48,26 @@ bool Wall::is_in_lower_sector(DynamicObject* obj) {
 
 void Wall::on_collide(DynamicObject* obj) {
 // DynamicObject::on_collide(obj);
+    if (auto player = dynamic_cast<Player*>(obj)) {
+        // Right wall
+        if (is_in_right_sector(player)) {
+            player->setPosition(getPosition().x + getHalfSize().x + 
+                       player->getFrame()->getHalfSize().x, player->getPosition().y);
+        // Left wall
+        } else if (is_in_left_sector(player)) {
+            player->setPosition(getPosition().x - getHalfSize().x - 
+                        player->getFrame()->getHalfSize().x, player->getPosition().y);
+        // Upper wall
+        } else if (is_in_upper_sector(player)) {
+            player->setPosition(player->getPosition().x, getPosition().y -
+                        getHalfSize().y - player->getFrame()->getHalfSize().y);
+        // Lower wall
+        } else if (is_in_lower_sector(player)) {
+            player->setPosition(player->getPosition().x, getPosition().y +
+                        getHalfSize().y + player->getFrame()->getHalfSize().y);
+        }
+    }
+
     if (mass_ > 0 && obj->getMass() > 0 && obj->getTag() != Tag::Wall) {
         // Edge bounce
         if (std::abs(obj->getPosition().x - getPosition().x) >= getHalfSize().x &&
@@ -62,17 +83,19 @@ void Wall::on_collide(DynamicObject* obj) {
 
         float offset = 15;
 
-        if (is_in_left_sector(obj)) {
-            obj->setPosition(getPosition().x - getHalfSize().x - obj->getHalfSize().x - offset, obj->getPosition().y);
-        }
-        if (is_in_right_sector(obj)) {
-            obj->setPosition(getPosition().x + getHalfSize().x + obj->getHalfSize().x + offset, obj->getPosition().y);
-        }
-        if (is_in_lower_sector(obj)) {
-            obj->setPosition(obj->getPosition().x, getPosition().y + getHalfSize().y + obj->getHalfSize().y + offset);
-        }
-        if (is_in_upper_sector(obj)) {
-            obj->setPosition(obj->getPosition().x, getPosition().y - getHalfSize().y - obj->getHalfSize().y - offset);
+        if (auto obj1 = dynamic_cast<FramedObject*>(obj)) { 
+            if (is_in_left_sector(obj1)) {
+                obj1->setPosition(getPosition().x - getHalfSize().x - obj1->getFrame()->getHalfSize().x - offset, obj1->getPosition().y);
+            }
+            if (is_in_right_sector(obj1)) {
+                obj1->setPosition(getPosition().x + getHalfSize().x + obj1->getFrame()->getHalfSize().x + offset, obj1->getPosition().y);
+            }
+            if (is_in_lower_sector(obj1)) {
+                obj1->setPosition(obj1->getPosition().x, getPosition().y + getHalfSize().y + obj1->getFrame()->getHalfSize().y + offset);
+            }
+            if (is_in_upper_sector(obj1)) {
+                obj1->setPosition(obj1->getPosition().x, getPosition().y - getHalfSize().y - obj1->getFrame()->getHalfSize().y - offset);
+            }
         }
     }
 }

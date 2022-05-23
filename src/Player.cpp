@@ -10,10 +10,11 @@ static constexpr float player_size = 32 * 4.4;
 
 static float gamepad_movement(Axis axis, unsigned int gamepad_num = 0) {
     float pos = Gamepad::getAxisPosition(gamepad_num, axis);
-    if (std::abs(pos) > 0) {
-        return pos > 0 ? 1 : -1;
-    }
-    return 0;
+    // if (std::abs(pos) > 0) {
+    //     return pos > 0 ? 1 : -1;
+    // }
+    // return 0;
+    return std::abs(pos);
 }
 
 static float gamepad_movement(Axis axis1, Axis axis2, unsigned int gamepad_num = 0) {
@@ -24,6 +25,7 @@ static bool pressed_any_of(Key::Key A, Key::Key B) {
     return Key::isKeyPressed(A) ||
            Key::isKeyPressed(B);
 }
+
 static float vertical_movement(unsigned int gamepad_num = 0) {
     float vertical = 0;
     if (pressed_any_of(Key::W, Key::Up)) {
@@ -50,7 +52,6 @@ Player::Player(const sf::Texture& texture, sf::Vector2f pos,
                sf::Vector2f hitbox_size, const std::string bullet_name/*const BulletInfo& info*/,
                float speed, float mass, Layer layer) 
     : ShootingObject(texture, pos, hitbox_size, {0, 0}, mass, layer), speed_(speed), normal_shot_(bullet_name) {
-        // gen_.add_bullet("normal", info);
         auto factor = player_size / min(texture.getSize());
         scale(factor, factor);
 }
@@ -72,25 +73,25 @@ void Player::on_collide(DynamicObject* obj) {
         }
     }
 
-    if (auto wall = dynamic_cast<Wall*>(obj)) {
-        // Right wall
-        if (wall->is_in_right_sector(this)) {
-            setPosition(obj->getPosition().x + obj->getHalfSize().x + 
-                        hitbox_->getHalfSize().x, getPosition().y);
-        // Left wall
-        } else if (wall->is_in_left_sector(this)) {
-            setPosition(obj->getPosition().x - obj->getHalfSize().x - 
-                        hitbox_->getHalfSize().x, getPosition().y);
-        // Upper wall
-        } else if (wall->is_in_upper_sector(this)) {
-            setPosition(getPosition().x, obj->getPosition().y -
-                        obj->getHalfSize().y - hitbox_->getHalfSize().y);
-        // Lower wall
-        } else if (wall->is_in_lower_sector(this)) {
-            setPosition(getPosition().x, obj->getPosition().y +
-                        obj->getHalfSize().y + hitbox_->getHalfSize().y);
-        }
-    }
+    // if (auto wall = dynamic_cast<Wall*>(obj)) {
+    //     // Right wall
+    //     if (wall->is_in_right_sector(this)) {
+    //         setPosition(obj->getPosition().x + obj->getHalfSize().x + 
+    //                     hitbox_->getHalfSize().x, getPosition().y);
+    //     // Left wall
+    //     } else if (wall->is_in_left_sector(this)) {
+    //         setPosition(obj->getPosition().x - obj->getHalfSize().x - 
+    //                     hitbox_->getHalfSize().x, getPosition().y);
+    //     // Upper wall
+    //     } else if (wall->is_in_upper_sector(this)) {
+    //         setPosition(getPosition().x, obj->getPosition().y -
+    //                     obj->getHalfSize().y - hitbox_->getHalfSize().y);
+    //     // Lower wall
+    //     } else if (wall->is_in_lower_sector(this)) {
+    //         setPosition(getPosition().x, obj->getPosition().y +
+    //                     obj->getHalfSize().y + hitbox_->getHalfSize().y);
+    //     }
+    // }
 }
 
 void Player::control() {
@@ -103,29 +104,6 @@ void Player::control() {
 //         hitbox_->hide();
 // #endif
     }
-
-    // float horizontal = 0;
-    // float vertical = 0;
-
-    // if (pressed_any_of(Key::A, Key::Left)) {
-    //     horizontal = -1;
-    //     // setVelocity(velocity_ + left * speed_);
-    // }
-    // if (pressed_any_of(Key::D, Key::Right)) {
-    //     horizontal = 1;
-    //     // setVelocity(velocity_ + right * speed_);
-    // }
-    // if (pressed_any_of(Key::W, Key::Up)) {
-    //     vertical = -1;
-    //     // setVelocity(velocity_ + up * speed_);
-    // }
-    // if (pressed_any_of(Key::S, Key::Down)) {
-    //     vertical = 1;
-    //     // setVelocity(velocity_ + down * speed_);
-    // }
-
-    // horizontal = gamepad_movement(Axis::X);
-    // vertical = gamepad_movement(Axis::Y);
 
     setVelocity(speed_ * (horizontal_movement() * right + vertical_movement() * down));
 

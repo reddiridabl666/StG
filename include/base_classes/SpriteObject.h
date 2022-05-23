@@ -3,19 +3,17 @@
 #include "GameObject.h"
 
 class SpriteObject : public GameObject, public sf::Sprite {
-  protected:
-    sf::Vector2f size_;
-
-  public:
+public:
     explicit SpriteObject(Layer layer = Layer::Bg);
     SpriteObject(const sf::Texture& texture, sf::Vector2f pos = {0, 0}, Layer layer = Layer::Bg);
     SpriteObject(const SpriteObject& other);
 
-    sf::Vector2f getSize() const;
-    sf::Vector2f getHalfSize() const override;
     void setTexture(const sf::Texture& texture);
 
-    void scale(float a, float b);
+    sf::Vector2f getSize() const override;
+    sf::Vector2f getHalfSize() const override;
+    
+    virtual void scale(float a, float b);
     void scale(float a);
 
     sf::Drawable* getDrawable() override;

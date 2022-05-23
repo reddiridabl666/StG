@@ -1,6 +1,6 @@
 #include "SpriteObject.h"
 
-SpriteObject::SpriteObject(Layer layer) : GameObject(layer), sf::Sprite(), size_() {}
+SpriteObject::SpriteObject(Layer layer) : GameObject(layer), sf::Sprite() {}
 
 SpriteObject::SpriteObject(const sf::Texture& texture, sf::Vector2f pos, Layer layer) : SpriteObject(layer) {
     setTexture(texture);
@@ -29,7 +29,7 @@ sf::Transformable* SpriteObject::getTransformable() {
 }
 
 sf::Vector2f SpriteObject::getSize() const {
-    return size_;
+    return GameObject::getSize();
 }
 
 sf::Vector2f SpriteObject::getHalfSize() const {

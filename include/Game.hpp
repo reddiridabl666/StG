@@ -5,19 +5,17 @@
 #include "GameState.hpp"
 #include "LoadFiles.hpp"
 #include "Player.hpp"
+#include "DynamicObject.hpp"
 #include "Resources.hpp"
 #include "Text.hpp"
 #include "UpdateFunctions.hpp"
 #include "Wall.hpp"
 #include "Window.h"
 
+#include <thread>
+
 class Game {
 private:
-    // string_map<sf::Texture> textures;
-    // string_map<sf::Font> fonts;
-    // string_map<sf::Image> sprite_sheets;
-    // Resources resources;
-
     Window window;
     Frame frame;
     Background bg;
@@ -26,10 +24,7 @@ private:
     sf::Clock clock;
     float deltaTime = 0;
 public:
-    Game() :  /* textures(load_from_folder<sf::Texture>("images")), */
-    //          fonts(load_from_folder<sf::Font>("fonts")),
-    //          sprite_sheets(load_from_folder<sf::Image>("images/sprite_sheets")),
-             window(),
+    Game() : window(),
              frame(Wall::get_frame(window)),
              bg(Resources::textures["bg"], window),
              player(new Player(Resources::textures["player"], 
@@ -40,7 +35,6 @@ public:
     Game& operator=(const Game&) = delete;
 
     void start() {
-        // auto frame = Wall::get_frame(window);
         GameState::set_frame(frame); 
 
         // Wall test({100, 300}, {600, 400});
@@ -63,7 +57,9 @@ public:
             offset += delta;
         }
 
-        // test_gen.for_each([] (Bullet* it) {it->scale(4, 4);});
+        test_gen.for_each([] (Bullet* it) {it->scale(2, 2);});
+        // test_gen.for_each([] (Bullet* it) {std::cout << "Size: " << it->getFrame()->getSize() << std::endl <<
+        //                                              "Half Size: " << it->getFrame()->getHalfSize();});
         // test_gen.for_each([] (Bullet* it) {it->setVelocity(0, 0);});
         // test_gen.for_each([] (Bullet* it) {it->setUpdateFunc(delete_when_out_of_bounds);});
 
@@ -96,9 +92,7 @@ public:
             // Movement
             DynamicObject::move_all(deltaTime);
             
-            // Collision checks
             check_collisions();
-            // DynamicObject::check_collisions();
 
             // TODO: В отдельную функцию?
             if (player && player->HP() <= 0) {
@@ -121,10 +115,10 @@ public:
 
     void check_collisions() {
         if (player) {
-            DynamicObject::check_collisions_with(*player);
+            // DynamicObject::check_collisions_with(*player);
         }
         for (auto it : frame.iter()) {
-            DynamicObject::check_collisions_with(*it);
+            FramedObject::check_phys_collisions_with(*it);
         }
     }
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SpriteObject.h"
-#include "Hitbox.h"
+#include "Hitbox.hpp"
 
 #include <functional>
 
@@ -16,8 +16,7 @@ class DynamicObject : public SpriteObject {
     DynamicObject(const sf::Texture& texture, sf::Vector2f pos = {0, 0},
         sf::Vector2f velocity = {0, 0}, float mass = 0,
         Layer layer = Layer::Character) 
-        : SpriteObject (texture, pos, layer), mass_(mass), velocity_(velocity) {
-            getTransformable()->setPosition(pos);
+        : SpriteObject(texture, pos, layer), mass_(mass), velocity_(velocity) {
             all.insert(this);
     }
 
@@ -35,13 +34,10 @@ class DynamicObject : public SpriteObject {
     DynamicObject& operator=(const DynamicObject& rhs);
 
     DynamicObject(const sf::Texture& texture, sf::Vector2f pos, 
-                 const sf::Vector2f& hitbox_size, sf::Vector2f velocity = {0, 0}, 
+                 const HitboxInfo& hitbox_size, sf::Vector2f velocity = {0, 0}, 
                  float mass = 0, Layer layer = Layer::Character);
 
-    DynamicObject(const sf::Texture& texture, sf::Vector2f pos, float hitbox_radius, 
-        sf::Vector2f velocity = {0, 0}, float mass = 0, Layer layer = Layer::Character);
-
-    void setPosition(const sf::Vector2f& pos) {
+    virtual void setPosition(const sf::Vector2f& pos) {
         SpriteObject::setPosition(pos);
         if (hitbox_)
             hitbox_->getTransformable()->setPosition(pos);
@@ -57,6 +53,8 @@ class DynamicObject : public SpriteObject {
         if (hitbox_) hitbox_->show();
 #endif
     }
+
+    void swap(DynamicObject& other);
 
     void hide() override {
         GameObject::hide();

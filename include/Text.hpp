@@ -10,6 +10,7 @@ public:
             GameObject(layer), sf::Text(text, font, size) {
             setOrigin(getHalfSize());
             setPosition(pos);
+            size_ = {getGlobalBounds().width, getGlobalBounds().height};
         }
 
     sf::Drawable* getDrawable() override {
@@ -27,14 +28,6 @@ public:
 
     void setString(float num) {
         setString(std::to_string(num));
-    }
-
-    sf::Vector2f getSize() const {
-        return {getGlobalBounds().width, getGlobalBounds().height};
-    }
-
-    sf::Vector2f getHalfSize() const override {
-        return getSize() / 2.f;
     }
 };
 

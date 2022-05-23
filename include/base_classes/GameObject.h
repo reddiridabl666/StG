@@ -12,6 +12,7 @@
 class GameObject {
   protected:
     Layer layer_;
+    sf::Vector2f size_;
     bool is_active_ = true;
     bool is_hidden_ = false;
 
@@ -33,7 +34,8 @@ class GameObject {
 
     virtual sf::Drawable* getDrawable() = 0;
     virtual sf::Transformable* getTransformable() = 0;
-    virtual sf::Vector2f getHalfSize() const = 0;
+    virtual sf::Vector2f getHalfSize() const;
+    virtual sf::Vector2f getSize() const;
 
     void change_layer(Layer layer);
 

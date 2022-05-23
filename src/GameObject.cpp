@@ -29,12 +29,21 @@ void GameObject::show() {
 bool GameObject::is_hidden() const {
     return is_hidden_;
 }
+
 void GameObject::switch_show_mode() {
     if (is_hidden()) {
         show();
     } else {
         hide();
     }
+}
+
+sf::Vector2f GameObject::getSize() const {
+    return size_;
+}
+
+sf::Vector2f GameObject::getHalfSize() const {
+    return size_ / 2.f;
 }
 
 void GameObject::change_layer(Layer layer) {

@@ -5,32 +5,38 @@
 Bullet::Bullet(BulletInfo info, Layer layer) : Bullet(layer) {
     if (info.texture) {
         setTexture(*info.texture);
-    }
+        if (auto n = std::get_if<float>(&info.phys_info)) {
+            if (n == 0) {
+                frame_hitbox_ = Hitbox::getHitbox(getSize());
+            } else {
+                frame_hitbox_ = Hitbox::getHitbox(info.phys_info, {}, sf::Color::Transparent);
+            }
+        }
+    } 
+
     if (info.update) {
         setUpdateFunc(*info.update);
     }
-    if (auto size = std::get_if<sf::Vector2f>(&info.hitbox_info)) {
-        hitbox_ = new RectHitbox(*size);
-    } else if (auto size = std::get_if<float>(&info.hitbox_info)) {
-        hitbox_= new CircleHitbox(*size);
-    }
+
+    hitbox_ = Hitbox::getHitbox(info.hitbox_info);
+
+    setDamage(info.damage);
     setVelocity(info.velocity);
     setMass(info.mass);
 }
 
 Bullet::Bullet(const Bullet& other) : 
-    Bullet(BulletInfo{other.getTexture(), 
-                    dynamic_cast<const CircleHitbox*>(other.getHitbox()) ? 
-                    HitboxInfo(other.getHitbox()->getHalfSize().x) : 
-                    HitboxInfo(other.getHitbox()->getSize()),
-                    other.getVelocity(),}) {
+    Bullet(BulletInfo{other.getTexture(), other.getHitbox()->getInfo(), 
+                      other.getVelocity(), &other.update_, other.damage_, 
+                      other.mass_, other.frame_hitbox_->getInfo()}) {
     setTag(other.getTag());
 }
 
 Bullet& Bullet::operator=(const Bullet& other) {
     clock.restart();
     setUpdateFunc(other.update_);
-    DynamicObject::operator=(other);
+    setDamage(other.damage_);
+    /* DynamicObject */FramedObject::operator=(other);
     return *this;
 }
 
@@ -51,8 +57,8 @@ std::unordered_map<std::string, BulletInfo> Bullet::getBulletTypes() {
     textures = getBulletTextures();
     std::unordered_map<std::string, BulletInfo> res;
 
-    res["test_circle"] = BulletInfo{&textures["test_circle"], 25,
-                          {0, 0}, &gravity, 1, 1};
+    res["test_circle"] = BulletInfo{&textures["test_circle"], 30,
+                          {0, 0}, &gravity, 1, 1, textures["test_circle"].getSize().x / 2};
 
     res["test_player"] = BulletInfo{&textures["player_bullet"], 
                                 sf::Vector2f{32.f, 56.f}, {0, -600}, &delete_when_out_of_bounds, 50, 0};

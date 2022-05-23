@@ -1,10 +1,14 @@
-#include "Hitbox.h"
+#include "Hitbox.hpp"
 #include <set>
 
-static const sf::Color green = {5, 240, 75};
-static const sf::Color transp_green = {5, 240, 75, 170};
-static const sf::Color red = {191, 34, 51};
-static const sf::Color transp_red = {191, 34, 51, 170};
+Hitbox* Hitbox::getHitbox(const HitboxInfo& info, sf::Vector2f pos, const sf::Color& fill, const sf::Color& outline) {
+    if (auto size = std::get_if<sf::Vector2f>(&info)) {
+        return new RectHitbox(*size, pos, fill, outline);
+    } else if (auto radius = std::get_if<float>(&info)) {
+        return new CircleHitbox(*radius, pos, fill, outline);
+    }
+    return nullptr;
+}
 
 Hitbox::Hitbox(Layer layer) : GameObject(layer) {
 #ifndef DEBUG
@@ -22,26 +26,32 @@ bool Hitbox::collides_with(const Hitbox* other) {
 
 void Hitbox::on_collide() {
     collision_num_++;
-    dynamic_cast<sf::Shape*>(getDrawable())->setOutlineColor(red);
-    dynamic_cast<sf::Shape*>(getDrawable())->setFillColor(transp_red);
+    setOutlineColor(red);
+    setFillColor(transp_red);
 }
 
 void Hitbox::on_collide_stop() {
-    dynamic_cast<sf::Shape*>(getDrawable())->setOutlineColor(green);
-    dynamic_cast<sf::Shape*>(getDrawable())->setFillColor(transp_green);
-}
-
-RectHitbox::RectHitbox(const sf::Vector2f &size, const sf::Vector2f &center, Layer layer) 
-  : Hitbox(layer), sf::RectangleShape(size) {
-    setOrigin(size.x / 2.f, size.y / 2.f);
-    setPosition(center);
-    setOutlineThickness(-4);
     setOutlineColor(green);
     setFillColor(transp_green);
 }
 
+RectHitbox::RectHitbox(const sf::Vector2f &size, const sf::Vector2f &center, 
+                       const sf::Color& fill, const sf::Color& outline, Layer layer) 
+  : Hitbox(layer), sf::RectangleShape(size) {
+    setOrigin(size.x / 2.f, size.y / 2.f);
+    size_ = size;
+    setPosition(center);
+    setOutlineThickness(-4);
+    setFillColor(fill);
+    setOutlineColor(outline);
+}
+
 bool RectHitbox::contains_point(const sf::Vector2f& point) const {
     return getGlobalBounds().contains(point);
+}
+
+HitboxInfo RectHitbox::getInfo() const {
+    return getSize();
 }
 
 bool RectHitbox::collides_with_rect(const RectHitbox* other) const {
@@ -52,29 +62,15 @@ bool RectHitbox::collides_with_circle(const CircleHitbox* other) const {
     return other->collides_with_rect(this);
 }
 
-sf::Drawable* RectHitbox::getDrawable() {
-    return this;
-}
-
-sf::Transformable* RectHitbox::getTransformable() {
-    return this;
-}
-
-sf::Vector2f RectHitbox::getSize() const {
-    return sf::RectangleShape::getSize();
-}
-
-sf::Vector2f RectHitbox::getHalfSize() const {
-    return getSize() / 2.f;
-}
-
-CircleHitbox::CircleHitbox(float radius, const sf::Vector2f &center, Layer layer) 
+CircleHitbox::CircleHitbox(float radius, const sf::Vector2f &center,
+                           const sf::Color& fill, const sf::Color& outline, Layer layer) 
   : Hitbox(layer), sf::CircleShape(radius) {
     setOrigin(radius, radius);
+    size_ = sf::Vector2f{radius, radius}/*  * 2.f */;
     setPosition(center);
     setOutlineThickness(-4);
-    setOutlineColor(green);
-    setFillColor(transp_green);
+    setFillColor(fill);
+    setOutlineColor(outline);
 }
       
 bool CircleHitbox::contains_point(const sf::Vector2f& point) const {
@@ -112,18 +108,14 @@ bool CircleHitbox::collides_with_circle(const CircleHitbox* other) const {
     return squared_distance(getPosition(), other->getPosition()) <= pow(getRadius() + other->getRadius(), 2);
 }
 
-sf::Vector2f CircleHitbox::getSize() const {
-    return getHalfSize() * 2.f;
-}
+// sf::Vector2f CircleHitbox::getSize() const {
+//     return getHalfSize() * 2.f;
+// }
 
-sf::Vector2f CircleHitbox::getHalfSize() const {
-    return {getRadius(), getRadius()};
-}
+// sf::Vector2f CircleHitbox::getHalfSize() const {
+//     return {getRadius(), getRadius()};
+// }
 
-sf::Drawable* CircleHitbox::getDrawable() {
-    return this;
-}
-
-sf::Transformable* CircleHitbox::getTransformable() {
-    return this;
+HitboxInfo CircleHitbox::getInfo() const {
+    return getHalfSize().x;
 }

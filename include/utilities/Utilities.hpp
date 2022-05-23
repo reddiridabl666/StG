@@ -19,9 +19,15 @@ enum class Layer {
 enum class Tag {
     None,
     PlayerBullet,
+    Player,
     Enemy,
     Bullet,
     Wall
+};
+
+enum class HitboxType {
+    Circle,
+    Rect
 };
 
 static constexpr sf::Uint8 layer_num = 5;
@@ -46,6 +52,12 @@ inline T min(sf::Vector2<T> a) {
 template <typename T>
 inline T sign(T x) {
     return (x > 0) - (x < 0);
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream &out, sf::Vector2<T> vec) {
+    out << vec.x << ", " << vec.y;
+    return out;
 }
 
 // static const sf::Vector2f left(-1.0, 0.0);
