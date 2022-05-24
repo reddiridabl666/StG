@@ -46,6 +46,18 @@ sf::Vector2f GameObject::getHalfSize() const {
     return size_ / 2.f;
 }
 
+void GameObject::update(float) {}
+
+void GameObject::update_all(float deltaTime) {
+    for (const auto& layer : Layers) {
+        for (auto& obj : objects_by_layer[layer]) {
+            if (obj->is_active()) {
+                obj->update(deltaTime);
+            }
+        }
+    }
+}
+
 void GameObject::change_layer(Layer layer) {
     objects_by_layer[layer_].erase(this);
     layer_ = layer;

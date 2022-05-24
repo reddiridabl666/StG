@@ -30,6 +30,9 @@ public:
     static Hitbox* getHitbox(const HitboxInfo& info, sf::Vector2f pos = {}, 
                              const sf::Color& fill = transp_green, const sf::Color& outline = green);
 
+    static Hitbox* getFrameHitbox(const HitboxInfo& info, sf::Vector2f pos = {}, 
+                                  const sf::Color& outline = green);
+
     virtual bool contains_point(const sf::Vector2f& point) const = 0;
     virtual bool collides_with(const Hitbox* other);
 
@@ -38,7 +41,11 @@ public:
 
     virtual void setFillColor(sf::Color color) = 0;
     virtual void setOutlineColor(sf::Color color) = 0;
-    virtual void scale(float a, float b) = 0;
+
+    virtual void scale(float a, float b) {
+        size_.x *= a;
+        size_.y *= b;
+    }
 
     sf::Uint32 getCollisionNum() {
         return collision_num_;
@@ -87,8 +94,8 @@ public:
 
     void scale(float a, float b) override {
         sf::RectangleShape::scale(a, b);
-        size_.x *= a;
-        size_.y *= b;
+        Hitbox::scale(a, b);
+        setOutlineThickness(-5 / max(a, b));
     }
 
     friend CircleHitbox;
@@ -130,8 +137,8 @@ public:
 
     void scale(float a, float b) override {
         sf::CircleShape::scale(a, b);
-        size_.x *= a;
-        size_.y *= b;
+        Hitbox::scale(a, b);
+        setOutlineThickness(-5 / max(a, b));
     }
 
     float getRadius() const {

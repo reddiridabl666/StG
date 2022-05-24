@@ -18,7 +18,7 @@ struct BulletInfo {
     int damage = 1;
     // sf::Vector2f size = static_cast<sf::Vector2f>(texture->getSize());
     float mass = 0;
-    HitboxInfo phys_info = {};
+    HitboxInfo phys_info = 0;
     // std::string name;
 };
 

@@ -10,18 +10,20 @@
 #include "Utilities.hpp"
 
 class GameObject {
-  protected:
+protected:
     Layer layer_;
     sf::Vector2f size_;
     bool is_active_ = true;
     bool is_hidden_ = false;
 
-  public:
+public:
     explicit GameObject(Layer layer = Layer::Bg);
     using objects = std::unordered_set<GameObject*>;
 
     static std::unordered_map<Layer, objects> objects_by_layer;
     static void draw_all(sf::RenderWindow& window);
+
+    static void update_all(float deltaTime);
 
     void activate();
     void deactivate();
@@ -36,6 +38,8 @@ class GameObject {
     virtual sf::Transformable* getTransformable() = 0;
     virtual sf::Vector2f getHalfSize() const;
     virtual sf::Vector2f getSize() const;
+
+    virtual void update(float);
 
     void change_layer(Layer layer);
 

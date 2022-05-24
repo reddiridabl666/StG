@@ -24,6 +24,7 @@ class DynamicObject : public SpriteObject {
     static std::set<DynamicObject*> all;   
     static void check_collisions_with(DynamicObject& other);
     static void check_collisions();
+
     static void move_all(float deltaTime);
     static void refresh_collision_num();
     static void for_each(std::function<void(DynamicObject*)> action);
@@ -67,6 +68,10 @@ class DynamicObject : public SpriteObject {
 
     void move(float x, float y) {
         move({x, y});
+    }
+
+    void update(float deltaTime) override {
+        move(velocity_ * deltaTime);
     }
 
     bool collides_with(const DynamicObject& obj) {

@@ -42,12 +42,6 @@ void DynamicObject::swap(DynamicObject& other) {
 
         const_cast<sf::Texture*>(getTexture())->swap(*const_cast<sf::Texture*>(other.getTexture()));
 }
-// DynamicObject::DynamicObject(const sf::Texture& texture, sf::Vector2f pos, 
-//                  const sf::Vector2f& hitbox_size, sf::Vector2f velocity, 
-//                  float mass, Layer layer) 
-//     : DynamicObject(texture, pos, velocity, mass, layer) {
-//     hitbox_ = new RectHitbox(hitbox_size, pos);
-// }
 
 DynamicObject::DynamicObject(const sf::Texture& texture, sf::Vector2f pos, 
                  const HitboxInfo& hitbox_size, sf::Vector2f velocity, 
@@ -55,13 +49,6 @@ DynamicObject::DynamicObject(const sf::Texture& texture, sf::Vector2f pos,
     : DynamicObject(texture, pos, velocity, mass, layer) {
     hitbox_ = Hitbox::getHitbox(hitbox_size, pos);
 }
-
-// DynamicObject::DynamicObject(const sf::Texture& texture, sf::Vector2f pos, 
-//                     float hitbox_radius, sf::Vector2f velocity, 
-//                     float mass, Layer layer) 
-//     : DynamicObject(texture, pos, velocity, mass, layer) {    
-//     hitbox_ = new CircleHitbox(hitbox_radius, pos);
-// }
 
 void DynamicObject::move_all(float deltaTime) {
     // for (auto it : all) {

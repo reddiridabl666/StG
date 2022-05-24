@@ -1,5 +1,6 @@
 #include "Player.hpp"
 #include "Wall.hpp"
+#include "UpdateFunctions.hpp"
 
 using Key = sf::Keyboard;
 using Gamepad = sf::Joystick;
@@ -54,6 +55,7 @@ Player::Player(const sf::Texture& texture, sf::Vector2f pos,
     : ShootingObject(texture, pos, hitbox_size, {0, 0}, mass, layer), speed_(speed), normal_shot_(bullet_name) {
         auto factor = player_size / min(texture.getSize());
         scale(factor, factor);
+        setTag(Tag::Player);
 }
 
 void Player::on_collide_stop() {

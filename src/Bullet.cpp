@@ -5,14 +5,14 @@
 Bullet::Bullet(BulletInfo info, Layer layer) : Bullet(layer) {
     if (info.texture) {
         setTexture(*info.texture);
-        if (auto n = std::get_if<float>(&info.phys_info)) {
-            if (n == 0) {
-                frame_hitbox_ = Hitbox::getHitbox(getSize());
-            } else {
-                frame_hitbox_ = Hitbox::getHitbox(info.phys_info, {}, sf::Color::Transparent);
-            }
-        }
-    } 
+    }
+
+    float* n;
+    if ((n = std::get_if<float>(&info.phys_info)) && *n) {
+        frame_hitbox_ = Hitbox::getFrameHitbox(info.phys_info);
+    } else {
+        frame_hitbox_ = Hitbox::getFrameHitbox(getSize());
+    }
 
     if (info.update) {
         setUpdateFunc(*info.update);
@@ -57,11 +57,11 @@ std::unordered_map<std::string, BulletInfo> Bullet::getBulletTypes() {
     textures = getBulletTextures();
     std::unordered_map<std::string, BulletInfo> res;
 
-    res["test_circle"] = BulletInfo{&textures["test_circle"], 30,
+    res["test_circle"] = BulletInfo{&textures["test_circle"], 36,
                           {0, 0}, &gravity, 1, 1, textures["test_circle"].getSize().x / 2};
 
     res["test_player"] = BulletInfo{&textures["player_bullet"], 
-                                sf::Vector2f{32.f, 56.f}, {0, -600}, &delete_when_out_of_bounds, 50, 0};
+                                sf::Vector2f{8.f, 14.f} * 4.f, {0, -600}, &delete_when_out_of_bounds, 50, 0, sf::Vector2f{100, 100}};
     return res;
 }
 

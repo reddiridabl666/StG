@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ShootingObject.hpp"
-#include "UpdateFunctions.hpp"
 
 class Player : public ShootingObject<BulletGenerator>, public Health {
 protected:

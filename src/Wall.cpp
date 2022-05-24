@@ -81,7 +81,7 @@ void Wall::on_collide(DynamicObject* obj) {
             obj->setVelocity(-obj->getVelocity().x, obj->getVelocity().y);
         }
 
-        float offset = 15;
+        float offset = 5;
 
         if (auto obj1 = dynamic_cast<FramedObject*>(obj)) { 
             if (is_in_left_sector(obj1)) {

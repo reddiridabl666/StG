@@ -10,6 +10,10 @@ Hitbox* Hitbox::getHitbox(const HitboxInfo& info, sf::Vector2f pos, const sf::Co
     return nullptr;
 }
 
+Hitbox* Hitbox::getFrameHitbox(const HitboxInfo& info, sf::Vector2f pos, const sf::Color& outline) {
+    return getHitbox(info, pos, sf::Color::Transparent, outline); 
+}
+
 Hitbox::Hitbox(Layer layer) : GameObject(layer) {
 #ifndef DEBUG
     hide();
@@ -41,7 +45,7 @@ RectHitbox::RectHitbox(const sf::Vector2f &size, const sf::Vector2f &center,
     setOrigin(size.x / 2.f, size.y / 2.f);
     size_ = size;
     setPosition(center);
-    setOutlineThickness(-4);
+    setOutlineThickness(-5);
     setFillColor(fill);
     setOutlineColor(outline);
 }
@@ -66,9 +70,9 @@ CircleHitbox::CircleHitbox(float radius, const sf::Vector2f &center,
                            const sf::Color& fill, const sf::Color& outline, Layer layer) 
   : Hitbox(layer), sf::CircleShape(radius) {
     setOrigin(radius, radius);
-    size_ = sf::Vector2f{radius, radius}/*  * 2.f */;
+    size_ = sf::Vector2f{radius, radius} * 2.f ;
     setPosition(center);
-    setOutlineThickness(-4);
+    setOutlineThickness(-5);
     setFillColor(fill);
     setOutlineColor(outline);
 }

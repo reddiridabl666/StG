@@ -19,23 +19,22 @@ private:
     Window window;
     Frame frame;
     Background bg;
-    Player* player;
+    // Player* player;
 
     sf::Clock clock;
     float deltaTime = 0;
 public:
     Game() : window(),
              frame(Wall::get_frame(window)),
-             bg(Resources::textures["bg"], window),
-             player(new Player(Resources::textures["player"], 
-                    window.getCenter(), 
-                    {30, 45}, "test_player")) {}
+             bg(Resources::textures["bg"], window) {
+             GameState::init(new Player(Resources::textures["player"], 
+                             window.getCenter(), {30, 45}, "test_player"), frame);
+    }
     
     Game(const Game&) = delete;
     Game& operator=(const Game&) = delete;
 
-    void start() {
-        GameState::set_frame(frame); 
+    void start() { 
 
         // Wall test({100, 300}, {600, 400});
         // Wall test2({300, 100}, {1200, 700});
@@ -43,7 +42,7 @@ public:
         // Wall test4({100, 100}, {1650, 300});
 
         srand(time(nullptr));
-        size_t size = 25;
+        size_t size = 15;
         float start_pos = 40;
         float delta = window.getView().getSize().x / (size + 1);
         float offset = 0;
@@ -52,12 +51,12 @@ public:
         for (size_t i = 0; i < size; ++i) {
             test_gen.shoot(Bullet::BulletTypes["test_circle"], 
                            {start_pos + offset, 150}, 
-                           {rand() % 600 - 300.f, rand() % 50 + 25.f},
-                           {100, 100});
+                           {rand() % 600 - 300.f, rand() % 100 + 25.f},
+                           {150, 150});
             offset += delta;
         }
 
-        test_gen.for_each([] (Bullet* it) {it->scale(2, 2);});
+        // test_gen.for_each([] (Bullet* it) {it->scale(2, 2);});
         // test_gen.for_each([] (Bullet* it) {std::cout << "Size: " << it->getFrame()->getSize() << std::endl <<
         //                                              "Half Size: " << it->getFrame()->getHalfSize();});
         // test_gen.for_each([] (Bullet* it) {it->setVelocity(0, 0);});
@@ -68,13 +67,10 @@ public:
     }
 
     void event_loop() {
-        Text hp(std::to_string(player->HP()), 
-                Resources::fonts["ARIAL"], 48, {1650, 150});
 #ifdef DEBUG
-        Text timer(std::to_string(player->get_invinc_time()),
+        Text timer(std::to_string(GameState::player()->get_invinc_time()),
                    Resources::fonts["ARIAL"], 48, {1650, 450});
 #endif
-
         while (window.isOpen()) {
             deltaTime = clock.restart().asSeconds();
         
@@ -82,45 +78,43 @@ public:
             window.sys_event_loop();
 
             // Character control
-            if (window.hasFocus() && player) {
-                player->update();
+            if (window.hasFocus() && GameState::player()) {
+                GameState::player()->update();
             }
 
             // Bullet update
             BulletGenerator::update_all(deltaTime);
 
-            // Movement
+            // Movement and collisions
             DynamicObject::move_all(deltaTime);
             
             check_collisions();
 
-            // TODO: В отдельную функцию?
-            if (player && player->HP() <= 0) {
-                delete player;
-                player = nullptr;
-            }
+            GameState::update();
 
-            // TODO: Вынести в отдельную функцию
-            hp.setString(player ? std::string("Health: ") + std::to_string(player->HP()) : "You died");
 #ifdef DEBUG
-            timer.setString(player ? player->get_invinc_time() : 0);
+            timer.setString(GameState::player() ? GameState::player()->get_invinc_time() : 0);
 #endif
 
             window.clear(sf::Color::Black);
             GameObject::draw_all(window);
 
             window.display();
+
+            // if (GameState::player() == nullptr) {
+            //     window.close();
+            // }
         }
     }
 
     void check_collisions() {
-        if (player) {
-            // DynamicObject::check_collisions_with(*player);
+        if (GameState::player()) {
+            DynamicObject::check_collisions_with(*GameState::player());
         }
         for (auto it : frame.iter()) {
             FramedObject::check_phys_collisions_with(*it);
         }
     }
 
-    ~Game() {if (player) delete player;}
+    // ~Game() {if (player) delete player;}
 };

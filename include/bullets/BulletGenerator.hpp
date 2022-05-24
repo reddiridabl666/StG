@@ -16,7 +16,8 @@ class BulletGenerator {
 
     static void update_all(float deltaTime) {
         for (auto it : all) {
-            it->update(deltaTime);
+            if (it)
+                it->update(deltaTime);
         }
     }
 

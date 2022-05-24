@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DynamicObject.hpp"
+#include "FramedObject.hpp"
 #include <memory>
 
 using TexturePtr = std::unique_ptr<sf::RenderTexture>;
@@ -37,6 +38,7 @@ public:
     bool is_in_lower_sector(DynamicObject* obj);
 
     void on_collide(DynamicObject* obj) override;
+    void on_collide_phys(FramedObject* obj);
 };
 
 struct Frame {
