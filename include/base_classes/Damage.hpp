@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstddef>
-
 class Health {
 protected:
     sf::Int32 hp_ = 5;

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "GameObject.h"
+#include "SpriteObject.h"
 #include "Window.h"
 
-class Background : SpriteObject {
+class Background : public SpriteObject {
 public:
     Background() : SpriteObject(Layer::Bg) {}
     Background(const sf::Texture& texture, const Window& window) :

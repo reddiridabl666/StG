@@ -5,14 +5,33 @@
 #include <unordered_set>
 #include "Bullet.hpp"
 
+#include "HealthObject.hpp"
+
 class BulletGenerator {
   private:
     // sf::Vector2f pos_ = {0, 0};
-    std::list<Bullet*> bullets;
+    std::list<Bullet*> bullets_;
     // std::unordered_map<std::string, BulletInfo> bullet_types;
 
   public:
     static std::unordered_set<BulletGenerator*> all;
+
+    static void check_collisions_with_bullets(HealthObject* obj) {
+        if (!obj) {
+            return;
+        }
+        
+        for (const auto gen : all) {
+            for (auto bullet : gen->bullets_) {
+                if (bullet->collides_with(obj)) {
+                    obj->on_collide(bullet);
+                    bullet->on_collide(obj);
+                }
+            }
+            
+            // Мб запихнуть проверку на отсутствие коллизий
+        }
+    }
 
     static void update_all(float deltaTime) {
         for (auto it : all) {
@@ -22,7 +41,7 @@ class BulletGenerator {
     }
 
     std::list<Bullet*>& getBullets() {
-        return bullets;
+        return bullets_;
     }
 
     explicit BulletGenerator(/*sf::Vector2f pos = {0, 0}*/)/*: pos_(pos)*/ {
@@ -31,7 +50,7 @@ class BulletGenerator {
 
     virtual Bullet* shoot(const BulletInfo& info) {
         auto bullet = new Bullet(info);
-        bullets.push_back(bullet);
+        bullets_.push_back(bullet);
         return bullet;
     }
 
@@ -59,18 +78,18 @@ class BulletGenerator {
     }
 
     void for_each(const std::function<void(Bullet*)>& action) {
-        for (auto it : bullets) {
+        for (auto it : bullets_) {
             if (it)
                 action(it);
         }
     }
 
     void update(float deltaTime) {
-        if (bullets.empty()) {
+        if (bullets_.empty()) {
             return;
         }
         // size_t deleted_num = 0;
-        for (auto it = bullets.begin(); it != bullets.end();) {
+        for (auto it = bullets_.begin(); it != bullets_.end();) {
             auto next = std::next(it);
             auto bullet = *it;
             if (bullet) {
@@ -79,7 +98,7 @@ class BulletGenerator {
                     // ++deleted_num;
                     delete bullet;
                     bullet = nullptr;
-                    bullets.erase(it);
+                    bullets_.erase(it);
                 }
             }
             it = next;
@@ -95,7 +114,7 @@ class BulletGenerator {
 
 inline std::unordered_set<BulletGenerator*> BulletGenerator::all;
 
-class EnemyBulletGenerator : public BulletGenerator {
+class EnemyBulletGen : public BulletGenerator {
 public:
     using BulletGenerator::BulletGenerator;
     using BulletGenerator::shoot;
@@ -104,6 +123,19 @@ public:
         auto bullet = BulletGenerator::shoot(info);
         bullet->setTag(Tag::Enemy);
         // std::cout << "Enemy bullet shot!\n";
+        return bullet;
+    }
+};
+
+class PlayerBulletGen : public BulletGenerator {
+public:
+    using BulletGenerator::BulletGenerator;
+    using BulletGenerator::shoot;
+
+    Bullet* shoot(const BulletInfo& info) override {
+        auto bullet = BulletGenerator::shoot(info);
+        bullet->setTag(Tag::PlayerBullet);
+        // std::cout << "Player bullet shot!\n";
         return bullet;
     }
 };

@@ -91,19 +91,26 @@ class DynamicObject : public SpriteObject {
             hitbox_->on_collide_stop();
     }
 
-    void setHitbox(sf::Vector2f size) {
+    void setHitbox(const HitboxInfo& info) {
         if (hitbox_) {
             delete hitbox_;
         }
-        hitbox_ = new RectHitbox(size, getPosition());
+        hitbox_ = Hitbox::getHitbox(info, getPosition());
     }
 
-    void setHitbox(float radius) {
-        if (hitbox_) {
-            delete hitbox_;
-        }
-        hitbox_ = new CircleHitbox(radius, getPosition());
-    }
+    // void setHitbox(sf::Vector2f size) {
+    //     if (hitbox_) {
+    //         delete hitbox_;
+    //     }
+    //     hitbox_ = new RectHitbox(size, getPosition());
+    // }
+
+    // void setHitbox(float radius) {
+    //     if (hitbox_) {
+    //         delete hitbox_;
+    //     }
+    //     hitbox_ = new CircleHitbox(radius, getPosition());
+    // }
 
     void setVelocity(sf::Vector2f velocity) {
         velocity_ = velocity;

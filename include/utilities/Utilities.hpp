@@ -5,7 +5,7 @@
 #include <cmath>
 
 namespace constants {
-    static constexpr float g = 9.8;
+    inline constexpr float g = 9.8;
 }
 
 enum class Layer {
@@ -29,10 +29,6 @@ enum class HitboxType {
     Circle,
     Rect
 };
-
-static constexpr sf::Uint8 layer_num = 5;
-
-inline std::array<Layer, layer_num> Layers = {Layer::Bg, Layer::Character, Layer::Bullet, Layer::Hitbox, Layer::Interface};
 
 template <typename T>
 inline T squared_distance(sf::Vector2<T> a, sf::Vector2<T> b) {
@@ -71,6 +67,6 @@ std::ostream& operator<<(std::ostream &out, sf::Vector2<T> vec) {
 }
 
 // static const sf::Vector2f left(-1.0, 0.0);
-static const sf::Vector2f right(1.0, 0.0);
+inline const sf::Vector2f right(1.0, 0.0);
 // static const sf::Vector2f up(0.0, -1.0);
-static const sf::Vector2f down(0.0, 1.0);
+inline const sf::Vector2f down(0.0, 1.0);

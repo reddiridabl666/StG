@@ -1,6 +1,8 @@
 #include <GameObject.h>
 
+static constexpr sf::Uint8 layer_num = 5;
 std::unordered_map<Layer, GameObject::objects> GameObject::objects_by_layer(layer_num);
+const std::array<Layer, layer_num> Layers = {Layer::Bg, Layer::Character, Layer::Bullet, Layer::Hitbox, Layer::Interface};
 
 GameObject::GameObject(Layer layer) : layer_(layer) {
     objects_by_layer[layer_].insert(this);

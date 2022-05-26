@@ -72,8 +72,6 @@ void DynamicObject::on_collide(DynamicObject* obj) {
 }
 
 void DynamicObject::check_collisions_with(DynamicObject& other) {
-    DynamicObject::refresh_collision_num();
-
     for (auto it : all) {
         if (!it) continue;
 

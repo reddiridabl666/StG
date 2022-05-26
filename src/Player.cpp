@@ -11,11 +11,10 @@ static constexpr float player_size = 32 * 4.4;
 
 static float gamepad_movement(Axis axis, unsigned int gamepad_num = 0) {
     float pos = Gamepad::getAxisPosition(gamepad_num, axis);
-    // if (std::abs(pos) > 0) {
-    //     return pos > 0 ? 1 : -1;
-    // }
-    // return 0;
-    return std::abs(pos);
+    if (std::abs(pos) > 0) {
+        return pos > 0 ? 1 : -1;
+    }
+    return 0;
 }
 
 static float gamepad_movement(Axis axis1, Axis axis2, unsigned int gamepad_num = 0) {
@@ -74,37 +73,17 @@ void Player::on_collide(DynamicObject* obj) {
             hitbox_->deactivate();
         }
     }
-
-    // if (auto wall = dynamic_cast<Wall*>(obj)) {
-    //     // Right wall
-    //     if (wall->is_in_right_sector(this)) {
-    //         setPosition(obj->getPosition().x + obj->getHalfSize().x + 
-    //                     hitbox_->getHalfSize().x, getPosition().y);
-    //     // Left wall
-    //     } else if (wall->is_in_left_sector(this)) {
-    //         setPosition(obj->getPosition().x - obj->getHalfSize().x - 
-    //                     hitbox_->getHalfSize().x, getPosition().y);
-    //     // Upper wall
-    //     } else if (wall->is_in_upper_sector(this)) {
-    //         setPosition(getPosition().x, obj->getPosition().y -
-    //                     obj->getHalfSize().y - hitbox_->getHalfSize().y);
-    //     // Lower wall
-    //     } else if (wall->is_in_lower_sector(this)) {
-    //         setPosition(getPosition().x, obj->getPosition().y +
-    //                     obj->getHalfSize().y + hitbox_->getHalfSize().y);
-    //     }
-    // }
 }
 
 void Player::control() {
     if (pressed_any_of(Key::LShift, Key::RShift) || Gamepad::isButtonPressed(0, 5)) {
         speed_ = slow_speed_;
-        // hitbox_->show();
+        if (!is_invincible()) hitbox_->show();
     } else {
         speed_ = normal_speed_;
-// #ifndef DEBUG
-//         hitbox_->hide();
-// #endif
+#ifndef DEBUG
+        hitbox_->hide();
+#endif
     }
 
     setVelocity(speed_ * (horizontal_movement() * right + vertical_movement() * down));
@@ -117,8 +96,6 @@ void Player::control() {
 
 void Player::update() {
     setVelocity(0, 0);
-
-    float flick_time = 0.1;
     // auto delta_time = invinc_clock_.getElapsedTime().asSeconds();
 
     if (!hitbox_->is_active()) {
@@ -140,8 +117,8 @@ void Player::shoot(std::string name) {
 
     sf::Vector2f new_size = {16, 28};
 
-    gen_.shoot(Bullet::BulletTypes[name], getPosition() - sf::Vector2f{15, 40}, 
+    gen_.shoot(Bullet::BulletTypes[name], getPosition() - sf::Vector2f{15, 70},
                         Bullet::BulletTypes[name].velocity, new_size);
-    gen_.shoot(Bullet::BulletTypes[name], getPosition() - sf::Vector2f{-15, 40}, 
+    gen_.shoot(Bullet::BulletTypes[name], getPosition() - sf::Vector2f{-15, 70}, 
                         Bullet::BulletTypes[name].velocity, new_size);
 }

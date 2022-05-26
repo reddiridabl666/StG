@@ -47,7 +47,7 @@ bool Wall::is_in_lower_sector(DynamicObject* obj) {
 }
 
 void Wall::on_collide(DynamicObject* obj) {
-// DynamicObject::on_collide(obj);
+    // DynamicObject::on_collide(obj);
     if (auto player = dynamic_cast<Player*>(obj)) {
         // Right wall
         if (is_in_right_sector(player)) {

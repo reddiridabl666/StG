@@ -2,7 +2,7 @@
 
 #include "ShootingObject.hpp"
 
-class Player : public ShootingObject<BulletGenerator>, public Health {
+class Player : public ShootingObject<PlayerBulletGen> {
 protected:
     float speed_ = 800;
     float normal_speed_ = speed_;
@@ -12,6 +12,7 @@ protected:
 
     sf::Clock invinc_clock_;
     sf::Clock flick_clock_;
+    float flick_time = 0.1;
     float invinc_time_ = 1.5;
 
 public:
@@ -31,9 +32,20 @@ public:
         slow_speed_ = slow;
     }
 
+    std::list<Bullet*> getBullets() {
+        return gen_.getBullets();
+    }
+
     void update();
     void control();
     void shoot(std::string name) override;
+
+    void show() override {
+        ShootingObject::show();
+        if (speed_ == slow_speed_ && hitbox_) {
+            hitbox_->show();
+        }
+    }
 
     bool is_invincible() const {
         return !hitbox_->is_active();

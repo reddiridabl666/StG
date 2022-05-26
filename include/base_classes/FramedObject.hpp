@@ -104,8 +104,6 @@ public:
     }
 
     static void check_phys_collisions_with(DynamicObject& other) {
-        DynamicObject::refresh_collision_num();
-
         for (auto it : all) {
             if (!it) continue;
 
