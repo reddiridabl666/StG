@@ -25,6 +25,13 @@ class DynamicObject : public SpriteObject {
     static void check_collisions_with(DynamicObject& other);
     static void check_collisions();
 
+    // void check_collisions(DynamicObject* obj) {
+    //     if (collides_with(obj)) {
+    //         on_collide(obj);
+    //         obj->on_collide(this);
+    //     }
+    // }
+
     static void move_all(float deltaTime);
     static void refresh_collision_num();
     static void for_each(std::function<void(DynamicObject*)> action);
@@ -97,20 +104,6 @@ class DynamicObject : public SpriteObject {
         }
         hitbox_ = Hitbox::getHitbox(info, getPosition());
     }
-
-    // void setHitbox(sf::Vector2f size) {
-    //     if (hitbox_) {
-    //         delete hitbox_;
-    //     }
-    //     hitbox_ = new RectHitbox(size, getPosition());
-    // }
-
-    // void setHitbox(float radius) {
-    //     if (hitbox_) {
-    //         delete hitbox_;
-    //     }
-    //     hitbox_ = new CircleHitbox(radius, getPosition());
-    // }
 
     void setVelocity(sf::Vector2f velocity) {
         velocity_ = velocity;

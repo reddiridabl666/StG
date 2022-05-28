@@ -2,8 +2,21 @@
 
 #include "ShootingObject.hpp"
 
-class Player : public ShootingObject<PlayerBulletGen> {
+class Enemy;
+
+class PlayerBullet : public Bullet {
+public:
+    PlayerBullet(Layer layer = Layer::Bullet) : Bullet(layer) {setTag(Tag::PlayerBullet);}
+
+    PlayerBullet(BulletInfo info, Layer layer = Layer::Bullet) : Bullet(info, layer) {
+        setTag(Tag::PlayerBullet);
+    }
+};
+
+class Player : public ShootingObject<PlayerBullet> {
 protected:
+    std::unordered_map<std::string, sf::Texture> sprites_;
+
     float speed_ = 800;
     float normal_speed_ = speed_;
     float slow_speed_ = 450;
@@ -24,16 +37,27 @@ public:
            sf::Vector2f hitbox_size = {0, 0}, const std::string bullet_name = ""/*const BulletInfo& info = {}*/,
            float speed = 800, float mass = 0, Layer layer = Layer::Character);
 
-    void on_collide(DynamicObject* obj) override;
-    void on_collide_stop() override;
+    // void on_collide(DynamicObject* obj) override;
+    // void on_collide_stop() override;
+
+    void init_sprites(sf::Image sprite_sheet);
+
+    void on_collide(Bullet* bullet) override;
+    void on_collide(Enemy* enemy);
+    void on_damage_dealt() {
+        invinc_clock_.restart();
+        flick_clock_.restart();
+        hitbox_->deactivate();
+    }
+
+    int loseHP(int hp = 1) override {
+        on_damage_dealt();
+        return ShootingObject::loseHP(hp);
+    }
 
     void setSpeed(float normal, float slow) {
         normal_speed_ = normal;
         slow_speed_ = slow;
-    }
-
-    std::list<Bullet*> getBullets() {
-        return gen_.getBullets();
     }
 
     void update();

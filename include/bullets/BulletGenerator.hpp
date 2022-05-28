@@ -7,49 +7,71 @@
 
 #include "HealthObject.hpp"
 
-class BulletGenerator {
+// class BulletGeneratorBase {
+// protected:
+//     static std::unordered_set<BulletGeneratorBase*> all;
+//     std::list<Bullet*> bullets_;
+
+//     BulletGeneratorBase() {
+//         all.insert(this);
+//     }
+
+//     virtual ~BulletGeneratorBase() {
+//         all.erase(this);
+//     }
+
+//     virtual void update(float) = 0;
+
+//     // TODO: МБ надо вообще убрать этот класс и делать сеты генераторов для каждого типа пуль??
+// public:
+//     static void check_collisions_with_bullets(HealthObject* obj) {
+//         if (!obj) {
+//             return;
+//         }
+        
+//         for (const auto gen : all) {
+//             for (auto bullet : gen->bullets_) {
+//                 if (bullet->collides_with(obj)) {
+//                     obj->on_collide(bullet);
+//                     bullet->on_collide(obj);
+//                 }
+//             }
+            
+//             // Мб запихнуть проверку на отсутствие коллизий
+//         }
+//     }
+
+//     template<typename> friend class BulletGenerator;
+// };
+
+template <typename BulletType>
+class BulletGenerator /* : public BulletGeneratorBase */ {
   private:
-    // sf::Vector2f pos_ = {0, 0};
     std::list<Bullet*> bullets_;
+    // sf::Vector2f pos_ = {0, 0};
+    // std::list<Bullet*> bullets_;
     // std::unordered_map<std::string, BulletInfo> bullet_types;
 
   public:
-    static std::unordered_set<BulletGenerator*> all;
+    // static std::unordered_set<BulletGenerator*> all;
 
-    static void check_collisions_with_bullets(HealthObject* obj) {
-        if (!obj) {
-            return;
-        }
-        
-        for (const auto gen : all) {
-            for (auto bullet : gen->bullets_) {
-                if (bullet->collides_with(obj)) {
-                    obj->on_collide(bullet);
-                    bullet->on_collide(obj);
-                }
-            }
-            
-            // Мб запихнуть проверку на отсутствие коллизий
-        }
-    }
-
-    static void update_all(float deltaTime) {
-        for (auto it : all) {
-            if (it)
-                it->update(deltaTime);
-        }
-    }
+    // static void update_all(float deltaTime) {
+    //     for (auto it : all) {
+    //         if (it)
+    //             it->update(deltaTime);
+    //     }
+    // }
 
     std::list<Bullet*>& getBullets() {
         return bullets_;
     }
 
-    explicit BulletGenerator(/*sf::Vector2f pos = {0, 0}*/)/*: pos_(pos)*/ {
-        all.insert(this);
+    BulletGenerator(/*sf::Vector2f pos = {0, 0}*/)/*: pos_(pos)*/ {
+        // all.insert(this);
     }
 
     virtual Bullet* shoot(const BulletInfo& info) {
-        auto bullet = new Bullet(info);
+        auto bullet = new BulletType(info);
         bullets_.push_back(bullet);
         return bullet;
     }
@@ -68,12 +90,7 @@ class BulletGenerator {
 
     Bullet* shoot(const BulletInfo& info, sf::Vector2f pos, sf::Vector2f velocity, sf::Vector2f size) {
         auto bullet = shoot(info, pos, velocity);
-        // std::cout << size.x;
         bullet->setSize(size);
-        // if (bullet->frame_hitbox_) {
-        //     delete bullet->frame_hitbox_;
-        // }
-        // bullet->frame_hitbox_ = Hitbox::getHitbox(bullet->getSize());
         return bullet;
     }
 
@@ -108,34 +125,35 @@ class BulletGenerator {
 
     virtual ~BulletGenerator() {
         for_each([](Bullet* it) {delete it;});
-        all.erase(this);
+        // all.erase(this);
     }
 };
 
-inline std::unordered_set<BulletGenerator*> BulletGenerator::all;
+// TODO: Переместить?
+// inline std::unordered_set<BulletGeneratorBase*> BulletGeneratorBase::all;
 
-class EnemyBulletGen : public BulletGenerator {
-public:
-    using BulletGenerator::BulletGenerator;
-    using BulletGenerator::shoot;
+// class EnemyBulletGen : public BulletGenerator {
+// public:
+//     using BulletGenerator::BulletGenerator;
+//     using BulletGenerator::shoot;
 
-    Bullet* shoot(const BulletInfo& info) override {
-        auto bullet = BulletGenerator::shoot(info);
-        bullet->setTag(Tag::Enemy);
-        // std::cout << "Enemy bullet shot!\n";
-        return bullet;
-    }
-};
+//     Bullet* shoot(const BulletInfo& info) override {
+//         auto bullet = BulletGenerator::shoot(info);
+//         bullet->setTag(Tag::Enemy);
+//         // std::cout << "Enemy bullet shot!\n";
+//         return bullet;
+//     }
+// };
 
-class PlayerBulletGen : public BulletGenerator {
-public:
-    using BulletGenerator::BulletGenerator;
-    using BulletGenerator::shoot;
+// class PlayerBulletGen : public BulletGenerator {
+// public:
+//     using BulletGenerator::BulletGenerator;
+//     using BulletGenerator::shoot;
 
-    Bullet* shoot(const BulletInfo& info) override {
-        auto bullet = BulletGenerator::shoot(info);
-        bullet->setTag(Tag::PlayerBullet);
-        // std::cout << "Player bullet shot!\n";
-        return bullet;
-    }
-};
+//     Bullet* shoot(const BulletInfo& info) override {
+//         auto bullet = BulletGenerator::shoot(info);
+//         bullet->setTag(Tag::PlayerBullet);
+//         // std::cout << "Player bullet shot!\n";
+//         return bullet;
+//     }
+// };

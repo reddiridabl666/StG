@@ -1,6 +1,8 @@
 #include "Player.hpp"
 #include "Wall.hpp"
+#include "Enemy.hpp"
 #include "UpdateFunctions.hpp"
+#include "Resources.hpp"
 
 using Key = sf::Keyboard;
 using Gamepad = sf::Joystick;
@@ -8,6 +10,19 @@ using Axis = Gamepad::Axis;
 
 static const sf::Vector2f player_hitbox_size = {30, 45};
 static constexpr float player_size = 32 * 4.4;
+
+// TODO: Хранить красивее?
+void Player::init_sprites(sf::Image sprite_sheet) {
+    for (int i = 1; i <= 4; ++i) {
+        sprites_["idle" + std::to_string(i)].loadFromImage(sprite_sheet, {32 * (i - 1), 0, 32 * i, 32 * i});
+    }
+    for (int i = 1; i <= 3; ++i) {
+        sprites_["right" + std::to_string(i)].loadFromImage(sprite_sheet, {32 * (i - 1), 32, 32 * i, 32 * i});
+    }
+    for (int i = 1; i <= 3; ++i) {
+        sprites_["left" + std::to_string(i)].loadFromImage(sprite_sheet, {32 * (i - 1), 64, 32 * i, 32 * i});
+    }
+}
 
 static float gamepad_movement(Axis axis, unsigned int gamepad_num = 0) {
     float pos = Gamepad::getAxisPosition(gamepad_num, axis);
@@ -50,29 +65,46 @@ static float horizontal_movement(unsigned int gamepad_num = 0) {
 
 Player::Player(const sf::Texture& texture, sf::Vector2f pos,
                sf::Vector2f hitbox_size, const std::string bullet_name/*const BulletInfo& info*/,
-               float speed, float mass, Layer layer) 
-    : ShootingObject(texture, pos, hitbox_size, {0, 0}, mass, layer), speed_(speed), normal_shot_(bullet_name) {
-        auto factor = player_size / min(texture.getSize());
-        scale(factor, factor);
-        setTag(Tag::Player);
+               float speed, float mass, Layer layer) : 
+    ShootingObject(texture, pos, hitbox_size, {0, 0}, mass, layer), speed_(speed), normal_shot_(bullet_name) {
+    auto factor = player_size / min(texture.getSize());
+    scale(factor, factor);
+    setTag(Tag::Player);
+    init_sprites(Resources::sprite_sheets["player"]);
 }
 
-void Player::on_collide_stop() {
-    DynamicObject::on_collide_stop();
-}
+// void Player::on_collide_stop() {
+//     DynamicObject::on_collide_stop();
+// }
 
-void Player::on_collide(DynamicObject* obj) {
-    DynamicObject::on_collide(obj);
+// void Player::on_collide(DynamicObject* obj) {
+//     DynamicObject::on_collide(obj);
     
-    if (obj->getTag() == Tag::Enemy && hitbox_->is_active()) {
-        // loseHP();
-        if (auto damage_source = dynamic_cast<DamageDealing*>(obj)) {
-            damage_source->dealDamage(*this);
-            invinc_clock_.restart();
-            flick_clock_.restart();
-            hitbox_->deactivate();
-        }
+//     if (obj->getTag() == Tag::Enemy && hitbox_->is_active()) {
+//         // loseHP();
+//         if (auto damage_source = dynamic_cast<DamageDealing*>(obj)) {
+//             damage_source->dealDamage(*this);
+//             invinc_clock_.restart();
+//             flick_clock_.restart();
+//             hitbox_->deactivate();
+//         }
+//     }
+// }
+
+void Player::on_collide(Bullet* bullet) {
+    if (!bullet || is_invincible()) {
+        return;
     }
+    if (bullet->getTag() == Tag::Enemy) {
+        ShootingObject::on_collide(bullet);
+    }
+}
+
+void Player::on_collide(Enemy* enemy) {
+    if (!enemy || is_invincible()) {
+        return;
+    }
+    enemy->dealDamage(*this);
 }
 
 void Player::control() {
@@ -110,6 +142,16 @@ void Player::update() {
     }
 
     control();
+
+    if (getVelocity().x > 0) {
+        setTexture(sprites_["right1"]);
+    }
+    if (getVelocity().x < 0) {
+        setTexture(sprites_["left1"]);
+    }
+    if (getVelocity().x == 0) {
+        setTexture(sprites_["idle1"]);
+    }
 }
 
 void Player::shoot(std::string name) {

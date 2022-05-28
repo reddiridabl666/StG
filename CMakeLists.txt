@@ -28,11 +28,11 @@ add_executable(main main.cpp)
 # Add lib
 set(SOURCES src/GameObject.cpp src/Window.cpp src/SpriteObject.cpp 
             src/Player.cpp src/Hitbox.cpp src/DynamicObject.cpp 
-            src/Wall.cpp src/Bullet.cpp src/Game.cpp)
+            src/Wall.cpp src/Bullet.cpp src/Game.cpp src/FramedObject.cpp)
 add_library(GameLib SHARED ${SOURCES})
 
 # Add include dirs
-set(INCLUDE_DIRS include include/utilities include/bullets include/base_classes)
+set(INCLUDE_DIRS include include/utilities include/bullets include/base_classes include/enemy)
 target_include_directories(main PRIVATE ${INCLUDE_DIRS})
 target_include_directories(GameLib PRIVATE ${INCLUDE_DIRS})
 

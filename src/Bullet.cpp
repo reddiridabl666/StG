@@ -14,9 +14,10 @@ Bullet::Bullet(BulletInfo info, Layer layer) : Bullet(layer) {
         frame_hitbox_ = Hitbox::getFrameHitbox(getSize());
     }
 
-    if (info.update) {
-        setUpdateFunc(*info.update);
-    }
+    // if (info.update) {
+    //     setUpdateFunc(*info.update);
+    // }
+    setUpdateFunc(info.update);
 
     hitbox_ = Hitbox::getHitbox(info.hitbox_info);
 
@@ -27,7 +28,7 @@ Bullet::Bullet(BulletInfo info, Layer layer) : Bullet(layer) {
 
 Bullet::Bullet(const Bullet& other) : 
     Bullet(BulletInfo{other.getTexture(), other.getHitbox()->getInfo(), 
-                      other.getVelocity(), &other.update_, other.damage_, 
+                      other.getVelocity(), other.update_, other.damage_, 
                       other.mass_, other.frame_hitbox_->getInfo()}) {
     setTag(other.getTag());
 }
@@ -57,11 +58,13 @@ std::unordered_map<std::string, BulletInfo> Bullet::getBulletTypes() {
     textures = getBulletTextures();
     std::unordered_map<std::string, BulletInfo> res;
 
-    res["test_circle"] = BulletInfo{&textures["test_circle"], 36,
-                          {0, 0}, &gravity, 1, 1, textures["test_circle"].getSize().x / 2};
+    res.insert({"test_circle", BulletInfo{&textures["test_circle"], 36,
+                          {0, 0}, gravity + delete_when_out_of_bounds, 
+                          1, 1, textures["test_circle"].getSize().x / 2}});
 
-    res["test_player"] = BulletInfo{&textures["player_bullet"], 
-                                sf::Vector2f{8.f, 14.f} * 4.f, {0, -600}, &delete_when_out_of_bounds, 50, 0, sf::Vector2f{100, 100}};
+    res.insert({"test_player", BulletInfo{&textures["player_bullet"], 
+                                sf::Vector2f{8.f, 14.f} * 4.f, {0, -600}, 
+                                delete_when_out_of_bounds, 25, 0, sf::Vector2f{100, 100}}});
     return res;
 }
 

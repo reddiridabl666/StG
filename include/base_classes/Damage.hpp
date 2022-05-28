@@ -20,7 +20,7 @@ public:
         return hp_;
     }
 
-    int loseHP(int n = 1) {
+    virtual int loseHP(int n = 1) {
         return gainHP(-n);
     }
 };

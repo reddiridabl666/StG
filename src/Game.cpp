@@ -25,7 +25,7 @@ void Game::start() {
     //     offset += delta;
     // }
 
-    boss = new TestBoss(Resources::textures["boss"], {window.getCenter().x, 200}, sf::Vector2f{300.f, 300.f}, 1000);
+    boss = new TestBoss(Resources::textures["boss"], {window.getCenter().x, 200}, sf::Vector2f{300.f, 300.f}, 10000);
     boss->scale(4.3, 4.3);
     
     // test_gen.for_each([] (Bullet* it) {it->scale(2, 2);});
@@ -33,7 +33,7 @@ void Game::start() {
     //                                              "Half Size: " << it->getFrame()->getHalfSize();});
     // test_gen.for_each([] (Bullet* it) {it->setVelocity(0, 0);});
     // test_gen.for_each([] (Bullet* it) {it->setUpdateFunc(delete_when_out_of_bounds);});
-
+    
     clock.restart();
     event_loop();
 }
@@ -65,6 +65,11 @@ void Game::event_loop() {
             player = nullptr;
         }
 
+        if (boss && boss->HP() <= 0) {
+            delete boss;
+            boss = nullptr;
+        }
+
         GameState::update(player);
 
 #ifdef DEBUG
@@ -76,6 +81,8 @@ void Game::event_loop() {
 
         window.display();
 
+        std::cout << player->getSize() << std::endl;
+
         // if (player == nullptr) {
         //     window.close();
         // }
@@ -84,9 +91,11 @@ void Game::event_loop() {
 
 void Game::check_collisions() {
     DynamicObject::refresh_collision_num();
-
-    boss->player_collision(player);
-    BulletGenerator::check_collisions_with_bullets(player);
+    if (boss) {
+        boss->player_collision(player);
+        boss->check_bullet_collisions(player);
+    }
+    // BulletGeneratorBase::check_collisions_with_bullets(player);
     
     for (auto it : frame.iter()) {
         FramedObject::check_phys_collisions_with(*it);

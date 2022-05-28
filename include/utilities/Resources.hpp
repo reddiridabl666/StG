@@ -10,9 +10,9 @@ namespace fs = std::filesystem;
 
 struct Resources {
 public:
-    static string_map<sf::Texture> textures;
-    static string_map<sf::Font> fonts;
-    static string_map<sf::Image> sprite_sheets;
+    static inline string_map<sf::Texture> textures;
+    static inline string_map<sf::Font> fonts;
+    static inline string_map<sf::Image> sprite_sheets;
 
     Resources(fs::path texture_path, fs::path fonts_path, fs::path sheets_path) {
         textures = load_from_folder<sf::Texture>(texture_path);
@@ -24,9 +24,4 @@ private:
     Resources& operator=(const Resources&) = delete;
 };
 
-
-inline string_map<sf::Texture> Resources::textures;
-inline string_map<sf::Font> Resources::fonts;
-inline string_map<sf::Image> Resources::sprite_sheets;
-
-static inline Resources resources("images", "fonts", "images/sprite_sheets");
+const inline Resources resources("images", "fonts", "images/sprite_sheets");

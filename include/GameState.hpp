@@ -8,6 +8,8 @@
 
 #include <memory>
 
+// TODO: Эта штука не должна хранить в себе указатель на игрока
+
 class GameState {
 private:
     GameState() {}

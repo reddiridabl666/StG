@@ -1,47 +1,7 @@
 #pragma once
 
-#include "ShootingObject.hpp"
-#include "Text.hpp"
-#include "GameState.hpp"
-
-class Enemy : public ShootingObject<EnemyBulletGen>, public DamageDealing {
-public:
-    Enemy(const sf::Texture& texture, const sf::Vector2f& pos, 
-          const HitboxInfo& hitbox_size, size_t hp, Layer layer = Layer::Character) : 
-        ShootingObject(texture, pos, hitbox_size, {}, 0, layer), DamageDealing() {
-        setHP(hp);
-        setTag(Tag::Enemy);
-    }
-
-    // void on_collide(DynamicObject* obj) override {
-    //     if (obj->getTag() == Tag::PlayerBullet) {
-    //         // auto bullet = dynamic_cast<Bullet*>(obj);
-    //         dynamic_cast<Bullet*>(obj)->dealDamage(*this);
-    //     }
-    // }
-
-    void on_collide(Bullet* obj) {
-        if (obj && obj->getTag() == Tag::PlayerBullet) {
-            // auto bullet = dynamic_cast<Bullet*>(obj);
-            obj->dealDamage(*this);
-        }
-    }
-
-    void player_collision(Player* player) {
-        if (!player) {
-            return;
-        }
-        if (frame_hitbox_->collides_with(player->getHitbox())) {
-            player->on_collide(this);
-        }
-        for (auto it : player->getBullets()) {
-            if (collides_with(it)) {
-                on_collide(it);
-                it->on_collide(this);
-            }
-        }
-    }
-};
+#include "Enemy.hpp"
+#include "UpdateFunctions.hpp"
 
 class Boss : public Enemy {
 protected:
@@ -96,7 +56,10 @@ public:
             shoot_clock_.restart();
         } else  if (time >= 7) {
             shot_num = 0;
-            gen_.for_each([](Bullet* it) {it->deactivate();});
+            gen_.for_each([](Bullet* it) {
+                // it->setUpdateFunc(gravity + delete_when_out_of_bounds);
+                it->setMass(0);
+            });
         }
     }
 };

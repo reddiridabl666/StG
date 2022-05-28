@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Background.hpp"
-#include "Enemy.hpp"
+#include "Boss.hpp"
 #include "GameState.hpp"
 #include "Player.hpp"
 #include "Resources.hpp"
