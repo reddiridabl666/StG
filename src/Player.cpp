@@ -11,17 +11,24 @@ using Axis = Gamepad::Axis;
 static const sf::Vector2f player_hitbox_size = {30, 45};
 static constexpr float player_size = 32 * 4.4;
 
-// TODO: Хранить красивее?
 void Player::init_sprites(sf::Image sprite_sheet) {
-    for (int i = 1; i <= 4; ++i) {
-        sprites_["idle" + std::to_string(i)].loadFromImage(sprite_sheet, {32 * (i - 1), 0, 32 * i, 32 * i});
-    }
-    for (int i = 1; i <= 3; ++i) {
-        sprites_["right" + std::to_string(i)].loadFromImage(sprite_sheet, {32 * (i - 1), 32, 32 * i, 32 * i});
-    }
-    for (int i = 1; i <= 3; ++i) {
-        sprites_["left" + std::to_string(i)].loadFromImage(sprite_sheet, {32 * (i - 1), 64, 32 * i, 32 * i});
-    }
+    sprites_["idle"] = load_row(sprite_sheet, 4, {0, 0});
+    sprites_["right"] = load_row(sprite_sheet, 3, {0, 32});
+    sprites_["left"] = load_row(sprite_sheet, 3, {0, 64});
+    // sprites_["idle"].resize(4);
+    // for (int i = 0; i < 4; ++i) {
+    //     sprites_["idle"][i].loadFromImage(sprite_sheet, {32 * i , 0, 32, 32});
+    // }
+
+    // sprites_["right"].resize(3);
+    // for (int i = 0; i < 3; ++i) {
+    //     sprites_["right"][i].loadFromImage(sprite_sheet, {32 * i, 32, 32, 32 });
+    // }
+
+    // sprites_["left"].resize(3);
+    // for (int i = 0; i < 3; ++i) {
+    //     sprites_["left"][i].loadFromImage(sprite_sheet, {32 * i, 64, 32, 32});
+    // }
 }
 
 static float gamepad_movement(Axis axis, unsigned int gamepad_num = 0) {
@@ -144,14 +151,18 @@ void Player::update() {
     control();
 
     if (getVelocity().x > 0) {
-        setTexture(sprites_["right1"]);
+        // setTexture(sprites_["right"][0]);
+        setAnimation(sprites_["right"]);
     }
     if (getVelocity().x < 0) {
-        setTexture(sprites_["left1"]);
+        // setTexture(sprites_["left"][0]);
+        setAnimation(sprites_["left"]);
     }
     if (getVelocity().x == 0) {
-        setTexture(sprites_["idle1"]);
+        // setTexture(sprites_["idle"][0]);
+        setAnimation(sprites_["idle"]);
     }
+    Animated::update();
 }
 
 void Player::shoot(std::string name) {

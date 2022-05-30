@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ShootingObject.hpp"
+#include "Animated.hpp"
 
 class Enemy;
 
@@ -13,10 +14,8 @@ public:
     }
 };
 
-class Player : public ShootingObject<PlayerBullet> {
+class Player : public ShootingObject<PlayerBullet>, public Animated {
 protected:
-    std::unordered_map<std::string, sf::Texture> sprites_;
-
     float speed_ = 800;
     float normal_speed_ = speed_;
     float slow_speed_ = 450;
@@ -27,6 +26,9 @@ protected:
     sf::Clock flick_clock_;
     float flick_time = 0.1;
     float invinc_time_ = 1.5;
+
+    void init_sprites(sf::Image sprite_sheet) override;
+    void control();
 
 public:
     Player() = default;
@@ -40,7 +42,9 @@ public:
     // void on_collide(DynamicObject* obj) override;
     // void on_collide_stop() override;
 
-    void init_sprites(sf::Image sprite_sheet);
+    void setTexture(const sf::Texture& texture) override {
+        ShootingObject::setTexture(texture);
+    }
 
     void on_collide(Bullet* bullet) override;
     void on_collide(Enemy* enemy);
@@ -61,7 +65,7 @@ public:
     }
 
     void update();
-    void control();
+    
     void shoot(std::string name) override;
 
     void show() override {

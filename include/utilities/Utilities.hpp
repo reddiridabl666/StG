@@ -4,10 +4,6 @@
 #include <array>
 #include <cmath>
 
-namespace constants {
-    inline constexpr float g = 9.8;
-}
-
 enum class Layer {
     Bg,
     Character,

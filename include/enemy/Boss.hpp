@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Animated.hpp"
 #include "Enemy.hpp"
 #include "UpdateFunctions.hpp"
 
@@ -21,11 +22,35 @@ public:
     }
 };
 
-class TestBoss : public Boss {
+class AnimatedBoss : public Boss, public Animated {
+public:
+    using Boss::Boss;
+
+    void setTexture(const sf::Texture& texture) override {
+        Boss::setTexture(texture);
+    }
+
+    void update(float deltaTime) override {
+        Boss::update(deltaTime);
+        Animated::update();
+    }
+};
+
+class TestBoss : public AnimatedBoss {
 protected:
     int shot_num = 0;
 public:
-    using Boss::Boss;
+    TestBoss(const sf::Texture& texture, const sf::Vector2f& pos, 
+          const HitboxInfo& hitbox_size, size_t hp, Layer layer = Layer::Character) : 
+        AnimatedBoss(texture, pos, hitbox_size, hp, layer) {
+        init_sprites(Resources::sprite_sheets["boss1"]);
+        setAnimation(sprites_["idle"]);
+    }
+
+    void init_sprites(sf::Image sprite_sheet) override {
+        sprites_["idle"] = load_row(sprite_sheet, 4, {0, 11}, {64, 40});
+    }
+
     void shoot(std::string name) override {
         // auto bullet = Bullet::BulletTypes[name];
         sf::Vector2f bullet_size = {150, 150};
@@ -48,7 +73,7 @@ public:
     }
 
     void update(float deltaTime) override {
-        Boss::update(deltaTime);
+        AnimatedBoss::update(deltaTime);
         auto time = shoot_clock_.getElapsedTime().asSeconds();
 
         if (shot_num < 5 && time >= 1.2) {
