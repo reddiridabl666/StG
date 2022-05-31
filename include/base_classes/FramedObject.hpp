@@ -6,8 +6,9 @@ class FramedObject : public DynamicObject {
 protected:
     // float mass_;
     Hitbox* frame_hitbox_ = nullptr;
-    static std::unordered_set<FramedObject*> all; // Куча копипасты
 public:
+    static std::unordered_set<FramedObject*> all;
+
     FramedObject(Layer layer = Layer::Character) : DynamicObject(layer) {
         all.insert(this);
     }
@@ -46,9 +47,9 @@ public:
 
     // virtual void on_collide_phys(FramedObject* obj) {}
     
-    virtual bool collides_with_phys(DynamicObject* obj);
+    // virtual bool collides_with_phys(DynamicObject* obj);
 
-    static void check_phys_collisions_with(DynamicObject& other);
+    // static void check_phys_collisions_with(DynamicObject& other);
 
     ~FramedObject() override {
         if (frame_hitbox_) {

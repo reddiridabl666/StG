@@ -17,7 +17,8 @@ protected:
     bool is_hidden_ = false;
 
 public:
-    explicit GameObject(Layer layer = Layer::Bg);
+    explicit GameObject(Layer layer = Layer::Bg, const sf::Vector2f& size = {0, 0});
+    GameObject(const GameObject& other);
     using objects = std::unordered_set<GameObject*>;
 
     static std::unordered_map<Layer, objects> objects_by_layer;

@@ -76,28 +76,28 @@ void FramedObject::scale(float a, float b) {
     }
 }
 
-bool FramedObject::collides_with_phys(DynamicObject* obj) {
-    if (frame_hitbox_ && obj)
-        return frame_hitbox_->collides_with(obj->getHitbox());
-    return false;
-}
+// bool FramedObject::collides_with_phys(DynamicObject* obj) {
+//     if (frame_hitbox_ && obj)
+//         return frame_hitbox_->collides_with(obj->getHitbox());
+//     return false;
+// }
 
-void FramedObject::check_phys_collisions_with(DynamicObject& other) {
-    for (auto it : all) {
-        if (!it) continue;
+// void FramedObject::check_phys_collisions_with(DynamicObject& other) {
+//     for (auto it : all) {
+//         if (!it) continue;
 
-        if (it != &other) {
-            if (it->collides_with_phys(&other)) {
-                it->on_collide(&other);
-                other.on_collide(it);
-            }
-        }
+//         if (it != &other) {
+//             if (it->collides_with_phys(&other)) {
+//                 it->on_collide(&other);
+//                 other.on_collide(it);
+//             }
+//         }
         
-        if (it->frame_hitbox_ && it->getFrame()->getCollisionNum() == 0) {
-            it->on_collide_stop();
-        }
-    }
-    if (other.getHitbox() && other.getHitbox()->getCollisionNum() == 0) {
-        other.on_collide_stop();
-    }
-}
+//         if (it->frame_hitbox_ && it->getFrame()->getCollisionNum() == 0) {
+//             it->on_collide_stop();
+//         }
+//     }
+//     if (other.getHitbox() && other.getHitbox()->getCollisionNum() == 0) {
+//         other.on_collide_stop();
+//     }
+// }

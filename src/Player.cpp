@@ -134,8 +134,7 @@ void Player::control() {
 }
 
 void Player::update() {
-    setVelocity(0, 0);
-    // auto delta_time = invinc_clock_.getElapsedTime().asSeconds();
+    // setVelocity(0, 0);
 
     if (!hitbox_->is_active()) {
         if (flick_clock_.getElapsedTime().asSeconds() >= flick_time) {
@@ -151,15 +150,12 @@ void Player::update() {
     control();
 
     if (getVelocity().x > 0) {
-        // setTexture(sprites_["right"][0]);
         setAnimation(sprites_["right"]);
     }
     if (getVelocity().x < 0) {
-        // setTexture(sprites_["left"][0]);
         setAnimation(sprites_["left"]);
     }
     if (getVelocity().x == 0) {
-        // setTexture(sprites_["idle"][0]);
         setAnimation(sprites_["idle"]);
     }
     Animated::update();

@@ -58,7 +58,7 @@ inline T sign(T x) {
 
 template <typename T>
 inline std::ostream& operator<<(std::ostream &out, sf::Vector2<T> vec) {
-    out << vec.x << ", " << vec.y;
+    out << vec.x << "," << vec.y;
     return out;
 }
 

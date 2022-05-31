@@ -70,6 +70,10 @@ void Game::check_collisions() {
     // BulletGeneratorBase::check_collisions_with_bullets(player);
     
     for (auto it : frame.iter()) {
-        FramedObject::check_phys_collisions_with(*it);
+        // FramedObject::check_phys_collisions_with(*it);
+        it->check_collisions_with(FramedObject::all);
+        if (player) {
+            it->player_collision(*player);
+        }
     }
 }

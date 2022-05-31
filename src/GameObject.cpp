@@ -4,9 +4,11 @@ static constexpr sf::Uint8 layer_num = 5;
 std::unordered_map<Layer, GameObject::objects> GameObject::objects_by_layer(layer_num);
 const std::array<Layer, layer_num> Layers = {Layer::Bg, Layer::Character, Layer::Bullet, Layer::Hitbox, Layer::Interface};
 
-GameObject::GameObject(Layer layer) : layer_(layer) {
+GameObject::GameObject(Layer layer, const sf::Vector2f& size) : layer_(layer), size_(size) {
     objects_by_layer[layer_].insert(this);
 }
+
+GameObject::GameObject(const GameObject& other) : GameObject(other.layer_, other.size_) {}
 
 void GameObject::activate() {
     is_active_ = true;
@@ -33,11 +35,12 @@ bool GameObject::is_hidden() const {
 }
 
 void GameObject::switch_show_mode() {
-    if (is_hidden()) {
-        show();
-    } else {
-        hide();
-    }
+    // if (is_hidden()) {
+    //     show();
+    // } else {
+    //     hide();
+    // }
+    is_hidden_ = 1 - (is_hidden_ % 2);
 }
 
 sf::Vector2f GameObject::getSize() const {

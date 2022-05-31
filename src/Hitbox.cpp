@@ -14,13 +14,13 @@ Hitbox* Hitbox::getFrameHitbox(const HitboxInfo& info, sf::Vector2f pos, const s
     return getHitbox(info, pos, sf::Color::Transparent, outline); 
 }
 
-Hitbox::Hitbox(Layer layer) : GameObject(layer) {
+Hitbox::Hitbox(Layer layer, sf::Vector2f size) : GameObject(layer, size) {
 #ifndef DEBUG
     hide();
 #endif
 }
 
-Hitbox::Hitbox(const Hitbox& hitbox) : GameObject(hitbox.layer_) {}
+// Hitbox::Hitbox(const Hitbox& hitbox) : GameObject(hitbox.layer_) {}
 
 bool Hitbox::collides_with(const Hitbox* other) {
     if (auto target = dynamic_cast<const RectHitbox*>(other)) {return collides_with_rect(target);}
@@ -41,9 +41,8 @@ void Hitbox::on_collide_stop() {
 
 RectHitbox::RectHitbox(const sf::Vector2f &size, const sf::Vector2f &center, 
                        const sf::Color& fill, const sf::Color& outline, Layer layer) 
-  : Hitbox(layer), sf::RectangleShape(size) {
+  : Hitbox(layer, size), sf::RectangleShape(size) {
     setOrigin(size.x / 2.f, size.y / 2.f);
-    size_ = size;
     setPosition(center);
     setOutlineThickness(-5);
     setFillColor(fill);
@@ -68,9 +67,9 @@ bool RectHitbox::collides_with_circle(const CircleHitbox* other) const {
 
 CircleHitbox::CircleHitbox(float radius, const sf::Vector2f &center,
                            const sf::Color& fill, const sf::Color& outline, Layer layer) 
-  : Hitbox(layer), sf::CircleShape(radius) {
+  : Hitbox(layer, {radius * 2, radius * 2}), sf::CircleShape(radius) {
     setOrigin(radius, radius);
-    size_ = sf::Vector2f{radius, radius} * 2.f ;
+    // size_ = sf::Vector2f{radius, radius} * 2.f ;
     setPosition(center);
     setOutlineThickness(-5);
     setFillColor(fill);

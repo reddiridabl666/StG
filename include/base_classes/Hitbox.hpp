@@ -19,13 +19,12 @@ class Hitbox : public GameObject {
 protected:
     sf::Uint32 collision_num_ = 0;
 
-
     virtual bool collides_with_rect(const RectHitbox* other) const = 0;
     virtual bool collides_with_circle(const CircleHitbox* other) const = 0;
   
 public:
-    explicit Hitbox(Layer layer = Layer::Hitbox);
-    Hitbox(const Hitbox& hitbox);
+    explicit Hitbox(Layer layer = Layer::Hitbox, sf::Vector2f size = {0, 0});
+    // Hitbox(const Hitbox& hitbox);
     
     static Hitbox* getHitbox(const HitboxInfo& info, sf::Vector2f pos = {}, 
                              const sf::Color& fill = transp_green, const sf::Color& outline = green);
@@ -38,6 +37,16 @@ public:
 
     virtual void on_collide();
     virtual void on_collide_stop();
+
+    void check_collisions_with(Hitbox* other) {
+        if (!other) {
+            return;
+        }
+        if (collides_with(other)) {
+            on_collide();
+            other->on_collide();
+        }
+    }
 
     virtual void setFillColor(sf::Color color) = 0;
     virtual void setOutlineColor(sf::Color color) = 0;

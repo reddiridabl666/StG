@@ -16,8 +16,7 @@ if (DEBUG)
 endif()
 
 # add memcheck
-add_custom_target(memcheck COMMAND valgrind --tool=memcheck --leak-check=full 
-                                   --log-file=memcheck.txt --suppressions=/lib/valgrind/sfml.supp ./main)
+add_custom_target(memcheck COMMAND valgrind --suppressions=/lib/valgrind/sfml.supp ./main)
 
 # Find SFML
 find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
