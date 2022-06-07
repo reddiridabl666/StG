@@ -7,7 +7,6 @@
 #include "Resources.hpp"
 #include "Text.hpp"
 #include "Wall.hpp"
-#include "Enemy.hpp"
 #include "Window.h"
 
 #include <thread>
@@ -19,7 +18,6 @@ private:
     Background bg;
     Player* player;
 
-    // GameState state;
     Boss* boss;
 
     sf::Clock clock;
@@ -29,7 +27,7 @@ public:
              frame(Wall::get_frame(window)),
              bg(Resources::textures["bg"], window),
              player(new Player(Resources::textures["player"], 
-                             window.getCenter(), {30, 45}, "test_player")) {
+                             window.getCenter(), {30, 45})) {
              GameState::init(player, &window, frame);
     }
     

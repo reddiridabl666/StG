@@ -44,13 +44,13 @@
 //     template<typename> friend class BulletGenerator;
 // };
 
-template <typename BulletType>
+template <typename T>
 class BulletGenerator /* : public BulletGeneratorBase */ {
   private:
     std::list<Bullet*> bullets_;
     // sf::Vector2f pos_ = {0, 0};
     // std::list<Bullet*> bullets_;
-    // std::unordered_map<std::string, BulletInfo> bullet_types;
+    // std::unordered_map<std::string, Bullet::Info> bullet_types;
 
   public:
     // static std::unordered_set<BulletGenerator*> all;
@@ -70,25 +70,25 @@ class BulletGenerator /* : public BulletGeneratorBase */ {
         // all.insert(this);
     }
 
-    virtual Bullet* shoot(const BulletInfo& info) {
-        auto bullet = new BulletType(info);
+    virtual Bullet* shoot(const Bullet::Info& info) {
+        auto bullet = new T(info);
         bullets_.push_back(bullet);
         return bullet;
     }
 
-    Bullet* shoot(const BulletInfo& info, sf::Vector2f pos) {
+    Bullet* shoot(const Bullet::Info& info, sf::Vector2f pos) {
         auto bullet = shoot(info);
         bullet->setPosition(pos);
         return bullet;
     }    
 
-    Bullet* shoot(const BulletInfo& info, sf::Vector2f pos, sf::Vector2f velocity) {
+    Bullet* shoot(const Bullet::Info& info, sf::Vector2f pos, sf::Vector2f velocity) {
         auto bullet = shoot(info, pos);
         bullet->setVelocity(velocity);
         return bullet;
     }
 
-    Bullet* shoot(const BulletInfo& info, sf::Vector2f pos, sf::Vector2f velocity, sf::Vector2f size) {
+    Bullet* shoot(const Bullet::Info& info, sf::Vector2f pos, sf::Vector2f velocity, sf::Vector2f size) {
         auto bullet = shoot(info, pos, velocity);
         bullet->setSize(size);
         return bullet;
@@ -137,7 +137,7 @@ class BulletGenerator /* : public BulletGeneratorBase */ {
 //     using BulletGenerator::BulletGenerator;
 //     using BulletGenerator::shoot;
 
-//     Bullet* shoot(const BulletInfo& info) override {
+//     Bullet* shoot(const Bullet::Info& info) override {
 //         auto bullet = BulletGenerator::shoot(info);
 //         bullet->setTag(Tag::Enemy);
 //         // std::cout << "Enemy bullet shot!\n";
@@ -150,7 +150,7 @@ class BulletGenerator /* : public BulletGeneratorBase */ {
 //     using BulletGenerator::BulletGenerator;
 //     using BulletGenerator::shoot;
 
-//     Bullet* shoot(const BulletInfo& info) override {
+//     Bullet* shoot(const Bullet::Info& info) override {
 //         auto bullet = BulletGenerator::shoot(info);
 //         bullet->setTag(Tag::PlayerBullet);
 //         // std::cout << "Player bullet shot!\n";

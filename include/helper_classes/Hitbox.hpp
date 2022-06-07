@@ -24,7 +24,6 @@ protected:
   
 public:
     explicit Hitbox(Layer layer = Layer::Hitbox, sf::Vector2f size = {0, 0});
-    // Hitbox(const Hitbox& hitbox);
     
     static Hitbox* getHitbox(const HitboxInfo& info, sf::Vector2f pos = {}, 
                              const sf::Color& fill = transp_green, const sf::Color& outline = green);

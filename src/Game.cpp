@@ -1,11 +1,12 @@
 #include "Game.hpp"
+#include "TestBoss.hpp"
 
 GameState GameState::state;
 
 void Game::start() {
     // player->setHP(1);
     
-    boss = new TestBoss(Resources::textures["boss"], {window.getCenter().x, 200}, sf::Vector2f{400.f, 200.f}, 10000);
+    boss = new TestBoss(Resources::textures["boss"], {window.getCenter().x, 200}, sf::Vector2f{400.f, 200.f});
     boss->scale(4.3, 4.3);
     
     clock.restart();
@@ -39,7 +40,7 @@ void Game::event_loop() {
             player = nullptr;
         }
 
-        if (boss && boss->HP() <= 0) {
+        if (boss && !boss->is_active()) {
             delete boss;
             boss = nullptr;
         }

@@ -4,6 +4,10 @@
 #include <array>
 #include <cmath>
 
+namespace constants {
+    inline constexpr float pi = 3.1415;
+}
+
 enum class Layer {
     Bg,
     Character,
@@ -21,14 +25,29 @@ enum class Tag {
     Wall
 };
 
-enum class HitboxType {
-    Circle,
-    Rect
-};
+template <typename T>
+inline T abs(sf::Vector2<T> a) {
+    return distance(a, sf::Vector2<T>{0, 0});
+}
 
 template <typename T>
 inline T squared_distance(sf::Vector2<T> a, sf::Vector2<T> b) {
     return pow(a.x - b.x, 2) + pow(a.y - b.y, 2);
+}
+
+template <typename T>
+inline T distance(sf::Vector2<T> a, sf::Vector2<T> b) {
+    return sqrt(squared_distance(a, b));
+}
+
+template <typename T>
+inline sf::Vector2<T> unit_vector(sf::Vector2<T> a, sf::Vector2<T> b) {
+    return (a - b) / distance(a, b);
+}
+
+template <typename T>
+inline sf::Vector2<T> unit_vector(sf::Vector2<T> a) {
+    return a / abs(a);
 }
 
 template <typename T>

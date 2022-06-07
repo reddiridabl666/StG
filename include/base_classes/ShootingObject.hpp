@@ -3,10 +3,10 @@
 #include "BulletGenerator.hpp"
 #include "HealthObject.hpp"
 
-template <typename BulletType>
+template <typename T>
 class ShootingObject : public HealthObject {
 protected:
-    BulletGenerator<BulletType> gen_;
+    BulletGenerator<T> gen_;
     sf::Clock shoot_clock_;
     float shot_interval = 0.1;
 
@@ -35,5 +35,9 @@ public:
         gen_.update(deltaTime);
     }
 
-    virtual void shoot(std::string name) = 0;
+    virtual void shoot(BulletType name) {
+        gen_.shoot(Bullet::Types[name], getPosition());
+    }
+
+    friend struct Phase;
 };

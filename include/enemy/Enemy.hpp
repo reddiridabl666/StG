@@ -10,6 +10,9 @@
 class EnemyBullet;
 
 class Enemy : public ShootingObject<EnemyBullet>, public DamageDealing {
+protected:
+    int shot_num_ = 0;
+
 public:
     Enemy(const sf::Texture& texture, const sf::Vector2f& pos, 
           const HitboxInfo& hitbox_size, size_t hp, Layer layer = Layer::Character) : 
@@ -39,13 +42,15 @@ public:
             }
         }
     }
+
+    friend class Phase;
 };
 
 class EnemyBullet : public Bullet {
 public:
     EnemyBullet(Layer layer = Layer::Bullet) : Bullet(layer) {}
 
-    EnemyBullet(BulletInfo info, Layer layer = Layer::Bullet) : Bullet(info, layer) {
+    EnemyBullet(Bullet::Info info, Layer layer = Layer::Bullet) : Bullet(info, layer) {
         setTag(Tag::Enemy);
     }
 };

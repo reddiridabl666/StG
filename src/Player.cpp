@@ -71,9 +71,9 @@ static float horizontal_movement(unsigned int gamepad_num = 0) {
 } 
 
 Player::Player(const sf::Texture& texture, sf::Vector2f pos,
-               sf::Vector2f hitbox_size, const std::string bullet_name/*const BulletInfo& info*/,
-               float speed, float mass, Layer layer) : 
-    ShootingObject(texture, pos, hitbox_size, {0, 0}, mass, layer), speed_(speed), normal_shot_(bullet_name) {
+               sf::Vector2f hitbox_size, float speed, 
+               float mass, Layer layer) : 
+    ShootingObject(texture, pos, hitbox_size, {0, 0}, mass, layer), speed_(speed) {
     auto factor = player_size / min(texture.getSize());
     scale(factor, factor);
     setTag(Tag::Player);
@@ -161,13 +161,13 @@ void Player::update() {
     Animated::update();
 }
 
-void Player::shoot(std::string name) {
+void Player::shoot(BulletType name) {
     shoot_clock_.restart();
 
     sf::Vector2f new_size = {16, 28};
 
-    gen_.shoot(Bullet::BulletTypes[name], getPosition() - sf::Vector2f{15, 70},
-                        Bullet::BulletTypes[name].velocity, new_size);
-    gen_.shoot(Bullet::BulletTypes[name], getPosition() - sf::Vector2f{-15, 70}, 
-                        Bullet::BulletTypes[name].velocity, new_size);
+    gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{15, 70},
+                        Bullet::Types[name].velocity, new_size);
+    gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{-15, 70}, 
+                        Bullet::Types[name].velocity, new_size);
 }

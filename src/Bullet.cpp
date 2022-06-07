@@ -2,7 +2,7 @@
 #include "UpdateFunctions.hpp"
 #include "Resources.hpp"
 
-Bullet::Bullet(BulletInfo info, Layer layer) : Bullet(layer) {
+Bullet::Bullet(Bullet::Info info, Layer layer) : Bullet(layer) {
     if (info.texture) {
         setTexture(*info.texture);
     }
@@ -27,7 +27,7 @@ Bullet::Bullet(BulletInfo info, Layer layer) : Bullet(layer) {
 }
 
 Bullet::Bullet(const Bullet& other) : 
-    Bullet(BulletInfo{other.getTexture(), other.getHitbox()->getInfo(), 
+    Bullet(Bullet::Info{other.getTexture(), other.getHitbox()->getInfo(), 
                       other.getVelocity(), other.update_, other.damage_, 
                       other.mass_, other.frame_hitbox_->getInfo()}) {
     setTag(other.getTag());
@@ -41,31 +41,40 @@ Bullet& Bullet::operator=(const Bullet& other) {
     return *this;
 }
 
-std::unordered_map<std::string, sf::Texture> Bullet::textures;
+std::unordered_map<BulletType, sf::Texture> Bullet::textures;
 
-std::unordered_map<std::string, sf::Texture> Bullet::getBulletTextures() {
-    std::unordered_map<std::string, sf::Texture> res;
+std::unordered_map<BulletType, sf::Texture> Bullet::getBulletTextures() {
+    std::unordered_map<BulletType, sf::Texture> res;
     // sf::RenderTexture texture;
     sf::Image &bullets = Resources::sprite_sheets["bullets"];
 
-    res["test_circle"].loadFromImage(bullets, {198, 466, 62, 62});
+    res[BulletType::BigCircle_Red].loadFromImage(bullets, {6, 466, 62, 62});
+    res[BulletType::Talisman_RB].loadFromImage(bullets, {23, 119, 12, 14});
+    res[BulletType::Player].loadFromImage(bullets, {233, 71, 8, 14});
+    res[BulletType::Circle_Red].loadFromImage(bullets, {40, 308, 28, 28});
 
-    res["player_bullet"].loadFromImage(bullets, {233, 71, 8, 14});
     return res;
 }
 
-std::unordered_map<std::string, BulletInfo> Bullet::getBulletTypes() {
+std::unordered_map<BulletType, Bullet::Info> Bullet::getBulletTypes() {
     textures = getBulletTextures();
-    std::unordered_map<std::string, BulletInfo> res;
+    std::unordered_map<BulletType, Bullet::Info> res;
 
-    res.insert({"test_circle", BulletInfo{&textures["test_circle"], 36,
-                          {0, 0}, gravity + delete_when_out_of_bounds, 
-                          1, 1, textures["test_circle"].getSize().x / 2}});
+    auto type = BulletType::BigCircle_Red;
+    res[type] = Bullet::Info{&textures[type], 36, {0, 0}, gravity + delete_when_out_of_bounds, 
+                             1, 1, textures[type].getSize().x / 2};
 
-    res.insert({"test_player", BulletInfo{&textures["player_bullet"], 
-                                sf::Vector2f{8.f, 14.f} * 4.f, {0, -600}, 
-                                delete_when_out_of_bounds, 25, 0, sf::Vector2f{100, 100}}});
+    type = BulletType::Player;
+    res[type] = Bullet::Info{&textures[type], sf::Vector2f{8.f, 14.f} * 4.f, {0, -600}, 
+                             delete_when_out_of_bounds, 25, 0, sf::Vector2f{100, 100}};
+    
+    type = BulletType::Talisman_RB;
+    res[type] = Bullet::Info{&textures[type], sf::Vector2f{12, 14} * 2.5f, {0, 500}, delete_when_out_of_bounds};
+
+    type = BulletType::Circle_Red;
+    res[type] = Bullet::Info{&textures[type], 30, {0, 400}, delete_when_out_of_bounds, 1, 0, textures[type].getSize().x / 2};
+    
     return res;
 }
 
-std::unordered_map<std::string, BulletInfo> Bullet::BulletTypes = Bullet::getBulletTypes();
+std::unordered_map<BulletType, Bullet::Info> Bullet::Types = Bullet::getBulletTypes();

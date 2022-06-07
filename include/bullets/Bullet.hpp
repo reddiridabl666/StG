@@ -1,63 +1,35 @@
 #pragma once
 
 #include <variant>
-// #include "DynamicObject.hpp"
+#include "BulletUtils.hpp"
 #include "FramedObject.hpp"
 #include "Damage.hpp"
 
-class Bullet;
-
-// using UpdateFunc = std::function<void(Bullet*, float)>;
-
-class UpdateFunc {
-private:
-    std::function<void(Bullet*, float)> func_;
+class Bullet : public FramedObject, public DamageDealing {
 public:
-    UpdateFunc() : func_() {}
-    UpdateFunc(const std::function<void(Bullet*, float)>& func) : func_(func) {}
-
-    void operator()(Bullet* bullet, float time) const {
-        func_(bullet, time);
-    }
-    
-    UpdateFunc operator+(const UpdateFunc& other) const {
-        return UpdateFunc([this, other](Bullet* bullet, float time) {
-            (*this)(bullet, time);
-            other(bullet, time);
-        });
-    }
-};
-
-struct BulletInfo {
-    const sf::Texture* texture = nullptr;
-    // const sf::Texture texture;
-    HitboxInfo hitbox_info = 0;
-    sf::Vector2f velocity = {0, 0};
-    const UpdateFunc update;
-    int damage = 1;
-    // sf::Vector2f size = static_cast<sf::Vector2f>(texture->getSize());
-    float mass = 0;
-    HitboxInfo phys_info = 0;
-    // std::string name;
-};
-
-class Bullet : public /* DynamicObject */FramedObject, public DamageDealing {
+    struct Info {
+        const sf::Texture* texture = nullptr;
+        HitboxInfo hitbox_info = 0;
+        sf::Vector2f velocity = {0, 0};
+        UpdateFunc update;
+        int damage = 1;
+        float mass = 0;
+        HitboxInfo phys_info = 0;
+    };
 protected:
-    // size_t damage_;
     sf::Clock clock;
     UpdateFunc update_ = UpdateFunc([] (Bullet*, float) {});
 
-    static std::unordered_map<std::string, sf::Texture> getBulletTextures();
-    // static std::unordered_map<std::string, sf::Texture> textures;
-    static std::unordered_map<std::string, BulletInfo> getBulletTypes(); 
+    static std::unordered_map<BulletType, sf::Texture> getBulletTextures();
+    static std::unordered_map<BulletType, Info> getBulletTypes(); 
 
 public:
-static std::unordered_map<std::string, sf::Texture> textures;
-    static std::unordered_map<std::string, BulletInfo> BulletTypes; 
+    static std::unordered_map<BulletType, sf::Texture> textures;
+    static std::unordered_map<BulletType, Info> Types; 
 
     Bullet(Layer layer = Layer::Bullet) : /* DynamicObject */FramedObject(layer) {}
 
-    Bullet(BulletInfo info, Layer layer = Layer::Bullet);
+    Bullet(Info info, Layer layer = Layer::Bullet);
     Bullet(const Bullet&);
     Bullet& operator=(const Bullet&);
 

@@ -11,7 +11,7 @@ public:
          int size = 48, sf::Vector2f pos = {0, 0},
          Layer layer = Layer::Interface) :
             GameObject(layer), sf::Text(text, font, size) {
-            setOrigin(getHalfSize());
+            // setOrigin(getHalfSize());
             setPosition(pos);
             size_ = {getGlobalBounds().width, getGlobalBounds().height};
     }
@@ -29,10 +29,30 @@ public:
 
     void setString(const sf::String& string) {
         sf::Text::setString(string);
-        setOrigin(getHalfSize());
+        // setOrigin(getHalfSize());
     }
 
     void setString(float num) {
         setString(std::to_string(num));
+    }
+};
+
+template <typename T>
+class Log : public Text {
+protected:
+    sf::String text_;
+    const T* num_;
+
+public:
+    Log() : Text(), text_(), num_() {}
+
+    Log(const sf::String& text, const T& num, sf::Vector2f pos = {0, 0}) :
+        Text(text + std::to_string(num), pos), text_(text), num_(&num) {}
+
+    void update(float) {
+        if (num_)
+            setString(text_ + std::to_string(*num_));
+        else
+            setString("Error");
     }
 };

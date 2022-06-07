@@ -9,7 +9,7 @@ class PlayerBullet : public Bullet {
 public:
     PlayerBullet(Layer layer = Layer::Bullet) : Bullet(layer) {setTag(Tag::PlayerBullet);}
 
-    PlayerBullet(BulletInfo info, Layer layer = Layer::Bullet) : Bullet(info, layer) {
+    PlayerBullet(Bullet::Info info, Layer layer = Layer::Bullet) : Bullet(info, layer) {
         setTag(Tag::PlayerBullet);
     }
 };
@@ -18,9 +18,9 @@ class Player : public ShootingObject<PlayerBullet>, public Animated {
 protected:
     float speed_ = 800;
     float normal_speed_ = speed_;
-    float slow_speed_ = 450;
+    float slow_speed_ = 350;
     
-    std::string normal_shot_;
+    BulletType normal_shot_ = BulletType::Player;
 
     sf::Clock invinc_clock_;
     sf::Clock flick_clock_;
@@ -36,8 +36,8 @@ public:
     Player& operator=(const Player& other) = delete;
 
     Player(const sf::Texture& texture, sf::Vector2f pos = {0, 0},
-           sf::Vector2f hitbox_size = {0, 0}, const std::string bullet_name = ""/*const BulletInfo& info = {}*/,
-           float speed = 800, float mass = 0, Layer layer = Layer::Character);
+           sf::Vector2f hitbox_size = {0, 0}, float speed = 800, 
+           float mass = 0, Layer layer = Layer::Character);
 
     // void on_collide(DynamicObject* obj) override;
     // void on_collide_stop() override;
@@ -66,7 +66,7 @@ public:
 
     void update();
     
-    void shoot(std::string name) override;
+    void shoot(BulletType name) override;
 
     void show() override {
         ShootingObject::show();
