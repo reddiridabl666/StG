@@ -7,7 +7,14 @@
 #include <unordered_map>
 
 #include <SFML/Graphics.hpp>
-#include "Utilities.hpp"
+
+enum class Layer {
+    Bg,
+    Character,
+    Hitbox,
+    Bullet,
+    Interface
+};
 
 class GameObject {
 protected:

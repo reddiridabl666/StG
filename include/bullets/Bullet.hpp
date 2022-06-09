@@ -36,6 +36,10 @@ public:
     void setUpdateFunc(const UpdateFunc& new_func) {
         update_ = new_func;
     }
+
+    UpdateFunc& updateFunc() {
+        return update_;
+    }
     
     void setSize(const sf::Vector2f& size) {
         scale(size.x / getSize().x, size.y / getSize().y);

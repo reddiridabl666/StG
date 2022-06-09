@@ -4,6 +4,16 @@
 #include "Hitbox.hpp"
 
 #include <functional>
+#include <set>
+
+enum class Tag {
+    None,
+    PlayerBullet,
+    Player,
+    Enemy,
+    Bullet,
+    Wall
+};
 
 class DynamicObject : public SpriteObject {
   protected:
@@ -53,6 +63,16 @@ class DynamicObject : public SpriteObject {
 
     void setPosition(float x, float y) {
         setPosition({x, y});
+    }
+
+    virtual void setRotation(float angle) {
+        SpriteObject::setRotation(angle);
+        if (hitbox_)
+            hitbox_->getTransformable()->setRotation(angle);
+    }
+
+    void rotate(float angle) {
+        setRotation(getRotation() + angle);
     }
 
     void show() override {

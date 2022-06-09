@@ -78,6 +78,10 @@ Player::Player(const sf::Texture& texture, sf::Vector2f pos,
     scale(factor, factor);
     setTag(Tag::Player);
     init_sprites(Resources::sprite_sheets["player"]);
+#ifdef DEBUG
+#include <limits>
+    setHP(std::numeric_limits<int>::max());
+#endif
 }
 
 // void Player::on_collide_stop() {

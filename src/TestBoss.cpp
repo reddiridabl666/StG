@@ -1,18 +1,19 @@
 #include "TestBoss.hpp"
+#include "Math.hpp"
+#include "Random.hpp"
 
 void TestBoss::BallBounce::shoot() {
     sf::Vector2f bullet_size = {150, 150};
 
-    srand(time(nullptr));
-    size_t size = rand() % 3 + 3;
-    sf::Vector2f start_pos = parent->getPosition() - (size / 2.f) * sf::Vector2f{bullet_size.x, 0};
-    sf::Vector2f delta = {bullet_size.x, 0}; /* GameState::window()->getView().getSize().x / (size + 1); */
+    const size_t size = rand_gen(3, 5);
+    const static sf::Vector2f start_pos = parent->getPosition() - (size / 2.f) * sf::Vector2f{bullet_size.x, 0};
+    const static sf::Vector2f delta = {bullet_size.x, 0};
     sf::Vector2f offset = {};
 
     for (size_t i = 0; i < size; ++i) {
         gen().shoot(Bullet::Types[BulletType::BigCircle_Red], 
                         start_pos + offset, 
-                        {rand() % 600 - 300.f, rand() % 100 + 25.f},
+                        {rand_gen(-300.f, 300.f), rand_gen(25.f, 125.f)},
                         bullet_size);
         offset += delta;
     }
@@ -34,17 +35,14 @@ void TestBoss::BallBounce::update(float time) {
 
 void TestBoss::ChessHoming::shoot() {
     // Видимо, переменные закинуть в фазу
-    auto bullet_size = sf::Vector2f{12, 14} * 3.f;
-    float delta = 140;
-    int num = GameState::window()->getSize().x / delta + 1;
+    const static auto bullet_size = sf::Vector2f{12, 14} * 3.f;
+    const static float delta = 140;
+    const static int num = GameState::window()->getSize().x / delta + 1;
     // std::cout << GameState::window()->getSize().x  << " " << num << std::endl;
-    auto start_pos = sf::Vector2f{50, parent->getPosition().y + 15};
+    const static auto start_pos = sf::Vector2f{50, parent->getPosition().y + 15};
     float offset = 0;
     
     shot_num()++;
-
-    srand(time(nullptr));
-    // auto modifier = rand() % 100 / 100.f;
 
     if (!(shot_num() % 2)) {
         sf::Vector2f velocity = unit_vector(GameState::getPlayerPos(), parent->getPosition()) * 1000.f;
@@ -67,10 +65,10 @@ void TestBoss::ChessHoming::update(float time) {
 }
 
 void TestBoss::Circular_1::shoot() {
-    float radius = 200;
-    auto bullet_size = sf::Vector2f{12, 14} * 3.f;
-    sf::Vector2f start_pos = parent->getPosition();
-    size_t num = 30;
+    const static float radius = 200;
+    const static auto bullet_size = sf::Vector2f{12, 14} * 3.f;
+    const static sf::Vector2f start_pos = parent->getPosition();
+    const static size_t num = 46;
 
     shot_num()++;
 
@@ -79,11 +77,11 @@ void TestBoss::Circular_1::shoot() {
         float x = start_pos.x + radius * cos(angle + constants::pi / num * (shot_num() % 2));
         float y = start_pos.y + radius * sin(angle + constants::pi / num * (shot_num() % 2));
 
-        float speed = 500;
-        sf::Vector2f velocity = unit_vector({x, y}, parent->getPosition()) * speed;
+        float speed = 450;
+        sf::Vector2f velocity = unit_vector({x, y}, parent->getPosition()) * -speed;
 
         auto bullet = gen().shoot(Bullet::Types[BulletType::Talisman_RB], {x, y}, velocity, bullet_size);
-        bullet->rotate(angle / 2 * constants::pi * 180);
+        bullet->setRotation(-to_degrees(arctan(velocity)));
     }
 }
 
@@ -95,10 +93,10 @@ void TestBoss::Circular_1::update(float time) {
 }
 
 void TestBoss::Circular_2::shoot() {
-    float radius = 200;
-    auto bullet_size = sf::Vector2f{12, 14} * 3.f;
-    sf::Vector2f start_pos = parent->getPosition();
-    size_t num = 30;
+    const static int radius = 150;
+    const static auto bullet_size = sf::Vector2f{12, 14} * 3.f;
+    const static sf::Vector2f start_pos = parent->getPosition();
+    const static size_t num = 30;
 
     shot_num()++;
 
@@ -107,10 +105,14 @@ void TestBoss::Circular_2::shoot() {
         float x = start_pos.x + radius * cos(angle + constants::pi / num * (shot_num() % 2));
         float y = start_pos.y + radius * sin(angle + constants::pi / num * (shot_num() % 2));
 
-        float speed = 500;
-        sf::Vector2f velocity = unit_vector({x, y}, parent->getPosition()) * -speed;
+        float speed = 100;
+        sf::Vector2f velocity = unit_vector({x, y}, parent->getPosition()) * speed;
+        // velocity += sf::Vector2f(200, 0);
 
-        gen().shoot(Bullet::Types[BulletType::Talisman_RB], {x, y}, velocity, bullet_size);
+        auto bullet = gen().shoot(Bullet::Types[BulletType::Talisman_RB], {x, y}, velocity, bullet_size);
+        float rotate_speed = shot_num() / 8 % 2 ? 150 : -150;
+        bullet->setRotation(-to_degrees(arctan(velocity)));
+        bullet->setUpdateFunc(delete_when_out_of_bounds + circular(parent->getPosition(), rotate_speed));
     }
 }
 
@@ -121,6 +123,101 @@ void TestBoss::Circular_2::update(float time) {
     }
 }
 
+void TestBoss::CircularGrouped::shoot() {
+    const static float radius = 150;
+    const static auto bullet_size = sf::Vector2f{12, 14} * 3.f;
+    const static sf::Vector2f start_pos = parent->getPosition();
+    const static size_t group_num = 8;
+    const static size_t num = 6;
+
+    float start_angle = rand_gen(0.f, 2 * constants::pi);
+    static const float speed = 350;
+    const static float delta = constants::pi / 14;
+    
+    shot_num()++;
+
+    for (size_t i = 0; i < group_num; ++i) {
+        start_angle += 2 * constants::pi / group_num;
+
+        auto pos = start_pos + radius * sf::Vector2f{static_cast<float>(cos(start_angle)), 
+                                                     static_cast<float>(sin(start_angle))};
+        sf::Vector2f velocity = unit_vector(pos, parent->getPosition()) * speed;
+        auto bullet = gen().shoot(Bullet::Types[BulletType::Talisman_RB], pos, velocity, bullet_size);
+        bullet->setRotation(-to_degrees(arctan(velocity)));
+
+        for (size_t j = 0; j < num / 2; ++j) {
+            float x = start_pos.x + radius * cos(start_angle + delta * (j + 1));
+            float y = start_pos.y + radius * sin(start_angle + delta * (j + 1));
+
+            
+            // sf::Vector2f velocity = unit_vector({x, y}, parent->getPosition()) * speed;
+
+            auto bullet = gen().shoot(Bullet::Types[BulletType::Talisman_RB], {x, y}, velocity, bullet_size);
+            bullet->setRotation(-to_degrees(arctan(velocity)));
+
+            x = start_pos.x + radius * cos(start_angle - delta * (j + 1));
+            y = start_pos.y + radius * sin(start_angle - delta * (j + 1));
+
+            // velocity = unit_vector({x, y}, parent->getPosition()) * speed;
+
+            bullet = gen().shoot(Bullet::Types[BulletType::Talisman_RB], {x, y}, velocity, bullet_size);
+            bullet->setRotation(-to_degrees(arctan(velocity)));
+        }
+    }
+}
+
+void TestBoss::CircularGrouped::update(float time) {
+    if (time >= 0.5) {
+        shoot();
+        shoot_clock().restart();
+    }
+}
+
+void TestBoss::Chaos::shoot() {
+    const static float radius = 150;
+    const static auto bullet_size = sf::Vector2f{12, 14} * 3.f;
+    const static sf::Vector2f start_pos = parent->getPosition();
+    const static size_t group_num = 8;
+    const static size_t num = 6;
+
+    float start_angle = rand_gen(0.f, 2 * constants::pi);
+    static const float speed = 150;
+    const static float delta = constants::pi / 14;
+    
+    shot_num()++;
+
+    for (size_t i = 0; i < group_num; ++i) {
+        start_angle += 2 * constants::pi / group_num;
+
+        for (size_t j = 0; j < num / 2; ++j) {
+            float x = start_pos.x + radius * cos(start_angle + delta * (j + 1));
+            float y = start_pos.y + radius * sin(start_angle + delta * (j + 1));
+
+            
+            sf::Vector2f velocity = unit_vector({x, y}, parent->getPosition()) * speed;
+
+            auto bullet = gen().shoot(Bullet::Types[BulletType::Talisman_RB], {x, y}, velocity, bullet_size);
+            bullet->setRotation(-to_degrees(arctan(velocity)));
+
+            x = start_pos.x + radius * cos(start_angle - delta * (j + 1));
+            y = start_pos.y + radius * sin(start_angle - delta * (j + 1));
+
+            velocity = unit_vector({x, y}, parent->getPosition()) * speed;
+
+            bullet = gen().shoot(Bullet::Types[BulletType::Talisman_RB], {x, y}, velocity, bullet_size);
+            bullet->setRotation(-to_degrees(arctan(velocity)));
+        }
+    }
+}
+
+void TestBoss::Chaos::update(float time) {
+    if (time >= 0.7) {
+        shoot();
+        shoot_clock().restart();
+    }
+}
+
+
 void TestBoss::update(float deltaTime) {
     AnimatedBoss::update(deltaTime);
     
@@ -130,10 +227,13 @@ void TestBoss::update(float deltaTime) {
             changePhase(new BallBounce(this, 7000));
             break;
         case 2:
-            changePhase(new Circular_2(this, 6000));
+            changePhase(new Chaos(this, 6000));
             break;
         case 3:
             changePhase(new ChessHoming(this, 5000));
+            break;
+        case 4:
+            changePhase(new Circular_2(this, 5000));
             break;
         default:
             changePhase(nullptr);

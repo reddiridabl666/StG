@@ -28,6 +28,18 @@ protected:
         void shoot() override;
     };
 
+    struct CircularGrouped : public Phase {
+        using Phase::Phase;
+        void update(float) override;
+        void shoot() override;
+    };
+
+    struct Chaos : public Phase {
+        using Phase::Phase;
+        void update(float) override;
+        void shoot() override;
+    };
+
 #ifdef DEBUG
     float time_;
     Log<int> shot_num_log;
@@ -46,10 +58,9 @@ public:
     {
         init_sprites(Resources::sprite_sheets["boss1"]);
         setAnimation(sprites_["idle"]);
-        // changePhase(new BallBounce(this)); 
-        // changePhase(new ChessHoming(this, 5000));
-        changePhase(new Circular_1(this, 6000));
-        phase_max_ = 4;
+        // changePhase(new Circular_1(this, 6000));
+        changePhase(new Chaos(this, 6000));
+        phase_max_ = 6;
     }
 
     void init_sprites(sf::Image sprite_sheet) override {

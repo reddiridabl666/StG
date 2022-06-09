@@ -1,7 +1,8 @@
 #pragma once
 
 #include "GameObject.h"
-#include <set>
+#include "Utils.hpp"
+
 #include <variant>
 
 class CircleHitbox;

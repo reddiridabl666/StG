@@ -1,4 +1,5 @@
 #include "SpriteObject.h"
+#include "Utils.hpp"
 
 SpriteObject::SpriteObject(Layer layer) : GameObject(layer), sf::Sprite() {}
 

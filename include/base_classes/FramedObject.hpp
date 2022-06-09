@@ -37,6 +37,13 @@ public:
         return frame_hitbox_;
     }
 
+    void setRotation(float angle) override {
+        DynamicObject::setRotation(angle);
+        if (frame_hitbox_) {
+            frame_hitbox_->getTransformable()->setRotation(angle);
+        }
+    }
+
     void on_collide(DynamicObject* obj) override;
 
     void show() override;

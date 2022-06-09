@@ -1,5 +1,5 @@
 #include "Hitbox.hpp"
-#include <set>
+#include"Math.hpp"
 
 Hitbox* Hitbox::getHitbox(const HitboxInfo& info, sf::Vector2f pos, const sf::Color& fill, const sf::Color& outline) {
     if (auto size = std::get_if<sf::Vector2f>(&info)) {

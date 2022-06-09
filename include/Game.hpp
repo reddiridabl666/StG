@@ -27,7 +27,7 @@ public:
              frame(Wall::get_frame(window)),
              bg(Resources::textures["bg"], window),
              player(new Player(Resources::textures["player"], 
-                             window.getCenter(), {30, 45})) {
+                             window.getCenter(), {30, 30})) {
              GameState::init(player, &window, frame);
     }
     
