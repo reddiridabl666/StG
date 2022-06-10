@@ -2,7 +2,7 @@
 
 #include "Boss.hpp"
 
-class TestBoss : public AnimatedBoss {
+class TestBoss : public AudibleAnimatedBoss {
 protected:
     struct BallBounce : public Phase {
         BallBounce(Boss*);
@@ -48,8 +48,9 @@ protected:
 
 public:
     TestBoss(const sf::Texture& texture, const sf::Vector2f& pos, 
-          const HitboxInfo& hitbox_size, Layer layer = Layer::Character) : 
-        AnimatedBoss(texture, pos, hitbox_size, 0, layer)
+          const HitboxInfo& hitbox_size, Layer layer = Layer::Character) :
+          Boss(texture, pos, hitbox_size, 0, layer),
+          AudibleAnimatedBoss(texture, pos, hitbox_size, 0, layer)
 #ifdef DEBUG
         , time_(),
         shot_num_log("Shot num: ", shot_num_, {50, 125}),
@@ -68,7 +69,7 @@ public:
         sprites_["death"] = load_row(Resources::sprite_sheets["explosion"], 8, {0, 12}, {64, 40});
     }
 
-    // void shoot(/* std::string name */);
+    void shoot();
     void update(float deltaTime) override;
 
     friend TestBoss::BallBounce;

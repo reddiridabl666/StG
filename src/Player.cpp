@@ -126,6 +126,7 @@ void Player::update() {
     }
 
     control();
+    static bool flag = false;
 
     if (hp_ > 0) {
         if (getVelocity().x > 0) {
@@ -137,8 +138,11 @@ void Player::update() {
         if (getVelocity().x == 0) {
             setAnimation(sprites_["idle"]);
         }
-    } else {
+    } else  if (!flag) {
         setAnimation(sprites_["death"]);
+        play_sound("player_death");
+        hitbox_->hide();
+        flag = true;
     }
 
     Animated::update();
@@ -150,11 +154,12 @@ void Player::update() {
 
 void Player::shoot(BulletType name) {
     shoot_clock_.restart();
+    play_sound("player_shoot", 50);
 
-    /* auto bullet =  */
+    // auto bullet = 
     gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{15, 70});
     // bullet->setDamage(10000);
-    /* bullet =  */
+    // bullet = 
     gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{-15, 70});
     // bullet->setDamage(10000);
 }

@@ -21,7 +21,7 @@ void TestBoss::BallBounce::shoot() {
 
 void TestBoss::BallBounce::update(float time) {
     if (shot_num() < 5 && time >= 1.2) {
-        shoot();
+        parent->shoot();
         shoot_clock().restart();
     } else if (time >= 6) {
         shot_num() = 0;
@@ -54,7 +54,7 @@ void TestBoss::ChessHoming::shoot() {
 
 void TestBoss::ChessHoming::update(float time) {
     if (time >= 0.5) {
-        shoot();
+        parent->shoot();
         shoot_clock().restart();
     }
 }
@@ -83,7 +83,7 @@ void TestBoss::Circular_1::shoot() {
 
 void TestBoss::Circular_1::update(float time) {
     if (time >= 0.5) {
-        shoot();
+        parent->shoot();
         shoot_clock().restart();
     }
 }
@@ -114,7 +114,7 @@ void TestBoss::CircularRotating::shoot() {
 
 void TestBoss::CircularRotating::update(float time) {
     if (time >= 0.5) {
-        shoot();
+        parent->shoot();
         shoot_clock().restart();
     }
 }
@@ -160,7 +160,7 @@ void TestBoss::CircularGrouped::shoot() {
 
 void TestBoss::CircularGrouped::update(float time) {
     if (time >= 0.5) {
-        shoot();
+        parent->shoot();
         shoot_clock().restart();
     }
 }
@@ -206,13 +206,22 @@ void TestBoss::Chaos::shoot() {
 
 void TestBoss::Chaos::update(float time) {
     if (time >= 0.7) {
-        shoot();
+        parent->shoot();
         shoot_clock().restart();
+    }
+}
+
+void TestBoss::shoot() {
+    play_sound("boss_shoot");
+    if (phase_) {
+        phase_->shoot();
     }
 }
 
 void TestBoss::update(float deltaTime) {
     AnimatedBoss::update(deltaTime);
+
+    static bool flag = false;
     
     if (hp_ <= 0) {
         switch (phase_num_) {
@@ -232,8 +241,12 @@ void TestBoss::update(float deltaTime) {
             changePhase(new CircularRotating(this));
             break;
         default:
+            if (flag)
+                break;
             setAnimation(sprites_["death"]);
+            play_sound("boss_death");
             changePhase(nullptr);
+            flag = true;
             break;
         }
     }

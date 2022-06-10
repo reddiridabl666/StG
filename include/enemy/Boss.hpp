@@ -36,10 +36,12 @@ public:
         phase_left_.setString("Phase: " + std::to_string(phase_num_) + "/" + std::to_string(phase_max_));
     }
 
+    virtual void shoot() = 0;
+
     friend class Phase;
 };
 
-class AnimatedBoss : public Boss, public Animated {
+class AnimatedBoss : virtual public Boss, public Animated {
 public:
     using Boss::Boss;
 
@@ -51,6 +53,22 @@ public:
         Boss::update(deltaTime);
         Animated::update();
     }
+};
+
+class AudibleBoss : virtual public Boss, public Audible {
+public:
+    using Boss::Boss;
+};
+
+class AudibleAnimatedBoss : public AudibleBoss, public AnimatedBoss {
+public:
+    AudibleAnimatedBoss(const sf::Texture& texture, const sf::Vector2f& pos, 
+                        const HitboxInfo& hitbox_size, size_t hp, Layer layer = Layer::Character) :
+        Boss(texture, pos, hitbox_size, hp, layer), 
+        AudibleBoss(texture, pos, hitbox_size, hp, layer), 
+        AnimatedBoss(texture, pos, hitbox_size, hp, layer) {}
+
+    using AnimatedBoss::update;
 };
 
 struct Phase {

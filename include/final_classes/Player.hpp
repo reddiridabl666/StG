@@ -2,6 +2,7 @@
 
 #include "ShootingObject.hpp"
 #include "Animated.hpp"
+#include "Audible.hpp"
 
 class Enemy;
 
@@ -14,7 +15,7 @@ public:
     }
 };
 
-class Player : public ShootingObject<PlayerBullet>, public Animated {
+class Player : public ShootingObject<PlayerBullet>, private Animated, private Audible {
 protected:
     float speed_ = 800;
     float normal_speed_ = speed_;
@@ -70,7 +71,7 @@ public:
 
     void show() override {
         ShootingObject::show();
-        if (speed_ == slow_speed_ && hitbox_) {
+        if (speed_ == slow_speed_ && hitbox_ && hp_ > 0) {
             hitbox_->show();
         }
     }
