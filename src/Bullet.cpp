@@ -2,14 +2,20 @@
 #include "UpdateFunctions.hpp"
 #include "Resources.hpp"
 
+void delete_when_out_of_bounds(Bullet* bullet, float) {
+    if (GameState::is_out_of_bounds(bullet)) {
+        bullet->deactivate();
+    }
+}
+
 Bullet::Bullet(Bullet::Info info, Layer layer) : Bullet(layer) {
     if (info.texture) {
         setTexture(*info.texture);
     }
 
     float* n;
-    if ((n = std::get_if<float>(&info.phys_info)) && *n) {
-        frame_hitbox_ = Hitbox::getFrameHitbox(info.phys_info);
+    if ((n = std::get_if<float>(&info.frame_info)) && *n) {
+        frame_hitbox_ = Hitbox::getFrameHitbox(info.frame_info);
     } else {
         frame_hitbox_ = Hitbox::getFrameHitbox(getSize());
     }
@@ -29,7 +35,7 @@ Bullet::Bullet(Bullet::Info info, Layer layer) : Bullet(layer) {
 Bullet::Bullet(const Bullet& other) : 
     Bullet(Bullet::Info{other.getTexture(), other.getHitbox()->getInfo(), 
                       other.getVelocity(), other.update_, other.damage_, 
-                      other.mass_, other.frame_hitbox_->getInfo()}) {
+                      other.mass_, {}, other.frame_hitbox_->getInfo()}) {
     setTag(other.getTag());
 }
 
@@ -45,7 +51,6 @@ std::unordered_map<BulletType, sf::Texture> Bullet::textures;
 
 std::unordered_map<BulletType, sf::Texture> Bullet::getBulletTextures() {
     std::unordered_map<BulletType, sf::Texture> res;
-    // sf::RenderTexture texture;
     sf::Image &bullets = Resources::sprite_sheets["bullets"];
 
     res[BulletType::BigCircle_Red].loadFromImage(bullets, {6, 466, 62, 62});
@@ -61,18 +66,20 @@ std::unordered_map<BulletType, Bullet::Info> Bullet::getBulletTypes() {
     std::unordered_map<BulletType, Bullet::Info> res;
 
     auto type = BulletType::BigCircle_Red;
-    res[type] = Bullet::Info{&textures[type], 36, {0, 0}, gravity + delete_when_out_of_bounds, 
-                             1, 1, textures[type].getSize().x / 2};
+    res[type] = Bullet::Info{&textures[type], 36, {0, 0}, gravity, 
+                             1, 1, {150, 150}, textures[type].getSize().x / 2};
 
     type = BulletType::Player;
     res[type] = Bullet::Info{&textures[type], sf::Vector2f{8.f, 14.f} * 4.f, {0, -600}, 
-                             delete_when_out_of_bounds, 25, 0, sf::Vector2f{100, 100}};
+                             UpdateFunc(), 25, 0, {16, 28}/* , sf::Vector2f{100, 100} */};
     
     type = BulletType::Talisman_RB;
-    res[type] = Bullet::Info{&textures[type], sf::Vector2f{12, 14} * 2.5f, {0, 500}, delete_when_out_of_bounds};
+    res[type] = Bullet::Info{&textures[type], sf::Vector2f{12, 14} * 2.5f, {0, 500}, 
+                             UpdateFunc(), 1, 0, sf::Vector2f{12, 14} * 3.f};
 
     type = BulletType::Circle_Red;
-    res[type] = Bullet::Info{&textures[type], 30, {0, 400}, delete_when_out_of_bounds, 1, 0, textures[type].getSize().x / 2};
+    res[type] = Bullet::Info{&textures[type], 30, {0, 400}, UpdateFunc(), 1, 0, 
+                             sf::Vector2f{28, 28} * 3.f, textures[type].getSize().x / 2};
     
     return res;
 }

@@ -60,9 +60,13 @@ public:
 struct Phase {
 protected:
     Boss* parent;
+    size_t num;
+    sf::Vector2f start_pos;
+    float delta;
 public:
-    explicit Phase(Boss* parent, int hp = 7000) : parent(parent) {
+    explicit Phase(Boss* parent, int hp = 6000) : parent(parent) {
         parent->setHP(hp);
+        start_pos = parent->getPosition();
     }
 
     int hp() {
@@ -73,13 +77,18 @@ public:
         return parent->gen_;
     }
 
-    int& shot_num() {
+    size_t& shot_num() {
         return parent->shot_num_;
     }
     sf::Clock& shoot_clock() {
         return parent->shoot_clock_;
     }
 
-    virtual void update(float) = 0;
+    virtual void update(float time) = 0;/* {
+        if (time >= 0.5) {
+            shoot();
+            shoot_clock().restart();
+        }
+    } */
     virtual void shoot() = 0;
 };

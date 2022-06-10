@@ -8,13 +8,17 @@
 class Bullet : public FramedObject, public DamageDealing {
 public:
     struct Info {
+        // Info(const sf::Texture* = nullptr, const HitboxInfo& hitbox_info = 0, 
+        //      const sf::Vector2f& velocity = {0, 0}, const UpdateFunc& update = {}, 
+        //      int damage = 1, float mass = 0, sf::Vector2f size = {}, HitboxInfo frame_info = 0);
         const sf::Texture* texture = nullptr;
         HitboxInfo hitbox_info = 0;
         sf::Vector2f velocity = {0, 0};
         UpdateFunc update;
         int damage = 1;
         float mass = 0;
-        HitboxInfo phys_info = 0;
+        sf::Vector2f size = {0, 0};
+        HitboxInfo frame_info = 0;
     };
 protected:
     sf::Clock clock;
@@ -49,6 +53,5 @@ public:
         return clock.getElapsedTime();
     }
 
-    // friend class BulletGenerator;
     template<typename> friend class BulletGenerator;
 };

@@ -15,20 +15,6 @@ void Player::init_sprites(sf::Image sprite_sheet) {
     sprites_["idle"] = load_row(sprite_sheet, 4, {0, 0});
     sprites_["right"] = load_row(sprite_sheet, 3, {0, 32});
     sprites_["left"] = load_row(sprite_sheet, 3, {0, 64});
-    // sprites_["idle"].resize(4);
-    // for (int i = 0; i < 4; ++i) {
-    //     sprites_["idle"][i].loadFromImage(sprite_sheet, {32 * i , 0, 32, 32});
-    // }
-
-    // sprites_["right"].resize(3);
-    // for (int i = 0; i < 3; ++i) {
-    //     sprites_["right"][i].loadFromImage(sprite_sheet, {32 * i, 32, 32, 32 });
-    // }
-
-    // sprites_["left"].resize(3);
-    // for (int i = 0; i < 3; ++i) {
-    //     sprites_["left"][i].loadFromImage(sprite_sheet, {32 * i, 64, 32, 32});
-    // }
 }
 
 static float gamepad_movement(Axis axis, unsigned int gamepad_num = 0) {
@@ -168,10 +154,6 @@ void Player::update() {
 void Player::shoot(BulletType name) {
     shoot_clock_.restart();
 
-    sf::Vector2f new_size = {16, 28};
-
-    gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{15, 70},
-                        Bullet::Types[name].velocity, new_size);
-    gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{-15, 70}, 
-                        Bullet::Types[name].velocity, new_size);
+    gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{15, 70});
+    gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{-15, 70});
 }

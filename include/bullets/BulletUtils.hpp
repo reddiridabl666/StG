@@ -4,14 +4,17 @@
 
 class Bullet;
 
+void delete_when_out_of_bounds(Bullet*, float);
+
 class UpdateFunc {
 private:
-    std::function<void(Bullet*, float)> func_;
+    std::function<void(Bullet*, float)> func_ = [] (Bullet*, float) {};
 public:
-    UpdateFunc() : func_() {}
+    UpdateFunc() = default;
     UpdateFunc(const std::function<void(Bullet*, float)>& func) : func_(func) {}
 
     void operator()(Bullet* bullet, float time) const {
+        delete_when_out_of_bounds(bullet, time);
         func_(bullet, time);
     }
     

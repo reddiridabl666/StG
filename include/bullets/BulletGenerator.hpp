@@ -7,71 +7,22 @@
 
 #include "HealthObject.hpp"
 
-// class BulletGeneratorBase {
-// protected:
-//     static std::unordered_set<BulletGeneratorBase*> all;
-//     std::list<Bullet*> bullets_;
-
-//     BulletGeneratorBase() {
-//         all.insert(this);
-//     }
-
-//     virtual ~BulletGeneratorBase() {
-//         all.erase(this);
-//     }
-
-//     virtual void update(float) = 0;
-
-//     // TODO: МБ надо вообще убрать этот класс и делать сеты генераторов для каждого типа пуль??
-// public:
-//     static void check_collisions_with_bullets(HealthObject* obj) {
-//         if (!obj) {
-//             return;
-//         }
-        
-//         for (const auto gen : all) {
-//             for (auto bullet : gen->bullets_) {
-//                 if (bullet->collides_with(obj)) {
-//                     obj->on_collide(bullet);
-//                     bullet->on_collide(obj);
-//                 }
-//             }
-            
-//             // Мб запихнуть проверку на отсутствие коллизий
-//         }
-//     }
-
-//     template<typename> friend class BulletGenerator;
-// };
-
 template <typename T>
-class BulletGenerator /* : public BulletGeneratorBase */ {
+class BulletGenerator {
   private:
     std::list<Bullet*> bullets_;
-    // sf::Vector2f pos_ = {0, 0};
-    // std::list<Bullet*> bullets_;
-    // std::unordered_map<std::string, Bullet::Info> bullet_types;
 
   public:
-    // static std::unordered_set<BulletGenerator*> all;
-
-    // static void update_all(float deltaTime) {
-    //     for (auto it : all) {
-    //         if (it)
-    //             it->update(deltaTime);
-    //     }
-    // }
-
     std::list<Bullet*>& getBullets() {
         return bullets_;
     }
 
-    BulletGenerator(/*sf::Vector2f pos = {0, 0}*/)/*: pos_(pos)*/ {
-        // all.insert(this);
-    }
+    BulletGenerator() = default;
 
     virtual Bullet* shoot(const Bullet::Info& info) {
         auto bullet = new T(info);
+        if (info.size != sf::Vector2f{0, 0})
+            bullet->setSize(info.size);
         bullets_.push_back(bullet);
         return bullet;
     }
@@ -85,12 +36,6 @@ class BulletGenerator /* : public BulletGeneratorBase */ {
     Bullet* shoot(const Bullet::Info& info, sf::Vector2f pos, sf::Vector2f velocity) {
         auto bullet = shoot(info, pos);
         bullet->setVelocity(velocity);
-        return bullet;
-    }
-
-    Bullet* shoot(const Bullet::Info& info, sf::Vector2f pos, sf::Vector2f velocity, sf::Vector2f size) {
-        auto bullet = shoot(info, pos, velocity);
-        bullet->setSize(size);
         return bullet;
     }
 

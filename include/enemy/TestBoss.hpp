@@ -5,37 +5,37 @@
 class TestBoss : public AnimatedBoss {
 protected:
     struct BallBounce : public Phase {
-        using Phase::Phase;
+        BallBounce(Boss*);
         void update(float) override;
         void shoot() override;
     };
 
     struct ChessHoming : public Phase {
-        using Phase::Phase;
+        ChessHoming(Boss*);
         void update(float) override;
         void shoot() override;
     };
     
     struct Circular_1 : public Phase {
-        using Phase::Phase;
+        Circular_1(Boss*);
         void update(float) override;
         void shoot() override;
     };
 
-    struct Circular_2 : public Phase {
-        using Phase::Phase;
+    struct CircularRotating : public Phase {
+        CircularRotating(Boss*);
         void update(float) override;
         void shoot() override;
     };
 
     struct CircularGrouped : public Phase {
-        using Phase::Phase;
+        CircularGrouped(Boss*);
         void update(float) override;
         void shoot() override;
     };
 
     struct Chaos : public Phase {
-        using Phase::Phase;
+        Chaos(Boss*);
         void update(float) override;
         void shoot() override;
     };
@@ -58,8 +58,8 @@ public:
     {
         init_sprites(Resources::sprite_sheets["boss1"]);
         setAnimation(sprites_["idle"]);
-        // changePhase(new Circular_1(this, 6000));
-        changePhase(new Chaos(this, 6000));
+        changePhase(new Circular_1(this));
+        // changePhase(new Chaos(this));
         phase_max_ = 6;
     }
 

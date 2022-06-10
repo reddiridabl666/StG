@@ -11,7 +11,7 @@ class EnemyBullet;
 
 class Enemy : public ShootingObject<EnemyBullet>, public DamageDealing {
 protected:
-    int shot_num_ = 0;
+    size_t shot_num_ = 0;
 
 public:
     Enemy(const sf::Texture& texture, const sf::Vector2f& pos, 
