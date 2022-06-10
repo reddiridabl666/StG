@@ -7,7 +7,7 @@
 #include "Math.hpp"
 
 namespace constants {
-    inline constexpr float g = 9.8 * 80;
+    inline constexpr float g = 9.8 * 100;
 }
 
 inline const UpdateFunc delete_timed(float time_in_seconds) {

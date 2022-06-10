@@ -34,10 +34,6 @@ public:
         health_bar_.setString("Health: " + std::to_string(hp_));
         health_bar_.setPosition(getPosition() + sf::Vector2f{-getHalfSize().x, -getSize().y});
         phase_left_.setString("Phase: " + std::to_string(phase_num_) + "/" + std::to_string(phase_max_));
-
-        if (phase_num_ > phase_max_) {
-            deactivate();
-        }
     }
 
     friend class Phase;
@@ -84,11 +80,6 @@ public:
         return parent->shoot_clock_;
     }
 
-    virtual void update(float time) = 0;/* {
-        if (time >= 0.5) {
-            shoot();
-            shoot_clock().restart();
-        }
-    } */
+    virtual void update(float time) = 0;
     virtual void shoot() = 0;
 };

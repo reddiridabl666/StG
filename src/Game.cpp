@@ -4,8 +4,6 @@
 GameState GameState::state;
 
 void Game::start() {
-    // player->setHP(1);
-    
     boss = new TestBoss(Resources::textures["boss"], {window.getCenter().x, 200}, sf::Vector2f{400.f, 200.f});
     boss->scale(4.3, 4.3);
     
@@ -21,21 +19,17 @@ void Game::event_loop() {
     while (window.isOpen()) {
         deltaTime = clock.restart().asSeconds();
     
-        // OS events
         window.sys_event_loop();
 
-        // Character control
         if (window.hasFocus() && player) {
             player->update();
         }
 
-        // Movement and collisions
-        // DynamicObject::move_all(deltaTime);
         GameObject::update_all(deltaTime);
         
         check_collisions();
 
-        if (player && player->HP() <= 0) {
+        if (player && !player->is_active()) {
             delete player;
             player = nullptr;
         }
@@ -55,23 +49,18 @@ void Game::event_loop() {
         GameObject::draw_all(window);
 
         window.display();
-
-        // if (player == nullptr) {
-        //     window.close();
-        // }
     }
 }
 
 void Game::check_collisions() {
     DynamicObject::refresh_collision_num();
+
     if (boss) {
         boss->player_collision(player);
         boss->check_bullet_collisions(player);
     }
-    // BulletGeneratorBase::check_collisions_with_bullets(player);
     
     for (auto it : frame.iter()) {
-        // FramedObject::check_phys_collisions_with(*it);
         it->check_collisions_with(FramedObject::all);
         if (player) {
             it->player_collision(*player);

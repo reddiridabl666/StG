@@ -232,11 +232,16 @@ void TestBoss::update(float deltaTime) {
             changePhase(new CircularRotating(this));
             break;
         default:
+            setAnimation(sprites_["death"]);
             changePhase(nullptr);
             break;
         }
     }
 
+    if (getTexture() == &sprites_["death"][7]) {
+        deactivate();
+    }
+    
     auto time = shoot_clock_.getElapsedTime().asSeconds();
 #ifdef DEBUG
     time_ = time;

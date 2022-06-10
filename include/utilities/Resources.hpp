@@ -1,7 +1,10 @@
 #pragma once
 
 #include "SFML/Graphics.hpp"
+#include "SFML/Audio.hpp"
+
 #include <filesystem>
+
 #include "LoadFiles.hpp"
 
 template<typename T>
@@ -13,6 +16,7 @@ public:
     static inline string_map<sf::Texture> textures;
     static inline string_map<sf::Font> fonts;
     static inline string_map<sf::Image> sprite_sheets;
+    static inline string_map<sf::SoundBuffer> sounds;
 
     Resources(fs::path texture_path, fs::path fonts_path, fs::path sheets_path) {
         textures = load_from_folder<sf::Texture>(texture_path);

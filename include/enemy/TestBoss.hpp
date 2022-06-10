@@ -65,6 +65,7 @@ public:
 
     void init_sprites(sf::Image sprite_sheet) override {
         sprites_["idle"] = load_row(sprite_sheet, 4, {0, 11}, {64, 40});
+        sprites_["death"] = load_row(Resources::sprite_sheets["explosion"], 8, {0, 12}, {64, 40});
     }
 
     // void shoot(/* std::string name */);

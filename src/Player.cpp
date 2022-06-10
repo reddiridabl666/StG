@@ -15,6 +15,7 @@ void Player::init_sprites(sf::Image sprite_sheet) {
     sprites_["idle"] = load_row(sprite_sheet, 4, {0, 0});
     sprites_["right"] = load_row(sprite_sheet, 3, {0, 32});
     sprites_["left"] = load_row(sprite_sheet, 3, {0, 64});
+    sprites_["death"] = load_row(sprite_sheet, 9, {0, 96});
 }
 
 static float gamepad_movement(Axis axis, unsigned int gamepad_num = 0) {
@@ -64,29 +65,13 @@ Player::Player(const sf::Texture& texture, sf::Vector2f pos,
     scale(factor, factor);
     setTag(Tag::Player);
     init_sprites(Resources::sprite_sheets["player"]);
+
+    // setHP(1);
 #ifdef DEBUG
 #include <limits>
     setHP(std::numeric_limits<int>::max());
 #endif
 }
-
-// void Player::on_collide_stop() {
-//     DynamicObject::on_collide_stop();
-// }
-
-// void Player::on_collide(DynamicObject* obj) {
-//     DynamicObject::on_collide(obj);
-    
-//     if (obj->getTag() == Tag::Enemy && hitbox_->is_active()) {
-//         // loseHP();
-//         if (auto damage_source = dynamic_cast<DamageDealing*>(obj)) {
-//             damage_source->dealDamage(*this);
-//             invinc_clock_.restart();
-//             flick_clock_.restart();
-//             hitbox_->deactivate();
-//         }
-//     }
-// }
 
 void Player::on_collide(Bullet* bullet) {
     if (!bullet || is_invincible()) {
@@ -105,6 +90,11 @@ void Player::on_collide(Enemy* enemy) {
 }
 
 void Player::control() {
+    if (hp_ <= 0) {
+        setVelocity(0, 0);
+        return;
+    }
+
     if (pressed_any_of(Key::LShift, Key::RShift) || Gamepad::isButtonPressed(0, 5)) {
         speed_ = slow_speed_;
         if (!is_invincible()) hitbox_->show();
@@ -124,8 +114,6 @@ void Player::control() {
 }
 
 void Player::update() {
-    // setVelocity(0, 0);
-
     if (!hitbox_->is_active()) {
         if (flick_clock_.getElapsedTime().asSeconds() >= flick_time) {
             flick_clock_.restart();
@@ -139,21 +127,34 @@ void Player::update() {
 
     control();
 
-    if (getVelocity().x > 0) {
-        setAnimation(sprites_["right"]);
+    if (hp_ > 0) {
+        if (getVelocity().x > 0) {
+            setAnimation(sprites_["right"]);
+        }
+        if (getVelocity().x < 0) {
+            setAnimation(sprites_["left"]);
+        }
+        if (getVelocity().x == 0) {
+            setAnimation(sprites_["idle"]);
+        }
+    } else {
+        setAnimation(sprites_["death"]);
     }
-    if (getVelocity().x < 0) {
-        setAnimation(sprites_["left"]);
-    }
-    if (getVelocity().x == 0) {
-        setAnimation(sprites_["idle"]);
-    }
+
     Animated::update();
+
+    if (getTexture() == &sprites_["death"][8]) {
+        deactivate();
+    }
 }
 
 void Player::shoot(BulletType name) {
     shoot_clock_.restart();
 
+    /* auto bullet =  */
     gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{15, 70});
+    // bullet->setDamage(10000);
+    /* bullet =  */
     gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{-15, 70});
+    // bullet->setDamage(10000);
 }
