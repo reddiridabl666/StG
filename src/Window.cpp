@@ -43,11 +43,10 @@ void Window::sys_event_loop() {
                 close();
                 break;
             case sf::Event::KeyReleased:
-                if ((event.key.code == sf::Keyboard::Enter && event.key.alt) ||
-                    event.key.code == sf::Keyboard::Escape) {
-                        if (event.key.code != sf::Keyboard::Escape || is_fullscreen_)
+                if (event.key.code == sf::Keyboard::Enter && event.key.alt) {
                         switch_view_mode();
                 }
+#ifdef DEBUG
                 if (event.key.code == sf::Keyboard::Equal ||
                     event.key.code == sf::Keyboard::Add) {
                     auto new_view = getView();
@@ -60,6 +59,7 @@ void Window::sys_event_loop() {
                     new_view.zoom(1.25);
                     setView(new_view);
                 }
+#endif
                 break;
             default:
                 break;

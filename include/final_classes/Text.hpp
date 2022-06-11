@@ -12,6 +12,8 @@ public:
          Layer layer = Layer::Ui) :
             GameObject(layer), sf::Text(text, font, size) {
             // setOrigin(getHalfSize());
+            setOutlineThickness(2);
+            setOutlineColor(sf::Color::Black);
             setPosition(pos);
             size_ = {getGlobalBounds().width, getGlobalBounds().height};
     }

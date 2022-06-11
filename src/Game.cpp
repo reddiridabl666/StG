@@ -1,10 +1,12 @@
 #include "Game.hpp"
 #include "TestBoss.hpp"
+#include "Button.hpp"
 
 GameState GameState::state;
 
 void Game::start() {
     boss = new TestBoss({window.getCenter().x, 200}, sf::Vector2f{400.f, 200.f});
+    Button exit(L"Выход", window, {1700, 950}, [this] {window.close();});
     clock.restart();
     event_loop();
 }
