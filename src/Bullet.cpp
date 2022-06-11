@@ -55,7 +55,9 @@ std::unordered_map<BulletType, sf::Texture> Bullet::getBulletTextures() {
 
     res[BulletType::BigCircle_Red].loadFromImage(bullets, {6, 466, 62, 62});
     res[BulletType::Talisman_RB].loadFromImage(bullets, {23, 119, 12, 14});
-    res[BulletType::Player].loadFromImage(bullets, {233, 71, 8, 14});
+    // res[BulletType::Player].loadFromImage(bullets, {233, 71, 8, 14});
+    res[BulletType::Player].loadFromImage(bullets, {233, 134, 8, 16});
+    res[BulletType::Seed_Red].loadFromImage(bullets, {/* 25 */41, 71, 8, 14});
     res[BulletType::Circle_Red].loadFromImage(bullets, {40, 308, 28, 28});
 
     return res;
@@ -71,7 +73,7 @@ std::unordered_map<BulletType, Bullet::Info> Bullet::getBulletTypes() {
 
     type = BulletType::Player;
     res[type] = Bullet::Info{&textures[type], sf::Vector2f{8.f, 14.f} * 4.f, {0, -600}, 
-                             UpdateFunc(), 25, 0, {16, 28}/* , sf::Vector2f{100, 100} */};
+                             UpdateFunc(), 25, 0, {16 * 0.9, 32 * 0.9}/* , sf::Vector2f{100, 100} */};
     
     type = BulletType::Talisman_RB;
     res[type] = Bullet::Info{&textures[type], sf::Vector2f{12, 14} * 2.5f, {0, 500}, 
@@ -80,6 +82,9 @@ std::unordered_map<BulletType, Bullet::Info> Bullet::getBulletTypes() {
     type = BulletType::Circle_Red;
     res[type] = Bullet::Info{&textures[type], 30, {0, 400}, UpdateFunc(), 1, 0, 
                              sf::Vector2f{28, 28} * 3.f, textures[type].getSize().x / 2};
+
+    type = BulletType::Seed_Red;
+    res[type] = Bullet::Info{&textures[type], sf::Vector2f{8, 14} * 2.5f, {0, 0}, UpdateFunc(), 1, 0, sf::Vector2f{8, 14} * 3.f};
     
     return res;
 }

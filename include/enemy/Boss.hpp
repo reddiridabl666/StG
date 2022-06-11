@@ -41,9 +41,11 @@ public:
     friend class Phase;
 };
 
-class AnimatedBoss : virtual public Boss, public Animated {
+class AnimatedBoss : virtual public Animated, virtual public Boss {
 public:
-    using Boss::Boss;
+    AnimatedBoss(const Animated::Sprites& sprites, const sf::Vector2f& pos, 
+                 const HitboxInfo& hitbox_size, size_t hp, Layer layer = Layer::Character) :
+        Animated(sprites), Boss(sprites_["idle"][0], pos, hitbox_size, hp, layer) {}
 
     void setTexture(const sf::Texture& texture) override {
         Boss::setTexture(texture);
@@ -60,13 +62,14 @@ public:
     using Boss::Boss;
 };
 
-class AudibleAnimatedBoss : public AudibleBoss, public AnimatedBoss {
+class AudibleAnimatedBoss : public AnimatedBoss, public AudibleBoss {
 public:
-    AudibleAnimatedBoss(const sf::Texture& texture, const sf::Vector2f& pos, 
+    AudibleAnimatedBoss(const Animated::Sprites& sprites, const sf::Vector2f& pos, 
                         const HitboxInfo& hitbox_size, size_t hp, Layer layer = Layer::Character) :
-        Boss(texture, pos, hitbox_size, hp, layer), 
-        AudibleBoss(texture, pos, hitbox_size, hp, layer), 
-        AnimatedBoss(texture, pos, hitbox_size, hp, layer) {}
+        Animated(sprites),
+        Boss(sprites_["idle"][0], pos, hitbox_size, hp, layer),
+        AnimatedBoss(sprites, pos, hitbox_size, hp, layer),
+        AudibleBoss(sprites_["idle"][0], pos, hitbox_size, hp, layer) {}
 
     using AnimatedBoss::update;
 };
@@ -76,9 +79,11 @@ protected:
     Boss* parent;
     size_t num;
     sf::Vector2f start_pos;
+    float shot_interval;
     float delta;
+    float speed;
 public:
-    explicit Phase(Boss* parent, int hp = 6000) : parent(parent) {
+    explicit Phase(Boss* parent, int hp = 6000, float interval = 0.5) : parent(parent), shot_interval(interval) {
         parent->setHP(hp);
         start_pos = parent->getPosition();
     }
@@ -98,6 +103,20 @@ public:
         return parent->shoot_clock_;
     }
 
-    virtual void update(float time) = 0;
+    virtual void update(float time) {
+        if (time >= shot_interval) {
+            parent->shoot();
+            shoot_clock().restart();
+        }
+    }
+
     virtual void shoot() = 0;
+
+    Bullet* shoot_circular(BulletType type, float radius, float angle, sf::Vector2f velocity = {}) {
+        float x = start_pos.x + radius * cos(angle);
+        float y = start_pos.y + radius * sin(angle);
+
+        velocity = velocity == sf::Vector2f{} ? unit_vector({x, y}, parent->getPosition()) * speed : velocity;
+        return gen().shoot(Bullet::Types[type], {x, y}, velocity, -to_degrees(arctan(velocity)));
+    }
 };

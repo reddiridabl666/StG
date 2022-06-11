@@ -4,9 +4,7 @@
 GameState GameState::state;
 
 void Game::start() {
-    boss = new TestBoss(Resources::textures["boss"], {window.getCenter().x, 200}, sf::Vector2f{400.f, 200.f});
-    boss->scale(4.3, 4.3);
-    
+    boss = new TestBoss({window.getCenter().x, 200}, sf::Vector2f{400.f, 200.f});
     clock.restart();
     event_loop();
 }

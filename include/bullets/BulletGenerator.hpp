@@ -39,6 +39,12 @@ class BulletGenerator {
         return bullet;
     }
 
+    Bullet* shoot(const Bullet::Info& info, sf::Vector2f pos, sf::Vector2f velocity, float angle) {
+        auto bullet = shoot(info, pos, velocity);
+        bullet->setRotation(angle);
+        return bullet;
+    }
+
     void for_each(const std::function<void(Bullet*)>& action) {
         for (auto it : bullets_) {
             if (it)

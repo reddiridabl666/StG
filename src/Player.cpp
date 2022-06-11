@@ -11,11 +11,13 @@ using Axis = Gamepad::Axis;
 static const sf::Vector2f player_hitbox_size = {30, 45};
 static constexpr float player_size = 32 * 4.4;
 
-void Player::init_sprites(sf::Image sprite_sheet) {
+static Animated::Sprites init_sprites(const sf::Image& sprite_sheet) {
+    std::unordered_map<std::string, std::vector<sf::Texture>> sprites_;
     sprites_["idle"] = load_row(sprite_sheet, 4, {0, 0});
     sprites_["right"] = load_row(sprite_sheet, 3, {0, 32});
     sprites_["left"] = load_row(sprite_sheet, 3, {0, 64});
     sprites_["death"] = load_row(sprite_sheet, 9, {0, 96});
+    return sprites_;
 }
 
 static float gamepad_movement(Axis axis, unsigned int gamepad_num = 0) {
@@ -57,14 +59,15 @@ static float horizontal_movement(unsigned int gamepad_num = 0) {
     return horizontal ? horizontal : gamepad_movement(Axis::X, Axis::PovX, gamepad_num);
 } 
 
-Player::Player(const sf::Texture& texture, sf::Vector2f pos,
+Player::Player(sf::Vector2f pos,
                sf::Vector2f hitbox_size, float speed, 
-               float mass, Layer layer) : 
-    ShootingObject(texture, pos, hitbox_size, {0, 0}, mass, layer), speed_(speed) {
-    auto factor = player_size / min(texture.getSize());
+               float mass, Layer layer) :
+    Animated(init_sprites(Resources::sprite_sheets["player"])),
+    ShootingObject(sprites_["idle"][0], pos, hitbox_size, {0, 0}, mass, layer), speed_(speed) {
+    auto factor = player_size / min(sprites_["idle"][0].getSize());
     scale(factor, factor);
     setTag(Tag::Player);
-    init_sprites(Resources::sprite_sheets["player"]);
+    // init_sprites(Resources::sprite_sheets["player"]);
 
     // setHP(1);
 #ifdef DEBUG
@@ -156,10 +159,10 @@ void Player::shoot(BulletType name) {
     shoot_clock_.restart();
     play_sound("player_shoot", 50);
 
-    // auto bullet = 
+    auto bullet = 
     gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{15, 70});
-    // bullet->setDamage(10000);
-    // bullet = 
+    bullet->setDamage(10000);
+    bullet = 
     gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{-15, 70});
-    // bullet->setDamage(10000);
+    bullet->setDamage(10000);
 }

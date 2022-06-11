@@ -15,7 +15,7 @@ if (DEBUG)
     add_compile_options(-DDEBUG)
 endif()
 
-# add memcheck
+# Add memcheck
 add_custom_target(memcheck COMMAND valgrind --suppressions=/lib/valgrind/sfml.supp ./main)
 
 # Find SFML
@@ -24,8 +24,8 @@ find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 # Add lib
 set(SOURCES src/GameObject.cpp src/Window.cpp src/SpriteObject.cpp 
             src/Player.cpp src/Hitbox.cpp src/DynamicObject.cpp 
-            src/Wall.cpp src/Bullet.cpp src/Game.cpp src/FramedObject.cpp
-            src/TestBoss.cpp)
+            src/Wall.cpp src/Bullet.cpp src/Game.cpp 
+            src/FramedObject.cpp src/TestBoss.cpp)
 
 # Add main
 add_executable(main main.cpp ${SOURCES})

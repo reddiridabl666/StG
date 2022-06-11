@@ -30,5 +30,6 @@ enum class BulletType {
     BigCircle_Red,
     Circle_Red,
     Talisman_RB,
+    Seed_Red,
     Player
 };

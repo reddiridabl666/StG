@@ -15,7 +15,7 @@ public:
     }
 };
 
-class Player : public ShootingObject<PlayerBullet>, private Animated, private Audible {
+class Player : private Animated, public ShootingObject<PlayerBullet>, private Audible {
 protected:
     float speed_ = 800;
     float normal_speed_ = speed_;
@@ -28,7 +28,7 @@ protected:
     float flick_time = 0.1;
     float invinc_time_ = 1.5;
 
-    void init_sprites(sf::Image sprite_sheet) override;
+    // void init_sprites(sf::Image sprite_sheet) override;
     void control();
 
 public:
@@ -36,7 +36,7 @@ public:
     Player(const Player&) = delete;
     Player& operator=(const Player& other) = delete;
 
-    Player(const sf::Texture& texture, sf::Vector2f pos = {0, 0},
+    Player(sf::Vector2f pos = {0, 0},
            sf::Vector2f hitbox_size = {0, 0}, float speed = 800, 
            float mass = 0, Layer layer = Layer::Character);
 
