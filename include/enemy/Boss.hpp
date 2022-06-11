@@ -3,6 +3,7 @@
 #include "Animated.hpp"
 #include "Enemy.hpp"
 #include "UpdateFunctions.hpp"
+#include "HealthBar.hpp"
 
 class Boss : public Enemy {
 protected:
@@ -11,11 +12,13 @@ protected:
         shoot_clock_.restart();
         shot_num_ = 0;
         phase_.reset(phase);
+        health_bar_.setMax(hp_);
         gen_.for_each([](Bullet* it) {it->deactivate();});
     }
 
     std::unique_ptr<Phase> phase_;
-    Text health_bar_;
+    // Text health_bar_;
+    HealthBar<sf::Int32> health_bar_;
     Text phase_left_;
     sf::Uint8 phase_num_ = 0;
     sf::Uint8 phase_max_ = 4;
@@ -23,16 +26,18 @@ protected:
 public:
     Boss(const sf::Texture& texture, const sf::Vector2f& pos, 
           const HitboxInfo& hitbox_size, size_t hp, Layer layer = Layer::Character) : 
-        Enemy(texture, pos, hitbox_size, hp, layer), 
-        health_bar_("Health: " + std::to_string(hp),
-                    getPosition() + sf::Vector2f{-getHalfSize().x, -getSize().y}),
+        Enemy(texture, pos, hitbox_size, hp, layer),
+        health_bar_(Resources::textures["hp_full"], Resources::textures["hp_zero"], 
+                    hp_, getPosition() + sf::Vector2f{0, -getSize().y - 80}),
+        // health_bar_("Health: " + std::to_string(hp),
+        //             getPosition() + sf::Vector2f{-getHalfSize().x, -getSize().y}),
         phase_left_("Phase: " + std::to_string(phase_num_) + "/" + std::to_string(phase_max_), {50, 50}) {
     }
 
     void update(float deltaTime) override {
         ShootingObject::update(deltaTime);
-        health_bar_.setString("Health: " + std::to_string(hp_));
-        health_bar_.setPosition(getPosition() + sf::Vector2f{-getHalfSize().x, -getSize().y});
+        // health_bar_.setString("Health: " + std::to_string(hp_));
+        // health_bar_.setPosition(getPosition() + sf::Vector2f{-getHalfSize().x, -getSize().y});
         phase_left_.setString("Phase: " + std::to_string(phase_num_) + "/" + std::to_string(phase_max_));
     }
 

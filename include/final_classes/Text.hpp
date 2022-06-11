@@ -5,11 +5,11 @@
 
 class Text : public GameObject, public sf::Text {
 public:
-    Text() : GameObject(Layer::Interface), sf::Text() {}
+    Text() : GameObject(Layer::Ui), sf::Text() {}
 
     Text(const sf::String& text, const sf::Font& font = Resources::fonts["ARIAL"], 
          int size = 48, sf::Vector2f pos = {0, 0},
-         Layer layer = Layer::Interface) :
+         Layer layer = Layer::Ui) :
             GameObject(layer), sf::Text(text, font, size) {
             // setOrigin(getHalfSize());
             setPosition(pos);

@@ -13,7 +13,7 @@ enum class Layer {
     Character,
     Hitbox,
     Bullet,
-    Interface
+    Ui
 };
 
 class GameObject {

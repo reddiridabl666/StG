@@ -31,8 +31,8 @@ set(SOURCES src/GameObject.cpp src/Window.cpp src/SpriteObject.cpp
 add_executable(main main.cpp ${SOURCES})
 
 # Add include dirs
-set(INCLUDE_DIRS include include/utilities include/bullets include/base_classes
-                 include/final_classes include/helper_classes include/enemy)
+set(INCLUDE_DIRS include include/utilities include/bullets include/base_classes 
+                 include/final_classes include/helper_classes include/enemy include/ui)
 target_include_directories(main PRIVATE ${INCLUDE_DIRS})
 
 # Link libraries

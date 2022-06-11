@@ -2,7 +2,7 @@
 
 static constexpr sf::Uint8 layer_num = 5;
 std::unordered_map<Layer, GameObject::objects> GameObject::objects_by_layer(layer_num);
-const std::array<Layer, layer_num> Layers = {Layer::Bg, Layer::Character, Layer::Bullet, Layer::Hitbox, Layer::Interface};
+const std::array<Layer, layer_num> Layers = {Layer::Bg, Layer::Character, Layer::Bullet, Layer::Hitbox, Layer::Ui};
 
 GameObject::GameObject(Layer layer, const sf::Vector2f& size) : layer_(layer), size_(size) {
     objects_by_layer[layer_].insert(this);

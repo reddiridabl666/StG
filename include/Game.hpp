@@ -26,7 +26,7 @@ public:
     Game() : window(),
              frame(Wall::get_frame(window)),
              bg(Resources::textures["bg"], window),
-             player(new Player(window.getCenter(), {30, 30})) {
+             player(new Player(window.getCenter(), {25, 30})) {
              GameState::init(player, &window, frame);
     }
     
