@@ -30,7 +30,7 @@ public:
         }
     }
 
-    void player_collision(Player* player) {
+    void player_collision(std::shared_ptr<Player>&& player) {
         if (!player) {
             return;
         }

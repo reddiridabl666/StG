@@ -161,10 +161,10 @@ void Player::shoot(BulletType name) {
     shoot_clock_.restart();
     play_sound("player_shoot", 50);
 
-    // auto bullet = 
+    auto bullet = 
     gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{15, 70});
-    // bullet->setDamage(10000);
-    // bullet = 
+    bullet->setDamage(10000);
+    bullet = 
     gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{-15, 70});
-    // bullet->setDamage(10000);
+    bullet->setDamage(10000);
 }

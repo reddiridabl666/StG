@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Background.hpp"
-#include "Boss.hpp"
+#include "TestBoss.hpp"
 #include "GameState.hpp"
 #include "Player.hpp"
 #include "Resources.hpp"
@@ -17,10 +17,11 @@ private:
         std::list<std::shared_ptr<GameObject>> objs;
     public:
         Manager() = default;
+        
         void update() {
             for (auto it = objs.begin(); it != objs.end();) {
                 if (!(*it)->is_active()) {
-                    objs.erase(it);
+                    it = objs.erase(it);
                 } else {
                     ++it;
                 }
@@ -28,9 +29,9 @@ private:
         }
 
         template <typename T>
-        std::weak_ptr<T> add(T* obj) {
-            objs.emplace_back(obj);
-            return std::shared_ptr<T>(obj);
+        std::shared_ptr<T> add(std::shared_ptr<T>&& obj) {
+            objs.push_back(obj);
+            return obj;
         }
     };
     
@@ -49,8 +50,9 @@ public:
              window(),
              frame(Wall::get_frame(window)),
              bg(Resources::textures["bg"], window),
-             player(manager.add(new Player(window.getCenter(), {25, 30}))) {
-             GameState::init(player.lock().get(), &window, frame);
+             player(manager.add(std::make_shared<Player>(window.getCenter(), sf::Vector2f{25, 30}))),
+             boss(manager.add(std::make_shared<TestBoss>(sf::Vector2f{window.getCenter().x, 200}, sf::Vector2f{400.f, 200.f}))) {
+             GameState::init(player, &window, frame);
     }
     
     Game(const Game&) = delete;
@@ -61,15 +63,4 @@ public:
     void event_loop();
 
     void check_collisions();
-
-    // ~Game() {
-    //     if (player) {
-    //         delete player; 
-    //         player = nullptr;
-    //     }
-    //     if (boss) {
-    //         delete boss; 
-    //         boss = nullptr;
-    //     }
-    // }
 };

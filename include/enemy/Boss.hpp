@@ -20,9 +20,10 @@ protected:
     std::unique_ptr<Phase> phase_;
     // Text health_bar_;
     HealthBar<sf::Int32> health_bar_;
-    Text phase_left_;
+    
     sf::Uint8 phase_num_ = 0;
     sf::Uint8 phase_max_ = 4;
+    Text phase_left_;
 
 public:
     Boss(const sf::Texture& texture, const sf::Vector2f& pos, 

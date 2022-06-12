@@ -9,7 +9,7 @@ void delete_when_out_of_bounds(Bullet* bullet, float) {
 }
 
 void delete_if_near_player(Bullet* bullet, float) {
-    const Player* player = GameState::player();
+    auto player = GameState::player();
     if (!player || !player->is_invincible()) {
         return;
     }
