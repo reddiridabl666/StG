@@ -5,7 +5,7 @@
 GameState GameState::state;
 
 void Game::start() {
-    boss = new TestBoss({window.getCenter().x, 200}, sf::Vector2f{400.f, 200.f});
+    boss = manager.add(new TestBoss({window.getCenter().x, 200}, sf::Vector2f{400.f, 200.f}));
     Button exit("Exit", window, {1700, 950}, [this] {window.close();});
     clock.restart();
     event_loop();
@@ -21,25 +21,25 @@ void Game::event_loop() {
     
         window.sys_event_loop();
 
-        if (window.hasFocus() && player) {
-            player->update();
+        if (window.hasFocus() && !player.expired()) {
+            player.lock()->update();
         }
 
         GameObject::update_all(deltaTime);
         
         check_collisions();
 
-        if (player && !player->is_active()) {
-            delete player;
-            player = nullptr;
-        }
+        // if (player && !player->is_active()) {
+        //     delete player;
+        //     player = nullptr;
+        // }
 
-        if (boss && !boss->is_active()) {
-            delete boss;
-            boss = nullptr;
-        }
+        // if (boss && !boss->is_active()) {
+        //     delete boss;
+        //     boss = nullptr;
+        // }
 
-        GameState::update(player);
+        GameState::update(player.lock().get());
 
 #ifdef DEBUG
         timer.setString(player ? player->get_invinc_time() : 0);
@@ -55,15 +55,15 @@ void Game::event_loop() {
 void Game::check_collisions() {
     DynamicObject::refresh_collision_num();
 
-    if (boss) {
-        boss->player_collision(player);
-        boss->check_bullet_collisions(player);
+    if (!boss.expired()) {
+        boss.lock()->player_collision(player.lock().get());
+        boss.lock()->check_bullet_collisions(player.lock().get());
     }
     
     for (auto it : frame.iter()) {
         it->check_collisions_with(FramedObject::all);
-        if (player) {
-            it->player_collision(*player);
+        if (!player.expired()) {
+            it->player_collision(*player.lock().get());
         }
     }
 }
