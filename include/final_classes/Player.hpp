@@ -3,6 +3,7 @@
 #include "ShootingObject.hpp"
 #include "Animated.hpp"
 #include "Audible.hpp"
+#include "Text.hpp"
 
 class Enemy;
 
@@ -27,6 +28,8 @@ protected:
     sf::Clock flick_clock_;
     float flick_time = 0.1;
     float invinc_time_ = 1.5;
+
+    std::unique_ptr<Log<sf::Int32>> health_bar_;
 
     // void init_sprites(sf::Image sprite_sheet) override;
     void control();
@@ -81,6 +84,6 @@ public:
     }
 
     float get_invinc_time() const {
-        return is_invincible() ? invinc_time_ - invinc_clock_.getElapsedTime().asSeconds() : 0;
+        return invinc_time_ - invinc_clock_.getElapsedTime().asSeconds();
     }
 };

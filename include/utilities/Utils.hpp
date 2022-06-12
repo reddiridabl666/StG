@@ -1,5 +1,9 @@
 #pragma once
 
+namespace constants {
+    inline constexpr float eps = 1e-3;
+}
+
 template <typename T>
 inline T max(sf::Vector2<T> a) {
     return a.x > a.y ? a.x : a.y;

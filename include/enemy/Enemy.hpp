@@ -23,7 +23,9 @@ public:
 
     void on_collide(Bullet* obj) {
         if (obj && obj->getTag() == Tag::PlayerBullet) {
-            obj->dealDamage(*this);
+            if (hitbox_->is_active()) {
+                obj->dealDamage(*this);
+            }
             obj->deactivate();
         }
     }

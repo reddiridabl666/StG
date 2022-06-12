@@ -8,6 +8,17 @@ void delete_when_out_of_bounds(Bullet* bullet, float) {
     }
 }
 
+void delete_if_near_player(Bullet* bullet, float) {
+    const Player* player = GameState::player();
+    if (!player || !player->is_invincible()) {
+        return;
+    }
+    if (distance(player->getPosition(), bullet->getPosition()) <= 70 &&
+        player->get_invinc_time() <= 0.05) {
+            bullet->deactivate();
+    }
+}
+
 Bullet::Bullet(Bullet::Info info, Layer layer) : Bullet(layer) {
     if (info.texture) {
         setTexture(*info.texture);
@@ -20,9 +31,6 @@ Bullet::Bullet(Bullet::Info info, Layer layer) : Bullet(layer) {
         frame_hitbox_ = Hitbox::getFrameHitbox(getSize());
     }
 
-    // if (info.update) {
-    //     setUpdateFunc(*info.update);
-    // }
     setUpdateFunc(info.update);
 
     hitbox_ = Hitbox::getHitbox(info.hitbox_info);
@@ -43,7 +51,7 @@ Bullet& Bullet::operator=(const Bullet& other) {
     clock.restart();
     setUpdateFunc(other.update_);
     setDamage(other.damage_);
-    /* DynamicObject */FramedObject::operator=(other);
+    FramedObject::operator=(other);
     return *this;
 }
 
@@ -73,7 +81,7 @@ std::unordered_map<BulletType, Bullet::Info> Bullet::getBulletTypes() {
 
     type = BulletType::Player;
     res[type] = Bullet::Info{&textures[type], sf::Vector2f{8.f, 14.f} * 4.f, {0, -600}, 
-                             UpdateFunc(), 25, 0, {16 * 0.9, 32 * 0.9}/* , sf::Vector2f{100, 100} */};
+                             UpdateFunc(), 25, 0, {16 * 0.9, 32 * 0.9}};
     
     type = BulletType::Talisman_RB;
     res[type] = Bullet::Info{&textures[type], sf::Vector2f{12, 14} * 2.5f, {0, 500}, 

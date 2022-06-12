@@ -4,6 +4,8 @@
 #include "Resources.hpp"
 
 class Text : public GameObject, public sf::Text {
+protected:
+    static inline const sf::Font& DefaultFont = Resources::fonts["Nova+"];
 public:
     Text() : GameObject(Layer::Ui), sf::Text() {}
 
@@ -19,7 +21,7 @@ public:
     }
 
     Text(const sf::String& text, sf::Vector2f pos) : 
-        Text(text, Resources::fonts["ARIAL"], 48, pos) {}
+        Text(text, DefaultFont, 48, pos) {}
 
     sf::Drawable* getDrawable() override {
         return this;
@@ -56,5 +58,9 @@ public:
             setString(text_ + std::to_string(*num_));
         else
             setString("Error");
+    }
+
+    void setText(const sf::String& text) {
+        text_ = text;
     }
 };

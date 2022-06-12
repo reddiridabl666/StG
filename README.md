@@ -1,7 +1,7 @@
 # STG
 A simple bullet-hell game
 
-## Controls:
+### Controls:
 - Movement:  
   - WASD, arrows
   - left joystick, D-pad

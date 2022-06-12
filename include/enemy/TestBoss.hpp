@@ -10,6 +10,7 @@ protected:
         BallBounce(Boss*);
         void update(float) override;
         void shoot() override;
+        ~BallBounce() override;
     };
 
     struct ChessHoming : public Phase {

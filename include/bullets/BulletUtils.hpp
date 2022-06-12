@@ -5,6 +5,7 @@
 class Bullet;
 
 void delete_when_out_of_bounds(Bullet*, float);
+void delete_if_near_player(Bullet* bullet, float);
 
 class UpdateFunc {
 private:
@@ -15,6 +16,7 @@ public:
 
     void operator()(Bullet* bullet, float time) const {
         delete_when_out_of_bounds(bullet, time);
+        delete_if_near_player(bullet, time);
         func_(bullet, time);
     }
     

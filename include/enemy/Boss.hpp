@@ -12,6 +12,7 @@ protected:
         shoot_clock_.restart();
         shot_num_ = 0;
         phase_.reset(phase);
+        hitbox_->deactivate();
         health_bar_.setMax(hp_);
         gen_.for_each([](Bullet* it) {it->deactivate();});
     }
@@ -31,14 +32,14 @@ public:
                     hp_, getPosition() + sf::Vector2f{0, -getSize().y - 80}),
         // health_bar_("Health: " + std::to_string(hp),
         //             getPosition() + sf::Vector2f{-getHalfSize().x, -getSize().y}),
-        phase_left_("Phase: " + std::to_string(phase_num_) + "/" + std::to_string(phase_max_), {50, 50}) {
+        phase_left_("Phase: " + std::to_string(phase_num_) + " / " + std::to_string(phase_max_), {50, 50}) {
     }
 
     void update(float deltaTime) override {
         ShootingObject::update(deltaTime);
         // health_bar_.setString("Health: " + std::to_string(hp_));
         // health_bar_.setPosition(getPosition() + sf::Vector2f{-getHalfSize().x, -getSize().y});
-        phase_left_.setString("Phase: " + std::to_string(phase_num_) + "/" + std::to_string(phase_max_));
+        phase_left_.setString("Phase: " + std::to_string(phase_num_) + " / " + std::to_string(phase_max_));
     }
 
     virtual void shoot() = 0;
@@ -88,6 +89,8 @@ protected:
     float delta;
     float speed;
 public:
+    bool started = false;
+
     explicit Phase(Boss* parent, int hp = 6000, float interval = 0.5) : parent(parent), shot_interval(interval) {
         parent->setHP(hp);
         start_pos = parent->getPosition();
@@ -124,4 +127,6 @@ public:
         velocity = velocity == sf::Vector2f{} ? unit_vector({x, y}, parent->getPosition()) * speed : velocity;
         return gen().shoot(Bullet::Types[type], {x, y}, velocity, -to_degrees(arctan(velocity)));
     }
+
+    virtual ~Phase() = default;
 };

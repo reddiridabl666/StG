@@ -63,7 +63,8 @@ Player::Player(sf::Vector2f pos,
                sf::Vector2f hitbox_size, float speed, 
                float mass, Layer layer) :
     Animated(init_sprites(Resources::sprite_sheets["player"])),
-    ShootingObject(sprites_["idle"][0], pos, hitbox_size, {0, 0}, mass, layer), speed_(speed) {
+    ShootingObject(sprites_["idle"][0], pos, hitbox_size, {0, 0}, mass, layer), speed_(speed),
+    health_bar_(std::make_unique<Log<sf::Int32>>("Health: ", hp_, sf::Vector2f{1650, 50})) {
     auto factor = player_size / min(sprites_["idle"][0].getSize());
     scale(factor, factor);
     setTag(Tag::Player);
@@ -124,6 +125,7 @@ void Player::update() {
         }
         if (invinc_clock_.getElapsedTime().asSeconds() >= invinc_time_) {
             hitbox_->activate();
+            // clear_nearby_bullets();
             show();
         }
     }
@@ -141,7 +143,7 @@ void Player::update() {
         if (getVelocity().x == 0) {
             setAnimation(sprites_["idle"]);
         }
-    } else  if (!flag) {
+    } else if (!flag) {
         setAnimation(sprites_["death"]);
         play_sound("player_death");
         hitbox_->hide();

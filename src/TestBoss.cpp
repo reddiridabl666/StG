@@ -36,6 +36,12 @@ void TestBoss::BallBounce::update(float time) {
     }
 }
 
+TestBoss::BallBounce::~BallBounce() {
+    gen().for_each([](Bullet* it) {
+        it->setMass(0);
+    });
+}
+
 TestBoss::ChessHoming::ChessHoming(Boss* parent) : Phase(parent, 5000) {
     delta = 140;
     num = GameState::window()->getSize().x / delta + 1;
@@ -186,11 +192,20 @@ void TestBoss::StreamsCircular::shoot() {
 }
 
 void TestBoss::shoot() {
-    shot_num_++;
-    play_sound("boss_shoot");
-    if (phase_) {
-        phase_->shoot();
+    if (!phase_) {
+        return;
     }
+
+    // if (!phase_->started) {
+        hitbox_->activate();
+    //     phase_->started = true;
+    // }
+
+    // if (phase_->started) {
+        shot_num_++;
+        play_sound("boss_shoot");
+        phase_->shoot();
+    // }
 }
 
 void TestBoss::update(float deltaTime) {

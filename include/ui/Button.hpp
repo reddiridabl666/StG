@@ -17,7 +17,7 @@ public:
         Text(text, font, size, pos), action_(action), window_(window) {}
 
     Button(const sf::String& text, const sf::RenderWindow& window, sf::Vector2f pos = {}, const std::function<void()>& action = [] {}) :
-        Button(text, Resources::fonts["ARIAL"], 48, window, pos, action) {}
+        Button(text, DefaultFont, 48, window, pos, action) {}
 
     void setAction(const std::function<void()>& action) {
         action_ = action;

@@ -19,9 +19,9 @@ private:
     sf::FloatRect bounds_ = {0, 0, 0, 0};
     sf::Vector2f player_pos_ = {0, 0};
 
-    Player* player_ = nullptr;
-    Window* window_ = nullptr;
-    std::unique_ptr<Text> hp_;
+    const Player* player_ = nullptr;
+    const Window* window_ = nullptr;
+    // std::unique_ptr<Text> hp_;
 
 public:
     // friend class Game;
@@ -29,7 +29,7 @@ public:
     GameState(const GameState&) = delete;   
     GameState& operator=(const GameState&) = delete;
 
-    static void update(Player* player) {
+    static void update(const Player* player) {
         // state.player_ = player;
         if (!player) {
             state.player_ = nullptr;
@@ -37,21 +37,20 @@ public:
         if (state.player_) {
             state.player_pos_ = state.player_->getPosition();
         }
-        state.hp_->setString(state.player_ ? std::string("Health: ") + 
-                                std::to_string(state.player_->HP()) : "You died");
+        // state.hp_->setString(state.player_ ? std::string("Health: ") + 
+        //                         std::to_string(state.player_->HP()) : "You died");
     }
 
-    static void init(Player* player, Window* window, const Frame& frame, float offset = 100) {
+    static void init(const Player* player, const Window* window, const Frame& frame, float offset = 100) {
         state.player_ = player;
         state.window_ = window;
 
-        state.hp_ = std::make_unique<Text>(std::to_string(player->HP()), 
-                                    Resources::fonts["ARIAL"], 
-                                    48, sf::Vector2f{1650, 150});
+        // state.hp_ = std::make_unique<Text>(std::to_string(player->HP()), sf::Vector2f{1650, 150});
 
         state.bounds_ = {frame.left.getPosition().x - offset, frame.up.getPosition().y - offset,
                          frame.right.getPosition().x + offset - state.bounds_.left,
                          frame.low.getPosition().y + offset - state.bounds_.top};
+                         
         // state.bounds_.left = frame.left.getPosition().x - offset;
         // state.bounds_.top = frame.up.getPosition().y - offset;
         // state.bounds_.width = frame.right.getPosition().x + offset - state.bounds_.left;
@@ -66,7 +65,7 @@ public:
         return state.window_;
     }
 
-    static Player* player() {
+    static const Player* player() {
         return state.player_;
     }
 
