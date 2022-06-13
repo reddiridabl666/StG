@@ -64,13 +64,14 @@ Player::Player(sf::Vector2f pos,
                float mass, Layer layer) :
     Animated(init_sprites(Resources::sprite_sheets["player"])),
     ShootingObject(sprites_["idle"][0], pos, hitbox_size, {0, 0}, mass, layer), speed_(speed),
-    health_bar_("Health: ", hp_, sf::Vector2f{1650, 50}) {
+    health_bar_("Health: ", hp_, sf::Vector2f{1650, 50}, Layer::Hitbox) {
+
     auto factor = player_size / min(sprites_["idle"][0].getSize());
     scale(factor, factor);
-    setTag(Tag::Player);
-    // init_sprites(Resources::sprite_sheets["player"]);
 
-    // setHP(1);
+    setTag(Tag::Player);
+    setHP(1);
+    
 #ifdef DEBUG
 #include <limits>
     setHP(std::numeric_limits<int>::max());
@@ -111,7 +112,7 @@ void Player::control() {
 
     setVelocity(speed_ * (horizontal_movement() * right + vertical_movement() * down));
 
-    if (shoot_clock_.getElapsedTime().asSeconds() >= shot_interval && 
+    if (shoot_clock_/* .getElapsedTime().asSeconds() */ >= shot_interval && 
             (Key::isKeyPressed(Key::Space) || Gamepad::isButtonPressed(0, 0))) {
         Player::shoot(normal_shot_);
     }
@@ -131,8 +132,7 @@ void Player::update() {
     }
 
     control();
-    static bool flag = false;
-
+    
     if (hp_ > 0) {
         if (getVelocity().x > 0) {
             setAnimation(sprites_["right"]);
@@ -158,13 +158,14 @@ void Player::update() {
 }
 
 void Player::shoot(BulletType name) {
-    shoot_clock_.restart();
+    // shoot_clock_.restart();
+    shoot_clock_ = 0;
     play_sound("player_shoot", 50);
 
-    // auto bullet = 
+    auto& bullet = 
     gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{15, 70});
-    // bullet->setDamage(10000);
-    // bullet = 
+    bullet->setDamage(10000);
+    auto& bullet2 = 
     gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{-15, 70});
-    // bullet->setDamage(10000);
+    bullet2->setDamage(10000);
 }

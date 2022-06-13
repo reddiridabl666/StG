@@ -11,6 +11,13 @@ public:
         all.insert(this);
     }
 
+    Ui(const Ui& other) : Ui(other.layer_) {}
+
+    Ui& operator=(const Ui& other) {
+        change_layer(other.layer_);
+        return *this;
+    }
+
     virtual void update() {}
 
     static void update_all() {

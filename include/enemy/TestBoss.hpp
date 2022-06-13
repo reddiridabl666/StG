@@ -50,7 +50,7 @@ protected:
 
 #ifdef DEBUG
     float time_;
-    Log<int> shot_num_log;
+    Log<size_t> shot_num_log;
     Log<float> time_log;
 #endif
 

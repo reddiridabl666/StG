@@ -7,10 +7,15 @@
 enum class Layer {
     Bg,
     Character,
-    Hitbox,
     Bullet,
+    Hitbox,
+    Menu,
+    Menu2,
     Ui
 };
+
+Layer prev(Layer layer);
+Layer next(Layer layer);
 
 class DrawableObject {
 protected:
@@ -23,6 +28,13 @@ public:
 
     DrawableObject(Layer layer = Layer::Bg) : layer_(layer) {
         objects_by_layer[layer].insert(this);
+    }
+
+    DrawableObject(const DrawableObject& obj) : DrawableObject(obj.layer_) {}
+
+    DrawableObject& operator=(const DrawableObject& obj) {
+        change_layer(obj.layer_);
+        return *this;
     }
 
     virtual void hide() {

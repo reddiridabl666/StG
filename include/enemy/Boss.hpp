@@ -8,8 +8,9 @@
 class Boss : public Enemy {
 protected:
     void changePhase(std::unique_ptr<Phase>&& phase) {
-        phase_num_++;
-        shoot_clock_.restart();
+        if (phase_num_ != phase_max_) phase_num_++;
+        // shoot_clock_.restart();
+        shoot_clock_ = 0;
         shot_num_ = 0;
         phase_ = std::move(phase);
         hitbox_->deactivate();
@@ -30,10 +31,10 @@ public:
           const HitboxInfo& hitbox_size, size_t hp, Layer layer = Layer::Character) : 
         Enemy(texture, pos, hitbox_size, hp, layer),
         health_bar_(Resources::textures["hp_full"], Resources::textures["hp_zero"], 
-                    hp_, getPosition() + sf::Vector2f{0, -getSize().y - 80}),
+                    hp_, getPosition() + sf::Vector2f{0, -getSize().y - 80}, Layer::Hitbox),
         // health_bar_("Health: " + std::to_string(hp),
         //             getPosition() + sf::Vector2f{-getHalfSize().x, -getSize().y}),
-        phase_left_("Phase: " + std::to_string(phase_num_) + " / " + std::to_string(phase_max_), {50, 50}) {
+        phase_left_("Phase: " + std::to_string(phase_num_) + " / " + std::to_string(phase_max_), {50, 50}, Layer::Hitbox) {
     }
 
     void update(float deltaTime) override {
@@ -108,14 +109,15 @@ public:
     size_t& shot_num() {
         return parent->shot_num_;
     }
-    sf::Clock& shoot_clock() {
+    /* sf::Clock&  */double& shoot_clock() {
         return parent->shoot_clock_;
     }
 
     virtual void update(float time) {
         if (time >= shot_interval) {
             parent->shoot();
-            shoot_clock().restart();
+            // shoot_clock().restart();
+            shoot_clock() = 0;
         }
     }
 

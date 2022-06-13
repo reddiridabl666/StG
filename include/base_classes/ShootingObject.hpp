@@ -7,7 +7,8 @@ template <typename T>
 class ShootingObject : public HealthObject {
 protected:
     BulletGenerator<T> gen_;
-    sf::Clock shoot_clock_;
+    // sf::Clock shoot_clock_;
+    double shoot_clock_ = 0;
     float shot_interval = 0.1;
 
 public:
@@ -33,6 +34,7 @@ public:
     void update(float deltaTime) override {
         HealthObject::update(deltaTime);
         gen_.update(deltaTime);
+        shoot_clock_ += deltaTime;
     }
 
     virtual void shoot(BulletType name) {

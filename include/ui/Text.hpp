@@ -4,21 +4,21 @@
 #include "Resources.hpp"
 
 class Text : public Ui, public sf::Text {
-protected:
-    static inline const sf::Font& DefaultFont = Resources::fonts["Nova+"];
 public:
+    static inline const sf::Font& DefaultFont = Resources::fonts["Nova+"];
+    
     Text() : Ui(), sf::Text() {}
 
     Text(const sf::String& text, const sf::Font& font = DefaultFont, 
-         int size = 48, sf::Vector2f pos = {0, 0}) :
-            Ui(), sf::Text(text, font, size) {
-            setOutlineThickness(2);
+         int size = 48, sf::Vector2f pos = {0, 0}, Layer layer = Layer::Ui) :
+            Ui(layer), sf::Text(text, font, size) {
+            setOutlineThickness(5);
             setOutlineColor(sf::Color::Black);
             setPosition(pos);
     }
 
-    Text(const sf::String& text, sf::Vector2f pos) : 
-        Text(text, DefaultFont, 48, pos) {}
+    Text(const sf::String& text, sf::Vector2f pos, Layer layer = Layer::Ui) : 
+        Text(text, DefaultFont, 48, pos, layer) {}
 
     sf::Drawable* getDrawable() override {
         return this;
@@ -46,8 +46,8 @@ protected:
 public:
     Log() : Text(), text_(), num_() {}
 
-    Log(const sf::String& text, const T& num, sf::Vector2f pos = {0, 0}) :
-        Text(text + std::to_string(num), pos), text_(text), num_(&num) {}
+    Log(const sf::String& text, const T& num, sf::Vector2f pos = {0, 0}, Layer layer = Layer::Ui) :
+        Text(text + std::to_string(num), pos, layer), text_(text), num_(&num) {}
 
     void update() override {
         if (num_)

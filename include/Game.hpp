@@ -53,9 +53,13 @@ protected:
 
     void pause_menu();
 
+    void menu();
+
     void event_loop(const std::function<void()>& action = [] {});
 
     void game_loop();
+
+    void game_over();
 
     void check_collisions();
 
@@ -63,11 +67,7 @@ public:
     Game() : manager(), 
              window(),
              frame(Wall::get_frame(window)),
-             bg(Resources::textures["bg"], window),
-             player(manager.add(std::make_shared<Player>(window.getCenter(), sf::Vector2f{25, 30}))),
-             boss(manager.add(std::make_shared<TestBoss>(sf::Vector2f{window.getCenter().x, 200}, sf::Vector2f{400.f, 200.f}))) {
-             GameState::init(player, &window, frame);
-    }
+             bg(Resources::textures["bg"], window) {}
     
     Game(const Game&) = delete;
     Game& operator=(const Game&) = delete;

@@ -10,9 +10,9 @@ protected:
     const T& value_;
     float max_ = 0;
 public:
-    HealthBar(const sf::Texture& inner, const sf::Texture& outer, const T& value, sf::Vector2f pos = {}) :
-        Picture(inner, pos),
-        outer_(outer, pos),
+    HealthBar(const sf::Texture& inner, const sf::Texture& outer, const T& value, sf::Vector2f pos = {}, Layer layer = Layer::Ui) :
+        Picture(inner, pos, layer),
+        outer_(outer, pos, prev(layer)),
         value_(value),
         max_(value) {}
 
@@ -28,6 +28,11 @@ public:
     void hide() override {
         Picture::hide();
         outer_.hide();
+    }
+
+    void change_layer(Layer layer) {
+        Picture::change_layer(layer);
+        outer_.change_layer(layer);
     }
 
     void update() override {

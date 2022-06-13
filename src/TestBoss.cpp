@@ -27,7 +27,8 @@ void TestBoss::BallBounce::shoot() {
 void TestBoss::BallBounce::update(float time) {
     if (shot_num() < 5 && time >= shot_interval) {
         parent->shoot();
-        shoot_clock().restart();
+        // shoot_clock().restart();
+        shoot_clock() = 0;
     } else if (time >= 6) {
         shot_num() = 0;
         gen().for_each([](BulletPtr& it) {
@@ -246,10 +247,12 @@ void TestBoss::update(float deltaTime) {
         deactivate();
     }
     
-    auto time = shoot_clock_.getElapsedTime().asSeconds();
+    // auto time = shoot_clock_.getElapsedTime().asSeconds();
+    // shoot_clock_ += deltaTime;
+    
 #ifdef DEBUG
-    time_ = time;
+    time_ = shoot_clock_;
 #endif
     if (phase_)
-        phase_->update(time);
+        phase_->update(shoot_clock_);
 }

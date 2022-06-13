@@ -30,6 +30,7 @@ protected:
     float invinc_time_ = 1.5;
 
     Log<sf::Int32> health_bar_;
+    bool flag = false;
 
     // void init_sprites(sf::Image sprite_sheet) override;
     void control();
