@@ -7,14 +7,14 @@
 
 class Boss : public Enemy {
 protected:
-    void changePhase(Phase* phase) {
+    void changePhase(std::unique_ptr<Phase>&& phase) {
         phase_num_++;
         shoot_clock_.restart();
         shot_num_ = 0;
-        phase_.reset(phase);
+        phase_ = std::move(phase);
         hitbox_->deactivate();
         health_bar_.setMax(hp_);
-        gen_.for_each([](Bullet* it) {it->deactivate();});
+        gen_.for_each([](BulletPtr& it) {it->deactivate();});
     }
 
     std::unique_ptr<Phase> phase_;
@@ -121,7 +121,7 @@ public:
 
     virtual void shoot() = 0;
 
-    Bullet* shoot_circular(BulletType type, float radius, float angle, sf::Vector2f velocity = {}) {
+    BulletPtr& shoot_circular(BulletType type, float radius, float angle, sf::Vector2f velocity = {}) {
         float x = start_pos.x + radius * cos(angle);
         float y = start_pos.y + radius * sin(angle);
 

@@ -18,15 +18,15 @@ public:
         if (!obj) {
             return;
         }
-        for (auto it : getBullets()) {
+        for (auto& it : getBullets()) {
             if (it->collides_with(obj)) {
                 it->on_collide(obj);
-                obj->on_collide(it);
+                obj->on_collide(it.get());
             } 
         }
     }
 
-    std::list<Bullet*> getBullets() {
+    std::list<BulletPtr>& getBullets() {
         return gen_.getBullets();
     }
     

@@ -30,14 +30,14 @@ void TestBoss::BallBounce::update(float time) {
         shoot_clock().restart();
     } else if (time >= 6) {
         shot_num() = 0;
-        gen().for_each([](Bullet* it) {
+        gen().for_each([](BulletPtr& it) {
             it->setMass(0);
         });
     }
 }
 
 TestBoss::BallBounce::~BallBounce() {
-    gen().for_each([](Bullet* it) {
+    gen().for_each([](BulletPtr& it) {
         it->setMass(0);
     });
 }
@@ -87,7 +87,7 @@ void TestBoss::CircularRotating::shoot() {
 
     for (size_t i = 0; i < num; ++i) {
         float angle = (2 * constants::pi) / num * i;
-        auto bullet = shoot_circular(BulletType::Talisman_RB, radius, angle + constants::pi / num * (shot_num() % 2));
+        auto& bullet = shoot_circular(BulletType::Talisman_RB, radius, angle + constants::pi / num * (shot_num() % 2));
 
         float rotate_speed = shot_num() / 8 % 2 ? 150 : -150;
         bullet->setUpdateFunc(circular(parent->getPosition(), rotate_speed));
@@ -155,13 +155,13 @@ void TestBoss::StreamsRandom::shoot() {
     }
 }
 
-TestBoss::StreamsCircular::StreamsCircular(Boss* parent) : Phase(parent, 7000, 0.07) {
+TestBoss::BoWaP_alike::BoWaP_alike(Boss* parent) : Phase(parent, 7000, 0.07) {
     num = 8;
     delta = 2 * constants::pi / num;
     speed = 500;
 }
 
-void TestBoss::StreamsCircular::shoot() {
+void TestBoss::BoWaP_alike::shoot() {
     static const float radius = 150;
     static const float start_angle = rand_gen(0.f, 2 * constants::pi);
 
@@ -216,22 +216,25 @@ void TestBoss::update(float deltaTime) {
     if (hp_ <= 0) {
         switch (phase_num_) {
         case 1:
-            changePhase(new BallBounce(this));
+            changePhase(std::make_unique<BallBounce>(this));
             break;
         case 2:
-            changePhase(new StreamsRandom(this));
+            changePhase(std::make_unique<StreamsRandom>(this));
             break;
         case 3:
-            changePhase(new Chaos(this));
+            changePhase(std::make_unique<Chaos>(this));
             break;
         case 4:
-            changePhase(new ChessHoming(this));
+            changePhase(std::make_unique<ChessHoming>(this));
             break;
         case 5:
-            changePhase(new CircularGrouped(this));
+            changePhase(std::make_unique<CircularGrouped>(this));
             break;
         case 6:
-            changePhase(new CircularRotating(this));
+            changePhase(std::make_unique<CircularRotating>(this));
+            break;
+        case 7:
+            changePhase(std::make_unique<BoWaP_alike>(this));
             break;
         default:
             if (flag)

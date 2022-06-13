@@ -37,9 +37,9 @@ public:
         if (frame_hitbox_->collides_with(player->getHitbox())) {
             player->on_collide(this);
         }
-        for (auto it : player->getBullets()) {
-            if (collides_with(it)) {
-                on_collide(it);
+        for (auto& it : player->getBullets()) {
+            if (collides_with(it.get())) {
+                on_collide(it.get());
                 it->on_collide(this);
             }
         }

@@ -10,11 +10,11 @@ void delete_when_out_of_bounds(Bullet* bullet, float) {
 
 void delete_if_near_player(Bullet* bullet, float) {
     auto player = GameState::player();
-    if (!player || !player->is_invincible()) {
+    if (!player) {
         return;
     }
-    if (distance(player->getPosition(), bullet->getPosition()) <= 70 &&
-        player->get_invinc_time() <= 0.05) {
+    if (distance(player->getPosition(), bullet->getPosition()) <= 60 &&
+        std::abs(player->get_invinc_time()) <= 0.05) {
             bullet->deactivate();
     }
 }

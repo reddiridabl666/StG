@@ -43,8 +43,8 @@ protected:
         void shoot() override;
     };
 
-    struct StreamsCircular : public Phase {
-        StreamsCircular(Boss*);
+    struct BoWaP_alike : public Phase {
+        BoWaP_alike(Boss*);
         void shoot() override;
     };
 
@@ -65,12 +65,10 @@ public:
         time_log("Shot interval: ", time_, {50, 200})
 #endif  
     {
-        // sprites_ = init_sprites(Resources::sprite_sheets["boss1"]);
         setAnimation(sprites_["idle"]);
         scale(4.3, 4.3);
-        // changePhase(new Circular_1(this));
-        // changePhase(new StreamsRandom(this));
-        changePhase(new StreamsCircular(this));
+        changePhase(std::make_unique<Circular_1>(this));
+        // changePhase(std::make_unique<BoWaP_alike>(this));
         phase_max_ = 9;
     }
 
