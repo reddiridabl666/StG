@@ -1,15 +1,15 @@
 #pragma once
 
-#include "SpriteObject.h"
+#include "Picture.hpp"
 #include "Window.h"
 
-class Background : public SpriteObject {
+class Background : public Picture {
 public:
-    Background() : SpriteObject(Layer::Bg) {}
+    Background() : Picture() {}
     Background(const sf::Texture& texture, const Window& window) :
-        SpriteObject(texture, window.getCenter(), Layer::Bg) {
-        auto factor = std::max(static_cast<float>(window.getSize().x) / getSize().x,
-                               static_cast<float>(window.getSize().y) / getSize().y);
+        Picture(texture, window.getCenter(), Layer::Bg) {
+        auto factor = std::max(static_cast<float>(window.getSize().x) / texture.getSize().x,
+                               static_cast<float>(window.getSize().y) / texture.getSize().y);
         scale(factor, factor);
     }
 };

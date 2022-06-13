@@ -14,10 +14,15 @@ protected:
     }
 public:
     Button(const sf::String& text, const sf::Font& font, int size, const sf::RenderWindow& window, sf::Vector2f pos = {}, const std::function<void()>& action = [] {}) :
-        Text(text, font, size, pos), action_(action), window_(window) {}
+        Text(text, font, size, pos), action_(action), window_(window) {
+        setOrigin(sf::Vector2f{getLocalBounds().width, getLocalBounds().height} / 2.f);
+    }
 
     Button(const sf::String& text, const sf::RenderWindow& window, sf::Vector2f pos = {}, const std::function<void()>& action = [] {}) :
         Button(text, DefaultFont, 48, window, pos, action) {}
+    
+    Button(const sf::String& text, int size, const sf::RenderWindow& window, sf::Vector2f pos = {}, const std::function<void()>& action = [] {}) :
+        Button(text, DefaultFont, size, window, pos, action) {}
 
     void setAction(const std::function<void()>& action) {
         action_ = action;

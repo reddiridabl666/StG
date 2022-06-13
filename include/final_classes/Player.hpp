@@ -29,7 +29,7 @@ protected:
     float flick_time = 0.1;
     float invinc_time_ = 1.5;
 
-    std::unique_ptr<Log<sf::Int32>> health_bar_;
+    Log<sf::Int32> health_bar_;
 
     // void init_sprites(sf::Image sprite_sheet) override;
     void control();
@@ -48,6 +48,10 @@ public:
 
     void setTexture(const sf::Texture& texture) override {
         ShootingObject::setTexture(texture);
+    }
+
+    auto& getHealthBar() {
+        return health_bar_;
     }
 
     void on_collide(Bullet* bullet) override;

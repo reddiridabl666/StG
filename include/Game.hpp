@@ -43,8 +43,22 @@ private:
     std::weak_ptr<Player> player;
     std::weak_ptr<Boss> boss;
 
+    bool in_loop = false;
+
     sf::Clock clock;
     float deltaTime = 0;
+
+protected:
+    void main_menu();
+
+    void pause_menu();
+
+    void event_loop(const std::function<void()>& action = [] {});
+
+    void game_loop();
+
+    void check_collisions();
+
 public:
     Game() : manager(), 
              window(),
@@ -59,12 +73,4 @@ public:
     Game& operator=(const Game&) = delete;
 
     void start();
-
-    void main_menu();
-
-    void pause_menu();
-
-    void event_loop();
-
-    void check_collisions();
 };

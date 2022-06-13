@@ -20,6 +20,16 @@ public:
         max_ = value;
     }
 
+    void show() override {
+        Picture::show();
+        outer_.show();
+    }
+
+    void hide() override {
+        Picture::hide();
+        outer_.hide();
+    }
+
     void update() override {
         if (max_ == 0) {
             return;

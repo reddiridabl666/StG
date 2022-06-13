@@ -4,6 +4,8 @@
 
 class Picture : public Ui, public sf::Sprite {
 public:
+    Picture() : Ui(), sf::Sprite() {}
+    
     Picture(const sf::Texture& texture, sf::Vector2f pos, Layer layer = Layer::Ui) :
         Ui(layer),
         sf::Sprite(texture) {

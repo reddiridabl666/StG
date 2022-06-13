@@ -72,6 +72,18 @@ public:
         phase_max_ = 8;
     }
 
+    void hide() override {
+        Boss::hide();
+        health_bar_.hide();
+        phase_left_.hide();
+    }
+
+    void show() override {
+        Boss::show();
+        health_bar_.show();
+        phase_left_.show();
+    }
+    
     void shoot();
     void update(float deltaTime) override;
 
