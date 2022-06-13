@@ -1,17 +1,18 @@
 #pragma once
 
-#include "SpriteObject.h"
+// #include "SpriteObject.h"
+#include "Picture.hpp"
 
 template <typename T>
-class HealthBar : public SpriteObject {
+class HealthBar : public Picture {
 protected:
-    SpriteObject outer_;
+    Picture outer_;
     const T& value_;
     float max_ = 0;
 public:
     HealthBar(const sf::Texture& inner, const sf::Texture& outer, const T& value, sf::Vector2f pos = {}) :
-        SpriteObject(inner, pos, Layer::Ui),
-        outer_(outer, pos, Layer::Ui),
+        Picture(inner, pos),
+        outer_(outer, pos),
         value_(value),
         max_(value) {}
 
@@ -19,11 +20,11 @@ public:
         max_ = value;
     }
 
-    void update(float) override {
+    void update() override {
         if (max_ == 0) {
             return;
         }
         static const auto size = static_cast<sf::Vector2i>(getTexture()->getSize());
-        setTextureRect({0, 0, /* size.x / 2 */ static_cast<int>(value_ > 0 ? size.x * (value_ / max_) : 0), size.y});
+        setTextureRect({0, 0, static_cast<int>(value_ > 0 ? size.x * (value_ / max_) : 0), size.y});
     }
 };

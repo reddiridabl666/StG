@@ -7,7 +7,7 @@ class Ui : public DrawableObject {
 private:
     static inline std::unordered_set<Ui*> all;
 public:
-    Ui() : DrawableObject(Layer::Ui) {
+    Ui(Layer layer = Layer::Ui) : DrawableObject(layer) {
         all.insert(this);
     }
 
