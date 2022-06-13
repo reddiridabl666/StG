@@ -67,9 +67,9 @@ public:
     {
         setAnimation(sprites_["idle"]);
         scale(4.3, 4.3);
-        changePhase(std::make_unique<Circular_1>(this));
+        changePhase(std::make_unique<StreamsRandom>(this));
         // changePhase(std::make_unique<BoWaP_alike>(this));
-        phase_max_ = 9;
+        phase_max_ = 8;
     }
 
     void shoot();

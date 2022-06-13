@@ -60,6 +60,10 @@ public:
 
     void start();
 
+    void main_menu();
+
+    void pause_menu();
+
     void event_loop();
 
     void check_collisions();

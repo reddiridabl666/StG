@@ -34,10 +34,18 @@ void Game::event_loop() {
 #endif
 
         window.clear(sf::Color::Black);
-        GameObject::draw_all(window);
+        DrawableObject::draw_all(window);
 
         window.display();
     }
+}
+
+void Game::main_menu() {
+
+}
+
+void Game::pause_menu() {
+    
 }
 
 void Game::check_collisions() {

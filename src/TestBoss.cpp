@@ -196,16 +196,11 @@ void TestBoss::shoot() {
         return;
     }
 
-    // if (!phase_->started) {
-        hitbox_->activate();
-    //     phase_->started = true;
-    // }
+    hitbox_->activate();
 
-    // if (phase_->started) {
-        shot_num_++;
-        play_sound("boss_shoot");
-        phase_->shoot();
-    // }
+    shot_num_++;
+    play_sound("boss_shoot");
+    phase_->shoot();
 }
 
 void TestBoss::update(float deltaTime) {
@@ -219,7 +214,7 @@ void TestBoss::update(float deltaTime) {
             changePhase(std::make_unique<BallBounce>(this));
             break;
         case 2:
-            changePhase(std::make_unique<StreamsRandom>(this));
+            changePhase(std::make_unique<Circular_1>(this));
             break;
         case 3:
             changePhase(std::make_unique<Chaos>(this));
