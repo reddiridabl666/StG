@@ -26,6 +26,7 @@ void Game::event_loop() {
         }
 
         GameObject::update_all(deltaTime);
+        Ui::update_all();
         
         check_collisions();
         

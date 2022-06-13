@@ -23,7 +23,7 @@ public:
         action_ = action;
     }
 
-    void update(float) override {
+    void update() override {
         if (!mouse_is_in_bounds()) {
             setFillColor(sf::Color::White);
             return;

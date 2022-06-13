@@ -1,23 +1,20 @@
 #pragma once
 
-#include "GameObject.h"
+#include "Ui.hpp"
 #include "Resources.hpp"
 
-class Text : public GameObject, public sf::Text {
+class Text : public Ui, public sf::Text {
 protected:
     static inline const sf::Font& DefaultFont = Resources::fonts["Nova+"];
 public:
-    Text() : GameObject(Layer::Ui), sf::Text() {}
+    Text() : Ui(), sf::Text() {}
 
-    Text(const sf::String& text, const sf::Font& font = Resources::fonts["ARIAL"], 
-         int size = 48, sf::Vector2f pos = {0, 0},
-         Layer layer = Layer::Ui) :
-            GameObject(layer), sf::Text(text, font, size) {
-            // setOrigin(getHalfSize());
+    Text(const sf::String& text, const sf::Font& font = DefaultFont, 
+         int size = 48, sf::Vector2f pos = {0, 0}) :
+            Ui(), sf::Text(text, font, size) {
             setOutlineThickness(2);
             setOutlineColor(sf::Color::Black);
             setPosition(pos);
-            size_ = {getGlobalBounds().width, getGlobalBounds().height};
     }
 
     Text(const sf::String& text, sf::Vector2f pos) : 
@@ -33,7 +30,6 @@ public:
 
     void setString(const sf::String& string) {
         sf::Text::setString(string);
-        // setOrigin(getHalfSize());
     }
 
     void setString(float num) {
@@ -53,7 +49,7 @@ public:
     Log(const sf::String& text, const T& num, sf::Vector2f pos = {0, 0}) :
         Text(text + std::to_string(num), pos), text_(text), num_(&num) {}
 
-    void update(float) {
+    void update() override {
         if (num_)
             setString(text_ + std::to_string(*num_));
         else

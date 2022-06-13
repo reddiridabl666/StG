@@ -1,11 +1,26 @@
 #pragma once
 
 #include <unordered_set>
-#include "GameObject.h"
+#include "DrawableObject.hpp"
 
-class Ui : GameObject {
+class Ui : public DrawableObject {
 private:
-    static std::unordered_set<Ui*> all;
+    static inline std::unordered_set<Ui*> all;
 public:
+    Ui() : DrawableObject(Layer::Ui) {
+        all.insert(this);
+    }
 
+    virtual void update() {}
+
+    static void update_all() {
+        for (auto it : all) {
+            if (!it->is_hidden())
+                it->update();
+        }
+    }
+
+    ~Ui() {
+        all.erase(this);
+    }
 };
