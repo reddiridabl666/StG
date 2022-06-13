@@ -4,8 +4,7 @@
 
 class FramedObject : public DynamicObject {
 protected:
-    // float mass_;
-    Hitbox* frame_hitbox_ = nullptr;
+    HitboxPtr frame_hitbox_;
 public:
     static std::unordered_set<FramedObject*> all;
 
@@ -34,7 +33,7 @@ public:
     void setPosition(const sf::Vector2f& pos) override;
 
     Hitbox* getFrame() {
-        return frame_hitbox_;
+        return frame_hitbox_.get();
     }
 
     void setRotation(float angle) override {
@@ -52,16 +51,8 @@ public:
 
     void scale(float a, float b) override;
 
-    // virtual void on_collide_phys(FramedObject* obj) {}
-    
-    // virtual bool collides_with_phys(DynamicObject* obj);
-
-    // static void check_phys_collisions_with(DynamicObject& other);
 
     ~FramedObject() override {
-        if (frame_hitbox_) {
-            delete frame_hitbox_;
-        }
         all.erase(this);
     }
 };

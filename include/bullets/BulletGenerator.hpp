@@ -48,7 +48,7 @@ class BulletGenerator {
     }
 
     void for_each(const std::function<void(BulletPtr&)>& action) {
-        for (auto& it : bullets_) {std::unique_ptr<Bullet>
+        for (auto& it : bullets_) {
             if (it)
                 action(it);
         }

@@ -16,6 +16,10 @@ inline const sf::Color transp_green = {5, 240, 75, 170};
 inline const sf::Color red = {191, 34, 51};
 inline const sf::Color transp_red = {191, 34, 51, 170};
 
+
+class Hitbox;
+using HitboxPtr = std::unique_ptr<Hitbox>;
+
 class Hitbox : public GameObject {
 protected:
     sf::Uint32 collision_num_ = 0;
@@ -26,10 +30,10 @@ protected:
 public:
     explicit Hitbox(Layer layer = Layer::Hitbox, sf::Vector2f size = {0, 0});
     
-    static Hitbox* getHitbox(const HitboxInfo& info, sf::Vector2f pos = {}, 
+    static HitboxPtr getHitbox(const HitboxInfo& info, sf::Vector2f pos = {}, 
                              const sf::Color& fill = transp_green, const sf::Color& outline = green);
 
-    static Hitbox* getFrameHitbox(const HitboxInfo& info, sf::Vector2f pos = {}, 
+    static HitboxPtr getFrameHitbox(const HitboxInfo& info, sf::Vector2f pos = {}, 
                                   const sf::Color& outline = green);
 
     virtual bool contains_point(const sf::Vector2f& point) const = 0;
@@ -130,9 +134,6 @@ public:
     sf::Transformable* getTransformable() override {
         return this;
     }
-    
-    // sf::Vector2f getSize() const override;
-    // sf::Vector2f getHalfSize() const override;
 
     HitboxInfo getInfo() const override;
 
@@ -156,3 +157,4 @@ public:
 
     friend RectHitbox;
 };
+

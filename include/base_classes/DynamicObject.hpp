@@ -19,7 +19,7 @@ class DynamicObject : public SpriteObject {
   protected:
     float mass_ = 0;
     sf::Vector2f velocity_ = {0, 0};
-    Hitbox* hitbox_ = nullptr;
+    HitboxPtr hitbox_;
     Tag tag_ = Tag::None;
 
   public:
@@ -32,19 +32,8 @@ class DynamicObject : public SpriteObject {
 
   public:
     static std::set<DynamicObject*> all;   
-    static void check_collisions_with(DynamicObject& other);
-    static void check_collisions();
 
-    // void check_collisions(DynamicObject* obj) {
-    //     if (collides_with(obj)) {
-    //         on_collide(obj);
-    //         obj->on_collide(this);
-    //     }
-    // }
-
-    static void move_all(float deltaTime);
     static void refresh_collision_num();
-    static void for_each(std::function<void(DynamicObject*)> action);
 
     explicit DynamicObject(Layer layer = Layer::Character) : SpriteObject(layer) {all.insert(this);}
 
@@ -107,7 +96,7 @@ class DynamicObject : public SpriteObject {
 
     bool collides_with(const DynamicObject* obj) {
         if (hitbox_ && obj)
-            return hitbox_->collides_with(obj->hitbox_);
+            return hitbox_->collides_with(obj->hitbox_.get());
         return false;
     }
 
@@ -119,9 +108,6 @@ class DynamicObject : public SpriteObject {
     }
 
     void setHitbox(const HitboxInfo& info) {
-        if (hitbox_) {
-            delete hitbox_;
-        }
         hitbox_ = Hitbox::getHitbox(info, getPosition());
     }
 
@@ -142,7 +128,7 @@ class DynamicObject : public SpriteObject {
     }
 
     const Hitbox* getHitbox() const {
-        return hitbox_;
+        return hitbox_.get();
     }
 
     Hitbox* getHitbox() {
@@ -162,9 +148,6 @@ class DynamicObject : public SpriteObject {
     }
 
     virtual ~DynamicObject() {
-        if (hitbox_) {
-            delete hitbox_;
-        }
         all.erase(this);
     }
 };

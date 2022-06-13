@@ -1,16 +1,16 @@
 #include "Hitbox.hpp"
 #include"Math.hpp"
 
-Hitbox* Hitbox::getHitbox(const HitboxInfo& info, sf::Vector2f pos, const sf::Color& fill, const sf::Color& outline) {
+HitboxPtr Hitbox::getHitbox(const HitboxInfo& info, sf::Vector2f pos, const sf::Color& fill, const sf::Color& outline) {
     if (auto size = std::get_if<sf::Vector2f>(&info)) {
-        return new RectHitbox(*size, pos, fill, outline);
+        return std::make_unique<RectHitbox>(*size, pos, fill, outline);
     } else if (auto radius = std::get_if<float>(&info)) {
-        return new CircleHitbox(*radius, pos, fill, outline);
+        return std::make_unique<CircleHitbox>(*radius, pos, fill, outline);
     }
     return nullptr;
 }
 
-Hitbox* Hitbox::getFrameHitbox(const HitboxInfo& info, sf::Vector2f pos, const sf::Color& outline) {
+HitboxPtr Hitbox::getFrameHitbox(const HitboxInfo& info, sf::Vector2f pos, const sf::Color& outline) {
     return getHitbox(info, pos, sf::Color::Transparent, outline); 
 }
 
@@ -20,7 +20,6 @@ Hitbox::Hitbox(Layer layer, sf::Vector2f size) : GameObject(layer, size) {
 #endif
 }
 
-// Hitbox::Hitbox(const Hitbox& hitbox) : GameObject(hitbox.layer_) {}
 
 bool Hitbox::collides_with(const Hitbox* other) {
     if (auto target = dynamic_cast<const RectHitbox*>(other)) {return collides_with_rect(target);}
@@ -69,7 +68,6 @@ CircleHitbox::CircleHitbox(float radius, const sf::Vector2f &center,
                            const sf::Color& fill, const sf::Color& outline, Layer layer) 
   : Hitbox(layer, {radius * 2, radius * 2}), sf::CircleShape(radius) {
     setOrigin(radius, radius);
-    // size_ = sf::Vector2f{radius, radius} * 2.f ;
     setPosition(center);
     setOutlineThickness(-5);
     setFillColor(fill);
@@ -110,14 +108,6 @@ bool CircleHitbox::collides_with_rect(const RectHitbox* other) const {
 bool CircleHitbox::collides_with_circle(const CircleHitbox* other) const {
     return squared_distance(getPosition(), other->getPosition()) <= pow(getRadius() + other->getRadius(), 2);
 }
-
-// sf::Vector2f CircleHitbox::getSize() const {
-//     return getHalfSize() * 2.f;
-// }
-
-// sf::Vector2f CircleHitbox::getHalfSize() const {
-//     return {getRadius(), getRadius()};
-// }
 
 HitboxInfo CircleHitbox::getInfo() const {
     return getHalfSize().x;
