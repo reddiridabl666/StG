@@ -18,15 +18,9 @@ private:
     public:
         Manager() = default;
         
-        void update() {
-            for (auto it = objs.begin(); it != objs.end();) {
-                if (!(*it)->is_active()) {
-                    it = objs.erase(it);
-                } else {
-                    ++it;
-                }
-            }
-        }
+        void update();
+
+        void refresh();
 
         template <typename T>
         std::shared_ptr<T> add(std::shared_ptr<T>&& obj) {
@@ -44,11 +38,13 @@ private:
     std::weak_ptr<Boss> boss;
 
     bool in_loop = false;
+    bool paused = false;
+    bool in_game = false;
 
     sf::Clock clock;
     float deltaTime = 0;
 
-protected:
+private:
     void main_menu();
 
     void pause_menu();
@@ -65,7 +61,7 @@ protected:
 
 public:
     Game() : manager(), 
-             window(),
+             window(*this),
              frame(Wall::get_frame(window)),
              bg(Resources::textures["bg"], window) {}
     
@@ -73,4 +69,6 @@ public:
     Game& operator=(const Game&) = delete;
 
     void start();
+
+    friend Window;
 };

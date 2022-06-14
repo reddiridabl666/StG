@@ -100,7 +100,7 @@ void Player::control() {
         return;
     }
 
-    if (pressed_any_of(Key::LShift, Key::RShift) || Gamepad::isButtonPressed(0, 5)) {
+    if (pressed_any_of(Key::LShift, Key::RShift) || Gamepad::isButtonPressed(0, JOY_RB)) {
         speed_ = slow_speed_;
         if (!is_invincible()) hitbox_->show();
     } else {
@@ -112,8 +112,8 @@ void Player::control() {
 
     setVelocity(speed_ * (horizontal_movement() * right + vertical_movement() * down));
 
-    if (shoot_clock_/* .getElapsedTime().asSeconds() */ >= shot_interval && 
-            (Key::isKeyPressed(Key::Space) || Gamepad::isButtonPressed(0, 0))) {
+    if (shoot_clock_ >= shot_interval && 
+            (Key::isKeyPressed(Key::Space) || Gamepad::isButtonPressed(0, JOY_A))) {
         Player::shoot(normal_shot_);
     }
 }
@@ -126,7 +126,6 @@ void Player::update() {
         }
         if (invinc_clock_.getElapsedTime().asSeconds() >= invinc_time_) {
             hitbox_->activate();
-            // clear_nearby_bullets();
             show();
         }
     }
@@ -158,7 +157,6 @@ void Player::update() {
 }
 
 void Player::shoot(BulletType name) {
-    // shoot_clock_.restart();
     shoot_clock_ = 0;
     play_sound("player_shoot", 50);
 

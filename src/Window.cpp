@@ -1,13 +1,17 @@
 #include "GameObject.h"
+#include "Game.hpp"
 #include "Window.h"
 
-Window::Window() : sf::RenderWindow() {
+Window::Window(Game& game) : 
+    sf::RenderWindow(),
+    game(game) {
     show();
 }
 
-Window::Window(sf::VideoMode mode, const sf::String &title,
-        sf::Uint32 style, const sf::ContextSettings &settings) 
-        : sf::RenderWindow(mode, title, style, settings) {
+Window::Window(Game& game, sf::VideoMode mode, const sf::String &title,
+               sf::Uint32 style, const sf::ContextSettings &settings) : 
+    sf::RenderWindow(mode, title, style, settings),
+    game(game) {
     show();
 }
 
@@ -17,6 +21,16 @@ sf::Vector2f Window::getCenter() const {
 
 bool Window::is_fullscreen() {
     return is_fullscreen_;
+}
+
+void Window::pause() {
+    if (game.paused) {
+        game.in_loop = false;
+        return;
+    }
+    if (game.in_game) {
+        game.pause_menu();
+    }
 }
 
 void Window::switch_view_mode() {
@@ -35,16 +49,23 @@ void Window::switch_view_mode() {
 }
 
 void Window::sys_event_loop() {
-    // OS events
-    sf::Event event = {};
+    sf::Event event;
     while (pollEvent(event)) {
         switch(event.type) {
             case sf::Event::Closed:
                 close();
                 break;
+            case sf::Event::JoystickButtonReleased:
+                if (event.joystickButton.button == JOY_ST) {
+                    pause();
+                }
+                break;
             case sf::Event::KeyReleased:
                 if (event.key.code == sf::Keyboard::Enter && event.key.alt) {
                         switch_view_mode();
+                }
+                if (event.key.code == sf::Keyboard::Escape) {
+                    pause();
                 }
 #ifdef DEBUG
                 if (event.key.code == sf::Keyboard::Equal ||
@@ -66,6 +87,14 @@ void Window::sys_event_loop() {
         }
     }
 }
+
+// void Window::handle_event(sf::Event::EventType type, const std::function<void()>& handler) {
+//     while (pollEvent(event)) {
+//         if (event.type == type) {
+//             handler();
+//         }
+//     }
+// }
 
 void Window::show() {
     open_fullscreen();

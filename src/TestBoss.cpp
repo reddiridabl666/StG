@@ -206,8 +206,6 @@ void TestBoss::shoot() {
 
 void TestBoss::update(float deltaTime) {
     AnimatedBoss::update(deltaTime);
-
-    static bool flag = false;
     
     if (hp_ <= 0) {
         switch (phase_num_) {

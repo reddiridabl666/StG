@@ -5,6 +5,8 @@
 class TestBoss : public AudibleAnimatedBoss {
 private:
     Animated::Sprites init_sprites(const sf::Image& sprite_sheet);
+    bool flag = false;
+    
 protected:
     struct BallBounce : public Phase {
         BallBounce(Boss*);
