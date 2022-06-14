@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Text.hpp"
+#include "Window.h"
 #include <functional>
 
 // class BackgroundedText : public Text {
@@ -16,9 +17,11 @@
 class Button : public /* Backgrounded */Text {
 protected:
     // static inline const sf::Texture& DefaultBackground = Resources::textures["button_normal"];
-    bool flag = false;
+    bool pressable = false;
+    bool hovered = true;
+
     std::function<void()> action_ = [] {};
-    const sf::RenderWindow* window_;
+    Window* window_;
 
     bool mouse_is_in_bounds() {
         auto pos = window_->mapPixelToCoords(sf::Mouse::getPosition(*window_));
@@ -33,7 +36,7 @@ public:
 
     Button() = default;
 
-    Button(const sf::String& text, const sf::RenderWindow& window, sf::Vector2f pos = {}, int size = 48, 
+    Button(const sf::String& text, Window& window, sf::Vector2f pos = {}, int size = 48, 
            const std::function<void()>& action = [] {}, Layer layer = Layer::Ui, const sf::Font& font = DefaultFont) :
         Text(text, font, size,/* DefaultBackground, */ pos, layer), action_(action), window_(&window) {
         setOrigin(sf::Vector2f{getLocalBounds().width, getLocalBounds().height} / 2.f);
@@ -43,17 +46,36 @@ public:
         action_ = action;
     }
 
+    void hover() {
+        setFillColor({180, 180, 180});
+        hovered = true;
+    }
+
+    void unhover() {
+        setFillColor(sf::Color::White);
+        hovered = false;
+    }
+
     void update() override {
-        if (!mouse_is_in_bounds()) {
-            setFillColor(sf::Color::White);
+        unhover();
+
+        if (mouse_is_in_bounds()) {
+            hover();
+        }
+
+        if (!hovered) {
             return;
         }
-        setFillColor({200, 200, 200});
+
         if (!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-            flag = true;
+            pressable = true;
         }
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && flag) {
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && pressable) {
             action_();
         }
     }
+
+    friend Window;
+    friend Menu;
 };

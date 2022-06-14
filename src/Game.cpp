@@ -5,8 +5,6 @@
 
 GameState GameState::state;
 
-using kb = sf::Keyboard;
-
 void Game::Manager::update() {
     for (auto it = objs.begin(); it != objs.end();) {
         if (!(*it)->is_active()) {
@@ -30,10 +28,9 @@ void Game::event_loop(const std::function<void()>& action) {
     in_loop = true;
     
     while (window.isOpen() && in_loop) {
+        Ui::update_all();
         window.sys_event_loop();
         manager.update();
-
-        Ui::update_all();
 
         action();
 
@@ -45,8 +42,6 @@ void Game::event_loop(const std::function<void()>& action) {
 }
 
 void Game::start() {
-    // std::cout << "I'm in start!  " << (window.isOpen() ? "true" : "false") << "\n";
-
     manager.refresh();
 
     main_menu();
@@ -55,7 +50,6 @@ void Game::start() {
     boss = manager.add(std::make_shared<TestBoss>(sf::Vector2f{window.getCenter().x, 200}, sf::Vector2f{400.f, 200.f}));
     GameState::init(player, &window, frame);
 
-    // std::cout << "Going to the game loop!  " << (window.isOpen() ? "true" : "false") << "\n";
     clock.restart();
     game_loop();
 }
@@ -74,16 +68,6 @@ void Game::game_loop() {
         if (window.hasFocus() && !player.expired()) {
             player.lock()->update();
         }
-
-        // if (kb::isKeyPressed(kb::Key::Escape)) {
-        //     pause_menu();
-        // }
-        
-        // window.handle_event(sf::Event::EventType::KeyReleased, [this] {
-        //     if (window.event.key.code == kb::Escape) {
-        //         pause_menu();
-        //     }
-        // });
 
         if (player.expired() || boss.expired()) {
             in_loop = false;
@@ -104,6 +88,7 @@ void Game::game_loop() {
 
 void Game::game_over() {
     in_game = false;
+    in_menu = true;
     {
         Background gray(Resources::textures["pause"], window, Layer::Menu);
         
@@ -117,40 +102,42 @@ void Game::game_over() {
 
         EndScreen end(text, Resources::textures["menu"],
                     window.getCenter(), window, 
-                    {{"Back to menu", [this] {in_loop = false;}}, 
-                    {"Exit", [this] {window.close();}}});
+                    {{"Back to menu", [this] {in_loop = false;}},
+                     {"Exit", [this] {window.close();}}});
         event_loop();
     }
+    in_menu = false;
     start();
 }
 
 void Game::main_menu() {
-    // std::cout << "I'm in main menu!  " << (window.isOpen() ? "true" : "false") << "\n"; 
+    in_menu = true;
+
     Menu menu(Resources::textures["menu"], window.getCenter(), window, {
-        {"Start", [this] {in_loop = false;}}, 
+        {"Start", [this] {in_loop = false;}},
+        {"Settings", [] {}},
         {"Exit", [this] {window.close();}}}); 
     
     event_loop();
+    in_menu = false;
 }
 
 void Game::pause_menu() {
     paused = true;
+    in_menu = true;
 
     Background gray(Resources::textures["pause"], window, Layer::Menu);
 
     Menu menu(Resources::textures["menu"], window.getCenter(), window, {
-        {"Back to game", [this] {in_loop = false;}}, 
+        {"Back to game", [this] {in_loop = false;}},
+        {"Settings", [] {}},
         {"Exit", [this] {window.close();}}}); 
 
-    event_loop(/* [this] {
-        window.handle_event(sf::Event::EventType::KeyReleased, [this] {
-            if (window.event.key.code == kb::Escape) {
-                in_loop = false;
-            }
-    });} */);
+    event_loop();
 
     in_loop = true;
     paused = false;
+    in_menu = false;
     clock.restart().asSeconds();
 }
 

@@ -2,6 +2,7 @@
 
 #include "SFML/Graphics.hpp"
 class Game;
+class Menu;
 
 class Window : public sf::RenderWindow {
 public:
@@ -18,14 +19,26 @@ public:
     sf::Vector2f getCenter() const;
     
     void sys_event_loop();
-    // void handle_event(sf::Event::EventType type, const std::function<void()>& handler);
     void open_fullscreen(); 
     void open_windowed();
 
+    void reset_menu(Menu*);
+
 private:
+    ssize_t pointer_ = -1;
+    Menu* menu_ = nullptr;
+    sf::Clock menu_timer_;
+
     void pause();
     void switch_view_mode();
+
+    void push_button();
+    void next_button();
+    void prev_button();
+
     Game& game;
     bool is_fullscreen_;
     void show();
+
+    friend class Menu;
 };

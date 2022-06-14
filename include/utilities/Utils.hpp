@@ -1,18 +1,5 @@
 #pragma once
 
-enum Joy {
-    JOY_A = 0,
-    JOY_B = 1,
-    JOY_X = 2,
-    JOY_Y = 3,
-    JOY_LB = 4,
-    JOY_RB = 5,
-    JOY_SEL = 6,
-    JOY_ST = 7,
-    JOY_L3 = 8,
-    JOY_R3 = 9,
-};
-
 template <typename T>
 inline T max(sf::Vector2<T> a) {
     return a.x > a.y ? a.x : a.y;

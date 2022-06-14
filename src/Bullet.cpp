@@ -14,7 +14,7 @@ void delete_if_near_player(Bullet* bullet, float) {
         return;
     }
     if (distance(player->getPosition(), bullet->getPosition()) <= 55 &&
-        std::abs(player->get_invinc_time()) <= 0.05) {
+        std::abs(player->get_invinc_time()) <= 0.03) {
             bullet->deactivate();
     }
 }

@@ -39,6 +39,7 @@ private:
 
     bool in_loop = false;
     bool paused = false;
+    bool in_menu = false;
     bool in_game = false;
 
     sf::Clock clock;

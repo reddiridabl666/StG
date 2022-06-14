@@ -1,6 +1,8 @@
 #include "GameObject.h"
+#include "Controls.hpp"
 #include "Game.hpp"
 #include "Window.h"
+#include "Menu.hpp"
 
 Window::Window(Game& game) : 
     sf::RenderWindow(),
@@ -16,11 +18,16 @@ Window::Window(Game& game, sf::VideoMode mode, const sf::String &title,
 }
 
 sf::Vector2f Window::getCenter() const {
-    return static_cast<sf::Vector2f>(getSize()) / 2.f;
+    return getView().getCenter();
 }
 
 bool Window::is_fullscreen() {
     return is_fullscreen_;
+}
+
+void Window::reset_menu(Menu* menu) {
+    menu_ = menu;
+    pointer_ = -1;
 }
 
 void Window::pause() {
@@ -31,6 +38,22 @@ void Window::pause() {
     if (game.in_game) {
         game.pause_menu();
     }
+}
+
+inline void Window::push_button() {
+    if (pointer_ != -1) {
+        menu_->buttons_[pointer_].action_();
+    }
+}
+
+inline void Window::next_button() {
+    menu_timer_.restart();
+    pointer_ = pointer_ < menu_->buttonNum() - 1 ? pointer_ + 1 : 0;
+}
+
+inline void Window::prev_button() {
+    menu_timer_.restart();
+    pointer_ = pointer_ > 0 ? pointer_ - 1 : menu_->buttonNum() - 1;
 }
 
 void Window::switch_view_mode() {
@@ -49,52 +72,81 @@ void Window::switch_view_mode() {
 }
 
 void Window::sys_event_loop() {
+    static float threshold = 15;
+
     sf::Event event;
     while (pollEvent(event)) {
         switch(event.type) {
             case sf::Event::Closed:
                 close();
                 break;
+
             case sf::Event::JoystickButtonReleased:
                 if (event.joystickButton.button == JOY_ST) {
                     pause();
                 }
-                break;
-            case sf::Event::KeyReleased:
-                if (event.key.code == sf::Keyboard::Enter && event.key.alt) {
-                        switch_view_mode();
+                if (event.joystickButton.button == JOY_A) {
+                    push_button();
                 }
-                if (event.key.code == sf::Keyboard::Escape) {
+                break;
+
+            case sf::Event::KeyReleased:
+                if (event.key.code == Key::Enter) {
+                    if (event.key.alt)
+                        switch_view_mode();
+                    else {
+                        push_button();
+                    }
+                }
+                if (event.key.code == Key::Escape) {
                     pause();
                 }
 #ifdef DEBUG
-                if (event.key.code == sf::Keyboard::Equal ||
-                    event.key.code == sf::Keyboard::Add) {
+                if (event.key.code == Key::Equal ||
+                    event.key.code == Key::Add) {
                     auto new_view = getView();
                     new_view.zoom(0.8);
                     setView(new_view);
                 }
-                if (event.key.code == sf::Keyboard::Subtract ||
-                    event.key.code == sf::Keyboard::Hyphen) {
+                if (event.key.code == Key::Subtract ||
+                    event.key.code == Key::Hyphen) {
                     auto new_view = getView();
                     new_view.zoom(1.25);
                     setView(new_view);
                 }
-#endif
+#endif          
+                break;
+
+            case sf::Event::KeyPressed:
+                if (!game.in_menu || !menu_ || menu_timer_.getElapsedTime().asSeconds() <= 0.1) {
+                    break;
+                }
+                if (event.key.code == Key::W || event.key.code == Key::Up) {
+                    prev_button();
+                }
+                if (event.key.code == Key::S || event.key.code == Key::Down) {
+                    next_button();
+                }
                 break;
             default:
                 break;
         }
     }
-}
 
-// void Window::handle_event(sf::Event::EventType type, const std::function<void()>& handler) {
-//     while (pollEvent(event)) {
-//         if (event.type == type) {
-//             handler();
-//         }
-//     }
-// }
+    if (game.in_menu && menu_ && menu_timer_.getElapsedTime().asSeconds() > 0.12) {
+        auto mv = gamepad_movement(Axis::Y, Axis::PovY, threshold);
+        if (mv < 0) {
+            prev_button();
+        }
+        if (mv > 0) {
+            next_button();
+        }
+    }
+
+    if (pointer_ != -1) {
+        menu_->buttons_[pointer_].hover();
+    }
+}
 
 void Window::show() {
     open_fullscreen();

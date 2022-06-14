@@ -3,10 +3,7 @@
 #include "Enemy.hpp"
 #include "UpdateFunctions.hpp"
 #include "Resources.hpp"
-
-using Key = sf::Keyboard;
-using Gamepad = sf::Joystick;
-using Axis = Gamepad::Axis;
+#include "Controls.hpp"
 
 static const sf::Vector2f player_hitbox_size = {30, 45};
 static constexpr float player_size = 32 * 4.4;
@@ -20,22 +17,6 @@ static Animated::Sprites init_sprites(const sf::Image& sprite_sheet) {
     return sprites_;
 }
 
-static float gamepad_movement(Axis axis, unsigned int gamepad_num = 0) {
-    float pos = Gamepad::getAxisPosition(gamepad_num, axis);
-    if (std::abs(pos) > 0) {
-        return pos > 0 ? 1 : -1;
-    }
-    return 0;
-}
-
-static float gamepad_movement(Axis axis1, Axis axis2, unsigned int gamepad_num = 0) {
-    return sign(gamepad_movement(axis1, gamepad_num) + gamepad_movement(axis2, gamepad_num));
-}
-
-static bool pressed_any_of(Key::Key A, Key::Key B) {
-    return Key::isKeyPressed(A) ||
-           Key::isKeyPressed(B);
-}
 
 static float vertical_movement(unsigned int gamepad_num = 0) {
     float vertical = 0;
@@ -45,7 +26,7 @@ static float vertical_movement(unsigned int gamepad_num = 0) {
     if (pressed_any_of(Key::S, Key::Down)) {
         vertical = 1;
     }
-    return vertical ? vertical : gamepad_movement(Axis::Y, Axis::PovY, gamepad_num);
+    return vertical ? vertical : gamepad_movement(Axis::Y, Axis::PovY, 0, gamepad_num);
 }
 
 static float horizontal_movement(unsigned int gamepad_num = 0) {
@@ -56,7 +37,7 @@ static float horizontal_movement(unsigned int gamepad_num = 0) {
     if (pressed_any_of(Key::D, Key::Right)) {
         horizontal = 1;
     }
-    return horizontal ? horizontal : gamepad_movement(Axis::X, Axis::PovX, gamepad_num);
+    return horizontal ? horizontal : gamepad_movement(Axis::X, Axis::PovX, 0, gamepad_num);
 } 
 
 Player::Player(sf::Vector2f pos,
