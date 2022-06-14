@@ -4,6 +4,7 @@
 
 #include "SFML/Audio.hpp"
 
+#include "GameState.hpp"
 #include "Resources.hpp"
 
 class Audible {
@@ -17,13 +18,13 @@ public:
 
     Audible(const std::unordered_map<std::string, sf::SoundBuffer>& buffers) : buffers_(buffers) {}
 
-    sf::Sound& play_sound(std::string name, float volume = 100) {
+    sf::Sound& play_sound(std::string name, float volume_mod = 1) {
         if (name != name_) {
             name_ = name;
             sound_ = sf::Sound(buffers_.at(name));
         }
-        // if (sound_.getStatus() != sf::SoundSource::Status::Playing)
-        sound_.setVolume(volume);
+
+        sound_.setVolume(GameState::Settings().volume * volume_mod);
         sound_.play();
         return sound_;
     }

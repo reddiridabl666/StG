@@ -1,6 +1,7 @@
 #include "Bullet.hpp"
 #include "UpdateFunctions.hpp"
 #include "Resources.hpp"
+#include "Player.hpp"
 
 void delete_when_out_of_bounds(Bullet* bullet, float) {
     if (GameState::is_out_of_bounds(bullet)) {

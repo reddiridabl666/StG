@@ -46,8 +46,11 @@ protected:
 public:
     Log() : Text(), text_(), num_() {}
 
-    Log(const sf::String& text, const T& num, sf::Vector2f pos = {0, 0}, Layer layer = Layer::Ui) :
-        Text(text + std::to_string(num), pos, layer), text_(text), num_(&num) {}
+    Log(const sf::String& text, const T& num, sf::Vector2f pos = {0, 0}, 
+        int size = 48, Layer layer = Layer::Ui, const sf::Font& font = DefaultFont) :
+        Text(text + std::to_string(num), font, size, pos, layer), 
+        text_(text), 
+        num_(&num) {}
 
     void update() override {
         if (num_)

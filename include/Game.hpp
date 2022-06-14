@@ -50,6 +50,10 @@ private:
 
     void pause_menu();
 
+    void settings();
+    void volume();
+    void controls();
+
     void menu();
 
     void event_loop(const std::function<void()>& action = [] {});
@@ -59,6 +63,8 @@ private:
     void game_over();
 
     void check_collisions();
+
+    Background gray_if_paused();
 
 public:
     Game() : manager(), 

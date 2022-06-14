@@ -1,14 +1,29 @@
 #pragma once
 
-#include "Wall.hpp"
-#include "Window.h"
-#include "Text.hpp"
-#include "Player.hpp"
-#include "Resources.hpp"
-
+#include "GameObject.h"
+#include "Controls.hpp"
 #include <memory>
 
+class Player;
+class Window;
+struct Frame;
+
 class GameState {
+    struct Settings_ {
+        sf::Uint16 volume = 100;
+
+        Key::Key k_shoot = Key::Key::Space;
+        Key::Key k_slow = Key::Key::LShift;
+
+        Gamepad::Button g_shoot = Gamepad::A;
+        Gamepad::Button g_slow = Gamepad::RB;
+
+        void volumeUp(sf::Uint8 vol = 1);
+        void volumeDown(sf::Uint8 vol = 1);
+
+        void setShoot(Key::Key k, Gamepad::Button g);
+        void setSlow(Key::Key k, Gamepad::Button g);
+    };
 private:
     GameState() {}
 
@@ -18,24 +33,19 @@ private:
 
     std::weak_ptr<Player> player_;
     const Window* window_ = nullptr;
+    Settings_ settings;
 
 public:
     GameState(const GameState&) = delete;   
     GameState& operator=(const GameState&) = delete;
 
-    static void init(std::weak_ptr<Player> player, const Window* window, const Frame& frame, float offset = 100) {
-        state.player_ = player;
-        state.window_ = window;
+    static void init(std::weak_ptr<Player> player, const Window* window, const Frame& frame, float offset = 100);
 
-        state.bounds_ = {frame.left.getPosition().x - offset, frame.up.getPosition().y - offset,
-                         frame.right.getPosition().x + offset - state.bounds_.left,
-                         frame.low.getPosition().y + offset - state.bounds_.top};
-                         
+    static Settings_& Settings() {
+        return state.settings;
     }
 
-	static sf::Vector2f getPlayerPos() {
-		return player() ? player()->getPosition() : sf::Vector2f();
-	}
+	static sf::Vector2f getPlayerPos();
 
     static const Window* window() {
         return state.window_;

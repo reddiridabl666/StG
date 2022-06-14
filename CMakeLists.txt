@@ -25,8 +25,8 @@ find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 set(SOURCES src/DrawableObject.cpp src/GameObject.cpp src/Window.cpp 
             src/SpriteObject.cpp src/Hitbox.cpp src/Wall.cpp 
             src/DynamicObject.cpp src/FramedObject.cpp
-            src/Player.cpp src/Bullet.cpp src/TestBoss.cpp
-            src/Game.cpp)
+            src/Player.cpp src/GameState.cpp src/Bullet.cpp 
+            src/TestBoss.cpp src/Game.cpp)
 
 # Add main
 add_executable(main main.cpp ${SOURCES})

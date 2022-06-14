@@ -45,7 +45,7 @@ Player::Player(sf::Vector2f pos,
                float mass, Layer layer) :
     Animated(init_sprites(Resources::sprite_sheets["player"])),
     ShootingObject(sprites_["idle"][0], pos, hitbox_size, {0, 0}, mass, layer), speed_(speed),
-    health_bar_("Health: ", hp_, sf::Vector2f{1650, 50}, Layer::Hitbox) {
+    health_bar_("Health: ", hp_, sf::Vector2f{1650, 50}, 48, Layer::Hitbox) {
 
     auto factor = player_size / min(sprites_["idle"][0].getSize());
     scale(factor, factor);
@@ -81,7 +81,7 @@ void Player::control() {
         return;
     }
 
-    if (pressed_any_of(Key::LShift, Key::RShift) || Gamepad::isButtonPressed(0, JOY_RB)) {
+    if (pressed_any_of(Key::LShift, Key::RShift) || Joy::isButtonPressed(0, Gamepad::RB)) {
         speed_ = slow_speed_;
         if (!is_invincible()) hitbox_->show();
     } else {
@@ -94,7 +94,7 @@ void Player::control() {
     setVelocity(speed_ * (horizontal_movement() * right + vertical_movement() * down));
 
     if (shoot_clock_ >= shot_interval && 
-            (Key::isKeyPressed(Key::Space) || Gamepad::isButtonPressed(0, JOY_A))) {
+            (Key::isKeyPressed(Key::Space) || Joy::isButtonPressed(0, Gamepad::A))) {
         Player::shoot(normal_shot_);
     }
 }
@@ -139,7 +139,7 @@ void Player::update() {
 
 void Player::shoot(BulletType name) {
     shoot_clock_ = 0;
-    play_sound("player_shoot", 50);
+    play_sound("player_shoot", 0.5);
 
     auto& bullet = 
     gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{15, 70});

@@ -31,7 +31,7 @@ public:
         return buttons_.size();
     }
 
-    void addButton(const Button::Info& info, const sf::Vector2f& pos = {}, int size = 72) {
+    Button& addButton(const Button::Info& info, const sf::Vector2f& pos = {}, int size = 72) {
         const sf::Vector2f pos_ = [this, &pos] {
             if (pos != sf::Vector2f()) {
                 return pos;
@@ -39,11 +39,11 @@ public:
             if (buttons_.empty()) {
                 return start_pos();
             } else {
-                return buttons_.back().getPosition() + sf::Vector2f(0, delta);
+                return start_pos() + sf::Vector2f(0, delta) * static_cast<float>((buttons_.size()));
             }
         }();
         
-        buttons_.emplace_back(info.text, window_, pos_, size, info.action, next(layer_));
+        return buttons_.emplace_back(info.text, window_, pos_, size, info.action, next(layer_));
     }
 
     void update() override {
@@ -64,11 +64,11 @@ public:
     friend Window;
 };
 
-class EndScreen : public Menu {
+class LabeledMenu : public Menu {
 protected:
     Text label_;
 public:
-    EndScreen(const sf::String& text, const sf::Texture& texture, sf::Vector2f pos, Window& window, 
+    LabeledMenu(const sf::String& text, const sf::Texture& texture, sf::Vector2f pos, Window& window, 
               const std::vector<Button::Info>& infos, Layer layer = Layer::Menu2) :
         Menu(texture, pos, window, {}, layer), 
         label_(text, Text::DefaultFont, 90, pos + sf::Vector2f{0, 70 - static_cast<float>(texture.getSize().y / 2)}) {
@@ -81,7 +81,7 @@ public:
         addButton(infos.front(), start_pos() + sf::Vector2f(0, delta));
 
         for (auto it = ++infos.begin(); it != infos.end(); ++it) {
-            addButton(*it);
+            addButton(*it, start_pos() + sf::Vector2f(0, delta * (std::distance(infos.begin(), it) + 1)));
         }
     }
 

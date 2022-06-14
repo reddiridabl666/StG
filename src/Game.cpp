@@ -3,8 +3,6 @@
 #include "Button.hpp"
 #include "Menu.hpp"
 
-GameState GameState::state;
-
 void Game::Manager::update() {
     for (auto it = objs.begin(); it != objs.end();) {
         if (!(*it)->is_active()) {
@@ -100,7 +98,7 @@ void Game::game_over() {
             }
         }();
 
-        EndScreen end(text, Resources::textures["menu"],
+        LabeledMenu end(text, Resources::textures["menu"],
                     window.getCenter(), window, 
                     {{"Back to menu", [this] {in_loop = false;}},
                      {"Exit", [this] {window.close();}}});
@@ -112,13 +110,20 @@ void Game::game_over() {
 
 void Game::main_menu() {
     in_menu = true;
+    bool settings_pressed = false;
 
-    Menu menu(Resources::textures["menu"], window.getCenter(), window, {
-        {"Start", [this] {in_loop = false;}},
-        {"Settings", [] {}},
-        {"Exit", [this] {window.close();}}}); 
-    
-    event_loop();
+    {
+        Menu menu(Resources::textures["menu"], window.getCenter(), window, {
+            {"Start", [this] {in_loop = false;}},
+            {"Settings", [&] {in_loop = false; settings_pressed = true;}},
+            {"Exit", [this] {window.close();}}});
+        
+        event_loop();
+    }
+
+    if (settings_pressed) {
+        settings();
+    }
     in_menu = false;
 }
 
@@ -126,19 +131,90 @@ void Game::pause_menu() {
     paused = true;
     in_menu = true;
 
-    Background gray(Resources::textures["pause"], window, Layer::Menu);
+    bool settings_pressed = false;
 
-    Menu menu(Resources::textures["menu"], window.getCenter(), window, {
-        {"Back to game", [this] {in_loop = false;}},
-        {"Settings", [] {}},
-        {"Exit", [this] {window.close();}}}); 
+    {
+        Background gray(Resources::textures["pause"], window, Layer::Menu);
 
-    event_loop();
+        Menu menu(Resources::textures["menu"], window.getCenter(), window, {
+            {"Back to game", [this] {in_loop = false;}},
+            {"Settings", [&] {in_loop = false; settings_pressed = true;}},
+            {"Exit", [this] {window.close();}}}); 
+
+        event_loop();
+    }
+
+    if (settings_pressed) {
+        settings();
+    }
 
     in_loop = true;
     paused = false;
     in_menu = false;
     clock.restart().asSeconds();
+}
+
+inline Background Game::gray_if_paused() {
+    if (paused)
+        return Background(Resources::textures["pause"], window, Layer::Menu);
+    else
+        return Background();
+}
+
+void Game::settings() {
+    int action = -1;
+
+    {
+        Background gray = gray_if_paused();
+
+        Menu menu(Resources::textures["menu"], window.getCenter(), window, {
+            {"Volume", [&] {in_loop = false; action = 0;}},
+            {"Controls", [&] {in_loop = false; action = 1;}},
+            {"Back", [&] {in_loop = false; action = 2;}}}); 
+
+        event_loop();
+    }
+
+    switch (action) {
+        case 0:
+            volume();
+            break;
+        case 1:
+            controls();
+            break;
+        case 2:
+            if (paused)
+                pause_menu();
+            else
+                main_menu();
+            break;
+        default:
+            window.close();
+    }
+}
+
+void Game::volume() {
+    {
+        Background gray = gray_if_paused();
+
+        Menu menu(Resources::textures["menu"], window.getCenter(), window, {});
+        menu.addButton({"^", [] {GameState::Settings().volumeUp();}}, 
+                        menu.getPosition() + sf::Vector2f(215, -55), 108);
+        auto& btn = menu.addButton({"^", [] {GameState::Settings().volumeDown();}}, 
+                                    menu.getPosition() + sf::Vector2f(221, 45), 108);
+        btn.setRotation(180);
+        menu.addButton({"Back", [this] {in_loop = false;}});
+
+        Log<sf::Uint16> volume("Volume: ", GameState::Settings().volume, menu.getPosition() + sf::Vector2f(-240, -50), 64);
+
+        event_loop();
+    }
+
+    settings();
+}
+
+void Game::controls() {
+
 }
 
 void Game::check_collisions() {

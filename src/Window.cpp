@@ -82,21 +82,14 @@ void Window::sys_event_loop() {
                 break;
 
             case sf::Event::JoystickButtonReleased:
-                if (event.joystickButton.button == JOY_ST) {
+                if (event.joystickButton.button == Gamepad::START) {
                     pause();
                 }
-                if (event.joystickButton.button == JOY_A) {
-                    push_button();
-                }
                 break;
-
             case sf::Event::KeyReleased:
-                if (event.key.code == Key::Enter) {
-                    if (event.key.alt)
+                if (event.key.code == Key::Enter &&
+                    event.key.alt) {
                         switch_view_mode();
-                    else {
-                        push_button();
-                    }
                 }
                 if (event.key.code == Key::Escape) {
                     pause();
@@ -118,6 +111,11 @@ void Window::sys_event_loop() {
                 break;
 
             case sf::Event::KeyPressed:
+                if (event.key.code == Key::Enter &&
+                   !event.key.alt && menu_timer_.getElapsedTime().asSeconds() >= 0.05) {
+                    menu_timer_.restart();
+                    push_button();
+                }
                 if (!game.in_menu || !menu_ || menu_timer_.getElapsedTime().asSeconds() <= 0.1) {
                     break;
                 }
@@ -133,6 +131,10 @@ void Window::sys_event_loop() {
         }
     }
 
+    if (Joy::isButtonPressed(0, Gamepad::A) && menu_timer_.getElapsedTime().asSeconds() > 0.05) {
+        menu_timer_.restart();
+        push_button();
+    }
     if (game.in_menu && menu_ && menu_timer_.getElapsedTime().asSeconds() > 0.12) {
         auto mv = gamepad_movement(Axis::Y, Axis::PovY, threshold);
         if (mv < 0) {
