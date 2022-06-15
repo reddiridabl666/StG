@@ -266,7 +266,7 @@ void Game::keyboard() {
                                         DrawableObject::draw_all(window);
                                         auto res = get_key(window);
                                         if (res == Key::Unknown)
-                                            return;
+                                            res = GameState::Settings().k_slow;
                                         GameState::Settings().k_slow = res;
                                         GameState::Settings().k_slow_str = key_to_str(res);
                                         }, delta},
