@@ -2,9 +2,7 @@
 
 #include "Wall.hpp"
 #include "Window.h"
-#include "Text.hpp"
 #include "Player.hpp"
-#include "Resources.hpp"
 
 GameState GameState::state;
 

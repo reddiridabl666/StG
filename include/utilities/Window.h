@@ -38,6 +38,7 @@ private:
 
     Game& game;
     bool is_fullscreen_;
+    bool hover_override = false;
     void show();
 
     friend class Menu;

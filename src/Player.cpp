@@ -1,7 +1,6 @@
 #include "Player.hpp"
 #include "Window.h"
 #include "Enemy.hpp"
-#include "UpdateFunctions.hpp"
 #include "Resources.hpp"
 #include "Controls.hpp"
 
@@ -53,7 +52,7 @@ Player::Player(sf::Vector2f pos,
     scale(factor, factor);
 
     setTag(Tag::Player);
-    setHP(10);
+    // setHP(1);
     
 #ifdef DEBUG
 #include <limits>

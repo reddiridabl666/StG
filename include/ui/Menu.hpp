@@ -6,6 +6,7 @@
 class Menu : public Picture {
 protected:
     std::vector<Button> buttons_;
+    int hover_ptr = -1;
 
     sf::Vector2f start_pos() {
         return getPosition() + sf::Vector2f{0, 80 - static_cast<float>(getTexture()->getSize().y / 2)};
@@ -23,6 +24,7 @@ public:
         for (auto& info : infos) {
             buttons_[i] = Button(info.text, window, sf::Vector2f(0, delta * i) + start_pos(), 
                                  72, info.action, next(layer));
+            buttons_[i].in_menu = true;
             ++i;
         }
     }
@@ -43,7 +45,9 @@ public:
             }
         }();
         
-        return buttons_.emplace_back(info.text, window_, pos_, size, info.action, next(layer_));
+        buttons_.emplace_back(info.text, window_, pos_, size, info.action, next(layer_));
+        buttons_.back().in_menu = true;
+        return buttons_.back();
     }
 
     void update() override {
@@ -52,9 +56,10 @@ public:
                                buttons_.end(),
                                [] (Button& it) {return it.mouse_is_in_bounds();});
         if (it == buttons_.end()) {
+            hover_ptr = -1;
             return;
         }
-        window_.pointer_ = std::distance(buttons_.begin(), it);
+        hover_ptr = std::distance(buttons_.begin(), it);
     }
 
     virtual ~Menu() {

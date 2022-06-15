@@ -3,7 +3,7 @@
 #include "Animated.hpp"
 #include "Enemy.hpp"
 #include "HealthBar.hpp"
-#include "UpdateFunctions.hpp"
+#include "Math.hpp"
 #include "Window.h"
 
 class Boss : public Enemy {

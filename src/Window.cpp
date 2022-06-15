@@ -42,17 +42,19 @@ void Window::pause() {
 
 inline void Window::push_button() {
     if (pointer_ != -1) {
-        menu_->buttons_[pointer_].action_();
+        menu_->buttons_[pointer_].activate();
     }
 }
 
 inline void Window::next_button() {
     menu_timer_.restart();
+    hover_override = true;
     pointer_ = pointer_ < menu_->buttonNum() - 1 ? pointer_ + 1 : 0;
 }
 
 inline void Window::prev_button() {
     menu_timer_.restart();
+    hover_override = true;
     pointer_ = pointer_ > 0 ? pointer_ - 1 : menu_->buttonNum() - 1;
 }
 
@@ -74,6 +76,10 @@ void Window::switch_view_mode() {
 void Window::sys_event_loop() {
     static float threshold = 15;
 
+    if (!hover_override && menu_ && menu_->hover_ptr != -1) {
+        pointer_ = menu_->hover_ptr;
+    }
+
     sf::Event event;
     while (pollEvent(event)) {
         switch(event.type) {
@@ -84,6 +90,14 @@ void Window::sys_event_loop() {
             case sf::Event::JoystickButtonReleased:
                 if (event.joystickButton.button == Gamepad::START) {
                     pause();
+                }
+                break;
+            case sf::Event::MouseMoved:
+                hover_override = false;
+                break;
+            case sf::Event::MouseButtonPressed:
+                if (event.mouseButton.button == sf::Mouse::Button::Left) {
+                    push_button();
                 }
                 break;
             case sf::Event::KeyReleased:
@@ -116,7 +130,7 @@ void Window::sys_event_loop() {
                     menu_timer_.restart();
                     push_button();
                 }
-                if (!game.in_menu || !menu_ || menu_timer_.getElapsedTime().asSeconds() <= 0.1) {
+                if (!menu_ || menu_timer_.getElapsedTime().asSeconds() <= 0.1) {
                     break;
                 }
                 if (event.key.code == Key::W || event.key.code == Key::Up) {
@@ -131,11 +145,15 @@ void Window::sys_event_loop() {
         }
     }
 
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+       push_button();
+    }
+
     if (Joy::isButtonPressed(0, Gamepad::A) && menu_timer_.getElapsedTime().asSeconds() > 0.05) {
         menu_timer_.restart();
         push_button();
     }
-    if (game.in_menu && menu_ && menu_timer_.getElapsedTime().asSeconds() > 0.12) {
+    if (menu_ && menu_timer_.getElapsedTime().asSeconds() > 0.12) {
         auto mv = gamepad_movement(Axis::Y, Axis::PovY, threshold);
         if (mv < 0) {
             prev_button();
@@ -163,11 +181,9 @@ void Window::open_fullscreen() {
 }
 
 void Window::open_windowed() {
-    // Потом надо научиться определять в зависимости от монитора
     create(sf::VideoMode(sf::VideoMode::getFullscreenModes()[0].width / 1.5,
            sf::VideoMode::getFullscreenModes()[0].height / 1.5),
            "STG",
            sf::Style::Default);
-            // sf::Style::Titlebar | sf::Style::Close);
     is_fullscreen_ = false;
 }

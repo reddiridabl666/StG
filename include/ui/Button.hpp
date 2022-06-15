@@ -4,21 +4,11 @@
 #include "Window.h"
 #include <functional>
 
-// class BackgroundedText : public Text {
-// protected:
-//     Picture bg_;
-// public:
-//     BackgroundedText(const sf::String& text, const sf::Texture& bg, sf::Vector2f pos = {0, 0}, int size = 48, 
-//                     Layer layer = Layer::Ui, const sf::Font& font = DefaultFont) :
-//         Text(text, font, size, pos, layer),
-//         bg_(bg, pos, prev(layer)) {}
-// };
-
-class Button : public /* Backgrounded */Text {
+class Button : public Text {
 protected:
-    // static inline const sf::Texture& DefaultBackground = Resources::textures["button_normal"];
     bool pressable = false;
     bool hovered = true;
+    bool in_menu = false;
 
     std::function<void()> action_ = [] {};
     Window* window_;
@@ -42,6 +32,12 @@ public:
         setOrigin(sf::Vector2f{getLocalBounds().width, getLocalBounds().height} / 2.f);
     }
 
+    void activate() {
+        if (pressable) {
+            action_();
+        }
+    }
+
     void setAction(const std::function<void()>& action) {
         action_ = action;
     }
@@ -57,9 +53,13 @@ public:
     }
 
     void update() override {
+        if (!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+            pressable = true;
+        }
+
         unhover();
 
-        if (mouse_is_in_bounds()) {
+        if (!in_menu && mouse_is_in_bounds()) {
             hover();
         }
 
@@ -67,12 +67,8 @@ public:
             return;
         }
 
-        if (!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-            pressable = true;
-        }
-
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && pressable) {
-            action_();
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+            activate();
         }
     }
 

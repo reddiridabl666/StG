@@ -87,7 +87,6 @@ void Game::game_loop() {
 
 void Game::game_over() {
     in_game = false;
-    in_menu = true;
     {
         Background gray(Resources::textures["pause"], window, Layer::Menu);
         
@@ -105,12 +104,10 @@ void Game::game_over() {
                      {"Exit", [this] {window.close();}}});
         event_loop();
     }
-    in_menu = false;
     start();
 }
 
 void Game::main_menu() {
-    in_menu = true;
     bool settings_pressed = false;
 
     {
@@ -125,13 +122,10 @@ void Game::main_menu() {
     if (settings_pressed) {
         settings();
     }
-    in_menu = false;
 }
 
 void Game::pause_menu() {
     paused = true;
-    in_menu = true;
-
     bool settings_pressed = false;
 
     {
@@ -151,7 +145,6 @@ void Game::pause_menu() {
 
     in_loop = true;
     paused = false;
-    in_menu = false;
     clock.restart().asSeconds();
 }
 
