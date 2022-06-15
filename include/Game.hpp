@@ -8,8 +8,11 @@
 #include "Text.hpp"
 #include "Wall.hpp"
 #include "Window.h"
+#include "Button.hpp"
 
 #include <thread>
+
+class Menu;
 
 class Game {
 private:
@@ -46,6 +49,9 @@ private:
     float deltaTime = 0;
 
 private:
+    void menu(sf::String text, const std::vector<Button::Info>& infos);
+    // void settings_menu(sf::String text, const std::vector<Button::Info>& infos);
+
     void main_menu();
 
     void pause_menu();
@@ -54,7 +60,8 @@ private:
     void volume();
     void controls();
 
-    void menu();
+    void gamepad();
+    void keyboard();
 
     void event_loop(const std::function<void()>& action = [] {});
 

@@ -4,7 +4,7 @@
 #include "Window.h"
 #include <functional>
 
-class Button : public Text {
+class Button : public CenteredText {
 protected:
     bool pressable = false;
     bool hovered = true;
@@ -22,15 +22,14 @@ public:
     struct Info {
         sf::String text = "";
         std::function<void()> action = [] {};
+        sf::Vector2f pos = {};
     };
 
     Button() = default;
 
     Button(const sf::String& text, Window& window, sf::Vector2f pos = {}, int size = 48, 
            const std::function<void()>& action = [] {}, Layer layer = Layer::Ui, const sf::Font& font = DefaultFont) :
-        Text(text, font, size,/* DefaultBackground, */ pos, layer), action_(action), window_(&window) {
-        setOrigin(sf::Vector2f{getLocalBounds().width, getLocalBounds().height} / 2.f);
-    }
+        CenteredText(text, pos, size, layer, font), action_(action), window_(&window) {}
 
     void activate() {
         if (pressable) {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Ui.hpp"
+#include "Text.hpp"
 
 class Picture : public Ui, public sf::Sprite {
 public:
@@ -21,3 +22,13 @@ public:
         return this;
     }
 };
+
+// class BackgroundedText : public CenteredText {
+// protected:
+//     Picture bg_;
+// public:
+//     BackgroundedText(const sf::String& text, const sf::Texture& bg, sf::Vector2f pos = {0, 0}, int size = 48, 
+//                     Layer layer = Layer::Ui, const sf::Font& font = DefaultFont) :
+//         CenteredText(text, pos + sf::Vector2f(0, -15), size, layer, font),
+//         bg_(bg, pos, prev(layer)) {}
+// };

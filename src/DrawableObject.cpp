@@ -17,6 +17,7 @@ Layer next(Layer layer) {
 std::unordered_map<Layer, DrawableObject::objects> DrawableObject::objects_by_layer;
 
 void DrawableObject::draw_all(sf::RenderWindow& window) {
+    window.clear(sf::Color::Black);
     for (const auto& layer : Layers) {
         for (auto obj : objects_by_layer[layer]) {
             if (!obj->is_hidden()) {
@@ -24,4 +25,5 @@ void DrawableObject::draw_all(sf::RenderWindow& window) {
             }
         }
     }
+    window.display();
 }

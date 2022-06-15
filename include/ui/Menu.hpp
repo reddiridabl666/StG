@@ -22,19 +22,22 @@ public:
 
         size_t i = 0;
         for (auto& info : infos) {
-            buttons_[i] = Button(info.text, window, sf::Vector2f(0, delta * i) + start_pos(), 
+            buttons_[i] = Button(info.text, window, sf::Vector2f(0, delta * i) + start_pos() + info.pos, 
                                  72, info.action, next(layer));
             buttons_[i].in_menu = true;
             ++i;
         }
     }
     
-    ssize_t buttonNum() {
+    ssize_t buttonNum() const {
         return buttons_.size();
     }
 
-    Button& addButton(const Button::Info& info, const sf::Vector2f& pos = {}, int size = 72) {
-        const sf::Vector2f pos_ = [this, &pos] {
+    Button& addButton(const Button::Info& info, sf::Vector2f pos = {}, int size = 72) {
+        const sf::Vector2f pos_ = [&] {
+            // if (info.pos != sf::Vector2f()) {
+            //     return info.pos;
+            // }
             if (pos != sf::Vector2f()) {
                 return pos;
             }
@@ -45,11 +48,15 @@ public:
             }
         }();
         
-        buttons_.emplace_back(info.text, window_, pos_, size, info.action, next(layer_));
+        buttons_.emplace_back(info.text, window_, pos_ + info.pos, size, info.action, next(layer_));
         buttons_.back().in_menu = true;
         return buttons_.back();
     }
 
+    const std::vector<Button>& getButtons() const {
+        return buttons_;
+    }
+    
     void update() override {
         Picture::update();
         auto it = std::find_if(buttons_.begin(),

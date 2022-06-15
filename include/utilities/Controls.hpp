@@ -26,6 +26,7 @@ inline float gamepad_movement(Axis axis1, Axis axis2, float threshold = 0, unsig
 
 namespace Gamepad {
     enum Button {
+        ERR = -1,
         A = 0,
         B = 1,
         X = 2,

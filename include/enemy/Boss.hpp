@@ -34,7 +34,7 @@ public:
         health_bar_(Resources::textures["hp_full"], Resources::textures["hp_zero"], 
                     hp_, getPosition() + sf::Vector2f{0, -getSize().y - 80}, Layer::Hitbox),
         phase_left_("Phase: " + std::to_string(phase_num_) + " / " + std::to_string(phase_max_), 
-                    phase_pos, Layer::Hitbox) {
+                    phase_pos, 48, Layer::Hitbox) {
     }
 
     void update(float deltaTime) override {

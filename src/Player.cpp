@@ -82,7 +82,8 @@ void Player::control() {
         return;
     }
 
-    if (pressed_any_of(Key::LShift, Key::RShift) || Joy::isButtonPressed(0, Gamepad::RB)) {
+    if (Key::isKeyPressed(GameState::Settings().k_slow) || 
+        Joy::isButtonPressed(0, GameState::Settings().g_slow)) {
         speed_ = slow_speed_;
         if (!is_invincible()) hitbox_->show();
     } else {
@@ -95,7 +96,8 @@ void Player::control() {
     setVelocity(speed_ * (horizontal_movement() * right + vertical_movement() * down));
 
     if (shoot_clock_ >= shot_interval && 
-            (Key::isKeyPressed(Key::Space) || Joy::isButtonPressed(0, Gamepad::A))) {
+            (Key::isKeyPressed(GameState::Settings().k_shoot) || 
+             Joy::isButtonPressed(0, GameState::Settings().g_shoot))) {
         Player::shoot(normal_shot_);
     }
 }
@@ -142,10 +144,10 @@ void Player::shoot(BulletType name) {
     shoot_clock_ = 0;
     play_sound("player_shoot", 0.5);
 
-    auto& bullet = 
+    // auto& bullet = 
     gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{15, 70});
-    bullet->setDamage(10000);
-    auto& bullet2 = 
+    // bullet->setDamage(10000);
+    // auto& bullet2 = 
     gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{-15, 70});
-    bullet2->setDamage(10000);
+    // bullet2->setDamage(10000);
 }

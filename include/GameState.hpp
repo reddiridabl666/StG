@@ -13,10 +13,14 @@ class GameState {
         sf::Uint16 volume = 100;
 
         Key::Key k_shoot = Key::Key::Space;
+        std::string k_shoot_str = "Space";
         Key::Key k_slow = Key::Key::LShift;
+        std::string k_slow_str = "LShift";
 
         Gamepad::Button g_shoot = Gamepad::A;
+        // std::string joy_sh = "A";
         Gamepad::Button g_slow = Gamepad::RB;
+        // std::string joy_sl = "RB";
 
         void volumeUp(sf::Uint8 vol = 1);
         void volumeDown(sf::Uint8 vol = 1);
