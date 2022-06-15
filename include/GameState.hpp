@@ -39,8 +39,10 @@ public:
     GameState(const GameState&) = delete;   
     GameState& operator=(const GameState&) = delete;
 
-    static void init(std::weak_ptr<Player> player, const Window* window, const Frame& frame, float offset = 100);
-
+    static void init(const Window* window, const Frame& frame, float offset = 100);
+    
+    static void setPlayerTracking(std::weak_ptr<Player>& player);
+    
     static Settings_& Settings() {
         return state.settings;
     }

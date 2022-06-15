@@ -2,14 +2,16 @@
 
 #include "Animated.hpp"
 #include "Enemy.hpp"
-#include "UpdateFunctions.hpp"
 #include "HealthBar.hpp"
+#include "UpdateFunctions.hpp"
+#include "Window.h"
 
 class Boss : public Enemy {
+private:
+    const sf::Vector2f phase_pos = {50, 45}/* GameState::window()->getView().getSize()*/;
 protected:
     void changePhase(std::unique_ptr<Phase>&& phase) {
         if (phase_num_ != phase_max_) phase_num_++;
-        // shoot_clock_.restart();
         shoot_clock_ = 0;
         shot_num_ = 0;
         phase_ = std::move(phase);
@@ -19,7 +21,6 @@ protected:
     }
 
     std::unique_ptr<Phase> phase_;
-    // Text health_bar_;
     HealthBar<sf::Int32> health_bar_;
     
     sf::Uint8 phase_num_ = 0;
@@ -32,15 +33,12 @@ public:
         Enemy(texture, pos, hitbox_size, hp, layer),
         health_bar_(Resources::textures["hp_full"], Resources::textures["hp_zero"], 
                     hp_, getPosition() + sf::Vector2f{0, -getSize().y - 80}, Layer::Hitbox),
-        // health_bar_("Health: " + std::to_string(hp),
-        //             getPosition() + sf::Vector2f{-getHalfSize().x, -getSize().y}),
-        phase_left_("Phase: " + std::to_string(phase_num_) + " / " + std::to_string(phase_max_), {50, 50}, Layer::Hitbox) {
+        phase_left_("Phase: " + std::to_string(phase_num_) + " / " + std::to_string(phase_max_), 
+                    phase_pos, Layer::Hitbox) {
     }
 
     void update(float deltaTime) override {
         ShootingObject::update(deltaTime);
-        // health_bar_.setString("Health: " + std::to_string(hp_));
-        // health_bar_.setPosition(getPosition() + sf::Vector2f{-getHalfSize().x, -getSize().y});
         phase_left_.setString("Phase: " + std::to_string(phase_num_) + " / " + std::to_string(phase_max_));
     }
 
@@ -109,14 +107,14 @@ public:
     size_t& shot_num() {
         return parent->shot_num_;
     }
-    /* sf::Clock&  */double& shoot_clock() {
+
+    double& shoot_clock() {
         return parent->shoot_clock_;
     }
 
     virtual void update(float time) {
         if (time >= shot_interval) {
             parent->shoot();
-            // shoot_clock().restart();
             shoot_clock() = 0;
         }
     }

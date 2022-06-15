@@ -26,14 +26,17 @@ void GameState::Settings_::setSlow(Key::Key k, Gamepad::Button g) {
     g_slow = g;
 }
 
-void GameState::init(std::weak_ptr<Player> player, const Window* window, const Frame& frame, float offset) {
-    state.player_ = player;
+void GameState::init(const Window* window, const Frame& frame, float offset) {
     state.window_ = window;
 
     state.bounds_ = {frame.left.getPosition().x - offset, 
                      frame.up.getPosition().y - offset,
                      frame.right.getPosition().x + offset - state.bounds_.left,
                      frame.low.getPosition().y + offset - state.bounds_.top};           
+}
+
+void GameState::setPlayerTracking(std::weak_ptr<Player>& player) {
+    state.player_ = player;
 }
 
 sf::Vector2f GameState::getPlayerPos() {

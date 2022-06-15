@@ -1,5 +1,5 @@
 #include "Player.hpp"
-#include "Wall.hpp"
+#include "Window.h"
 #include "Enemy.hpp"
 #include "UpdateFunctions.hpp"
 #include "Resources.hpp"
@@ -45,13 +45,15 @@ Player::Player(sf::Vector2f pos,
                float mass, Layer layer) :
     Animated(init_sprites(Resources::sprite_sheets["player"])),
     ShootingObject(sprites_["idle"][0], pos, hitbox_size, {0, 0}, mass, layer), speed_(speed),
-    health_bar_("Health: ", hp_, sf::Vector2f{1650, 50}, 48, Layer::Hitbox) {
+    health_bar_("Health: ", hp_, 
+               {GameState::window()->getView().getSize().x - 270, 50}, 
+                48, Layer::Hitbox) {
 
     auto factor = player_size / min(sprites_["idle"][0].getSize());
     scale(factor, factor);
 
     setTag(Tag::Player);
-    setHP(1);
+    setHP(10);
     
 #ifdef DEBUG
 #include <limits>

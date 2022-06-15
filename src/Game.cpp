@@ -46,8 +46,9 @@ void Game::start() {
 
     player = manager.add(std::make_shared<Player>(window.getCenter(), sf::Vector2f{25, 30}));
     boss = manager.add(std::make_shared<TestBoss>(sf::Vector2f{window.getCenter().x, 200}, sf::Vector2f{400.f, 200.f}));
-    GameState::init(player, &window, frame);
 
+    GameState::setPlayerTracking(player);
+    
     clock.restart();
     game_loop();
 }

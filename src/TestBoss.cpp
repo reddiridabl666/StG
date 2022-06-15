@@ -28,7 +28,6 @@ void TestBoss::BallBounce::shoot() {
 void TestBoss::BallBounce::update(float time) {
     if (shot_num() < 5 && time >= shot_interval) {
         parent->shoot();
-        // shoot_clock().restart();
         shoot_clock() = 0;
     } else if (time >= 6) {
         shot_num() = 0;
@@ -46,7 +45,7 @@ TestBoss::BallBounce::~BallBounce() {
 
 TestBoss::ChessHoming::ChessHoming(Boss* parent) : Phase(parent, 5000) {
     delta = 140;
-    num = GameState::window()->getSize().x / delta + 1;
+    num = GameState::window()->getView().getSize().x / delta + 1;
     start_pos = sf::Vector2f{50, parent->getPosition().y + 15};
 }
 
@@ -245,9 +244,6 @@ void TestBoss::update(float deltaTime) {
     if (getTexture() == &sprites_["death"][7]) {
         deactivate();
     }
-    
-    // auto time = shoot_clock_.getElapsedTime().asSeconds();
-    // shoot_clock_ += deltaTime;
     
 #ifdef DEBUG
     time_ = shoot_clock_;

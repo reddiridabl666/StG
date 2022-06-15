@@ -67,10 +67,13 @@ private:
     Background gray_if_paused();
 
 public:
-    Game() : manager(), 
-             window(*this),
-             frame(Wall::get_frame(window)),
-             bg(Resources::textures["bg"], window) {}
+    Game() : 
+        manager(), 
+        window(*this),
+        frame(Wall::get_frame(window)),
+        bg(Resources::textures["bg"], window) {
+        GameState::init(&window, frame);
+    }
     
     Game(const Game&) = delete;
     Game& operator=(const Game&) = delete;
