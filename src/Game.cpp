@@ -1,5 +1,4 @@
 #include "Button.hpp"
-#include "ChangeControls.hpp"
 #include "Game.hpp"
 #include "Menu.hpp"
 #include "TestBoss.hpp"
@@ -108,7 +107,7 @@ void Game::game_over() {
 void Game::menu(sf::String text, const std::vector<Button::Info>& infos) {
     Background gray = gray_if_paused();
 
-    LabeledMenu menu_(text, Resources::textures["menu_large"], window.getCenter() /* + sf::Vector2f(0, 100) */, window, infos);
+    LabeledMenu menu_(text, Resources::textures["menu_large"], window.getCenter(), window, infos);
 
     event_loop();
 }
@@ -162,9 +161,11 @@ void Game::settings() {
     switch (action) {
         case 0:
             volume();
+            Settings::update();
             break;
         case 1:
             controls();
+            Settings::update();
             break;
         case 2:
             if (paused)
@@ -183,19 +184,23 @@ void Game::volume() {
     {
         Background gray = gray_if_paused();
 
-        Menu menu(/* "Volume", */ Resources::textures["menu"], window.getCenter(), window, {});
-        menu.addButton({"^", [] {GameState::Settings().volumeUp();}}, 
+        static std::function<std::string()> refreshed = [] {
+            return "Volume: " + std::to_string(Settings::volume());
+        };
+
+        Text volume(refreshed(), window.getCenter() + sf::Vector2f(-255, -65), 72);
+
+        Menu menu(Resources::textures["menu"], window.getCenter(), window, {});
+        menu.addButton({"^", [&] {Settings::volumeUp();
+                                 volume.setString(refreshed());}}, 
                         menu.getPosition() + sf::Vector2f(225, -70), 108);
 
-        auto& btn = menu.addButton({"^", [] {GameState::Settings().volumeDown();}}, 
+        auto& btn = menu.addButton({"^", [&] {Settings::volumeDown();
+                                             volume.setString(refreshed());}}, 
                                     menu.getPosition() + sf::Vector2f(231, 30), 108);
         btn.setRotation(180);
 
         menu.addButton({"Back", [&] {in_loop = false; back_pressed = true;}});
-
-
-        Log<sf::Uint16> volume("Volume: ", GameState::Settings().volume, 
-                                menu.getPosition() + sf::Vector2f(-255, -65), 72);
 
         event_loop();
     }
@@ -231,7 +236,7 @@ void Game::controls() {
     // std::vector<Log<std::string>> logs;
 
     // for (auto it = menu_.getButtons().begin(); it != std::prev(menu_.getButtons().end()); ++it) {
-    //     logs.emplace_back("", GameState::Settings().);
+    //     logs.emplace_back("", Settings::);
     // }
 
     // event_loop();
@@ -247,31 +252,31 @@ void Game::keyboard() {
 
         sf::Vector2f delta = {-100, 0};
 
-        Log<std::string> shoot("", GameState::Settings().k_shoot_str, 
-                            window.getCenter() + sf::Vector2f(130, -45), 48, Layer::Ui, true);
-        Log<std::string> slow("", GameState::Settings().k_slow_str, 
-                            shoot.getPosition() + sf::Vector2f(0, 100), 48, Layer::Ui, true);
+        CenteredText shoot(key_to_str(Settings::getKey("key_shoot")), window.getCenter() + 
+                               sf::Vector2f(130, -45));
+        CenteredText slow(key_to_str(Settings::getKey("key_slow")), shoot.getPosition() + 
+                              sf::Vector2f(0, 100));
 
+        // TODO: Убрать копипасту
         LabeledMenu menu("Keyboard", Resources::textures["menu_large"], 
                         window.getCenter(), window, 
                         {{"Shoot:", [&] {shoot.setString("---");
                                          DrawableObject::draw_all(window);
                                          auto res = get_key(window);
                                          if (res == Key::Unknown)
-                                            res = GameState::Settings().k_shoot;
-                                         GameState::Settings().k_shoot = res;
-                                         GameState::Settings().k_shoot_str = key_to_str(res);
+                                            res = Settings::getKey("key_shoot");
+                                         Settings::setKey("key_shoot", res);
+                                         shoot.setString(key_to_str(res));
                                          }, delta},
                          {"Slow:", [&] {slow.setString("---");
                                         DrawableObject::draw_all(window);
                                         auto res = get_key(window);
                                         if (res == Key::Unknown)
-                                            res = GameState::Settings().k_slow;
-                                        GameState::Settings().k_slow = res;
-                                        GameState::Settings().k_slow_str = key_to_str(res);
+                                            res = Settings::getKey("key_slow");
+                                        Settings::setKey("key_slow", res);
+                                        slow.setString(key_to_str(res));
                                         }, delta},
                          {"Back", [&] {in_loop = false; back_pressed = true;}}});
-
 
         event_loop();
     }
@@ -288,11 +293,12 @@ void Game::gamepad() {
 
         sf::Vector2f delta = {-100, 0};
 
-        Log<Gamepad::Button> shoot("", GameState::Settings().g_shoot, 
-                            window.getCenter() + sf::Vector2f(130, -45), 48, Layer::Ui, true);
-        Log<Gamepad::Button> slow("", GameState::Settings().g_slow, 
-                            shoot.getPosition() + sf::Vector2f(0, 100), 48, Layer::Ui, true);
+        CenteredText shoot(std::to_string(Settings::getButton("joy_shoot")), window.getCenter() + 
+                               sf::Vector2f(130, -45));
+        CenteredText slow(std::to_string(Settings::getButton("joy_slow")), shoot.getPosition() + 
+                              sf::Vector2f(0, 100));
 
+        // TODO: Убрать копипасту
         LabeledMenu menu("Gamepad", Resources::textures["menu_large"], 
                         window.getCenter(), window, 
                         {{"Shoot:", [&] {if (timer.getElapsedTime().asSeconds() < 0.5)
@@ -301,9 +307,10 @@ void Game::gamepad() {
                                          DrawableObject::draw_all(window);
                                          auto res = get_button(window);
                                          if (res == Gamepad::ERR) {
-                                            res = GameState::Settings().g_shoot;
+                                            res = Settings::getButton("joy_shoot");
                                          }
-                                         GameState::Settings().g_shoot = res;
+                                         Settings::setButton("joy_shoot", res);
+                                         shoot.setString(std::to_string(res));
                                          timer.restart();}, 
                                          delta},
                          {"Slow:", [&] {if (timer.getElapsedTime().asSeconds() < 0.7)
@@ -312,9 +319,10 @@ void Game::gamepad() {
                                          DrawableObject::draw_all(window);
                                          auto res = get_button(window);
                                          if (res == Gamepad::ERR) {
-                                            res = GameState::Settings().g_slow;
+                                            res = Settings::getButton("joy_slow");
                                          }
-                                         GameState::Settings().g_slow = res;
+                                         Settings::setButton("joy_slow", res);
+                                         slow.setString(std::to_string(res));
                                          timer.restart();}, 
                                          delta},
                          {"Back", [&] {in_loop = false; back_pressed = true;}}});

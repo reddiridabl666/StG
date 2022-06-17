@@ -9,25 +9,25 @@ class Window;
 struct Frame;
 
 class GameState {
-    struct Settings_ {
-        sf::Uint16 volume = 100;
+    // struct Settings_ {
+    //     sf::Uint16 volume = 100;
 
-        Key::Key k_shoot = Key::Key::Space;
-        std::string k_shoot_str = "Space";
-        Key::Key k_slow = Key::Key::LShift;
-        std::string k_slow_str = "LShift";
+    //     Key::Key k_shoot = Key::Key::Space;
+    //     std::string k_shoot_str = "Space";
+    //     Key::Key k_slow = Key::Key::LShift;
+    //     std::string k_slow_str = "LShift";
 
-        Gamepad::Button g_shoot = Gamepad::A;
-        // std::string joy_sh = "A";
-        Gamepad::Button g_slow = Gamepad::RB;
-        // std::string joy_sl = "RB";
+    //     Gamepad::Button g_shoot = Gamepad::A;
+    //     // std::string joy_sh = "A";
+    //     Gamepad::Button g_slow = Gamepad::RB;
+    //     // std::string joy_sl = "RB";
 
-        void volumeUp(sf::Uint8 vol = 1);
-        void volumeDown(sf::Uint8 vol = 1);
+    //     void volumeUp(sf::Uint8 vol = 1);
+    //     void volumeDown(sf::Uint8 vol = 1);
 
-        void setShoot(Key::Key k, Gamepad::Button g);
-        void setSlow(Key::Key k, Gamepad::Button g);
-    };
+    //     void setShoot(Key::Key k, Gamepad::Button g);
+    //     void setSlow(Key::Key k, Gamepad::Button g);
+    // };
 private:
     GameState() {}
 
@@ -37,7 +37,7 @@ private:
 
     std::weak_ptr<Player> player_;
     const Window* window_ = nullptr;
-    Settings_ settings;
+    // Settings_ settings;
 
 public:
     GameState(const GameState&) = delete;   
@@ -47,9 +47,9 @@ public:
     
     static void setPlayerTracking(std::weak_ptr<Player>& player);
     
-    static Settings_& Settings() {
-        return state.settings;
-    }
+    // static Settings_& Settings() {
+    //     return state.settings;
+    // }
 
 	static sf::Vector2f getPlayerPos();
 

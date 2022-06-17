@@ -5,6 +5,7 @@
 #include "GameState.hpp"
 #include "Player.hpp"
 #include "Resources.hpp"
+#include "Settings.hpp"
 #include "Text.hpp"
 #include "Wall.hpp"
 #include "Window.h"
@@ -80,6 +81,7 @@ public:
         frame(Wall::get_frame(window)),
         bg(Resources::textures["bg"], window) {
         GameState::init(&window, frame);
+        Settings::init();
     }
     
     Game(const Game&) = delete;

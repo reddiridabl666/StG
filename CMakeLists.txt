@@ -26,7 +26,7 @@ set(SOURCES src/DrawableObject.cpp src/GameObject.cpp src/Window.cpp
             src/SpriteObject.cpp src/Hitbox.cpp src/Wall.cpp 
             src/DynamicObject.cpp src/FramedObject.cpp
             src/Player.cpp src/GameState.cpp src/Bullet.cpp 
-            src/TestBoss.cpp src/Game.cpp)
+            src/TestBoss.cpp src/Game.cpp src/Settings.cpp)
 
 # Add main
 add_executable(main main.cpp ${SOURCES})

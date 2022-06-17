@@ -1,8 +1,9 @@
 #include "Player.hpp"
 #include "Window.h"
+#include "GameState.hpp"
 #include "Enemy.hpp"
 #include "Resources.hpp"
-#include "Controls.hpp"
+#include "Settings.hpp"
 
 static const sf::Vector2f player_hitbox_size = {30, 45};
 static constexpr float player_size = 32 * 4.4;
@@ -82,8 +83,8 @@ void Player::control() {
         return;
     }
 
-    if (Key::isKeyPressed(GameState::Settings().k_slow) || 
-        Joy::isButtonPressed(0, GameState::Settings().g_slow)) {
+    if (Key::isKeyPressed(Settings::getKey("key_slow")) || 
+        Joy::isButtonPressed(0, Settings::getButton("joy_slow"))) {
         speed_ = slow_speed_;
         if (!is_invincible()) hitbox_->show();
     } else {
@@ -96,8 +97,8 @@ void Player::control() {
     setVelocity(speed_ * (horizontal_movement() * right + vertical_movement() * down));
 
     if (shoot_clock_ >= shot_interval && 
-            (Key::isKeyPressed(GameState::Settings().k_shoot) || 
-             Joy::isButtonPressed(0, GameState::Settings().g_shoot))) {
+            (Key::isKeyPressed(Settings::getKey("key_shoot")) || 
+             Joy::isButtonPressed(0, Settings::getButton("joy_shoot")))) {
         Player::shoot(normal_shot_);
     }
 }

@@ -4,7 +4,7 @@
 
 #include "SFML/Audio.hpp"
 
-#include "GameState.hpp"
+#include "Settings.hpp"
 #include "Resources.hpp"
 
 class Audible {
@@ -24,7 +24,7 @@ public:
             sound_ = sf::Sound(buffers_.at(name));
         }
 
-        sound_.setVolume(GameState::Settings().volume * volume_mod);
+        sound_.setVolume(Settings::volume() * volume_mod);
         sound_.play();
         return sound_;
     }
