@@ -11,6 +11,8 @@ private:
     static json settings;
     static sf::Uint16 volume_;
 
+    static void rebuild_json();
+
 public:
     static void init();
 

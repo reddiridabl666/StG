@@ -1,7 +1,11 @@
 {
-    "joy_shoot": 0,
-    "joy_slow": 5,
-    "key_shoot": 57,
-    "key_slow": 38,
+    "joy": {
+        "shoot": 0,
+        "slow": 5
+    },
+    "key": {
+        "shoot": 57,
+        "slow": 38
+    },
     "volume": 100
 }

@@ -83,8 +83,8 @@ void Player::control() {
         return;
     }
 
-    if (Key::isKeyPressed(Settings::getKey("key_slow")) || 
-        Joy::isButtonPressed(0, Settings::getButton("joy_slow"))) {
+    if (Key::isKeyPressed(Settings::getKey("slow")) || 
+        Joy::isButtonPressed(0, Settings::getButton("slow"))) {
         speed_ = slow_speed_;
         if (!is_invincible()) hitbox_->show();
     } else {
@@ -97,8 +97,8 @@ void Player::control() {
     setVelocity(speed_ * (horizontal_movement() * right + vertical_movement() * down));
 
     if (shoot_clock_ >= shot_interval && 
-            (Key::isKeyPressed(Settings::getKey("key_shoot")) || 
-             Joy::isButtonPressed(0, Settings::getButton("joy_shoot")))) {
+            (Key::isKeyPressed(Settings::getKey("shoot")) || 
+             Joy::isButtonPressed(0, Settings::getButton("shoot")))) {
         Player::shoot(normal_shot_);
     }
 }

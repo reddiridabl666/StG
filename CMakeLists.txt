@@ -22,11 +22,14 @@ add_custom_target(memcheck COMMAND valgrind --suppressions=/lib/valgrind/sfml.su
 find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 
 # Add lib
-set(SOURCES src/DrawableObject.cpp src/GameObject.cpp src/Window.cpp 
-            src/SpriteObject.cpp src/Hitbox.cpp src/Wall.cpp 
-            src/DynamicObject.cpp src/FramedObject.cpp
-            src/Player.cpp src/GameState.cpp src/Bullet.cpp 
-            src/TestBoss.cpp src/Game.cpp src/Settings.cpp)
+set(SOURCES src/base_classes/DrawableObject.cpp 
+            src/base_classes/GameObject.cpp
+            src/Window.cpp src/base_classes/SpriteObject.cpp 
+            src/Hitbox.cpp src/Wall.cpp 
+            src/base_classes/DynamicObject.cpp 
+            src/base_classes/FramedObject.cpp src/Player.cpp 
+            src/GameState.cpp src/Bullet.cpp src/TestBoss.cpp 
+            src/Game.cpp src/Settings.cpp)
 
 # Add main
 add_executable(main main.cpp ${SOURCES})

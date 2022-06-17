@@ -252,9 +252,9 @@ void Game::keyboard() {
 
         sf::Vector2f delta = {-100, 0};
 
-        CenteredText shoot(key_to_str(Settings::getKey("key_shoot")), window.getCenter() + 
+        CenteredText shoot(key_to_str(Settings::getKey("shoot")), window.getCenter() + 
                                sf::Vector2f(130, -45));
-        CenteredText slow(key_to_str(Settings::getKey("key_slow")), shoot.getPosition() + 
+        CenteredText slow(key_to_str(Settings::getKey("slow")), shoot.getPosition() + 
                               sf::Vector2f(0, 100));
 
         // TODO: Убрать копипасту
@@ -264,16 +264,16 @@ void Game::keyboard() {
                                          DrawableObject::draw_all(window);
                                          auto res = get_key(window);
                                          if (res == Key::Unknown)
-                                            res = Settings::getKey("key_shoot");
-                                         Settings::setKey("key_shoot", res);
+                                            res = Settings::getKey("shoot");
+                                         Settings::setKey("shoot", res);
                                          shoot.setString(key_to_str(res));
                                          }, delta},
                          {"Slow:", [&] {slow.setString("---");
                                         DrawableObject::draw_all(window);
                                         auto res = get_key(window);
                                         if (res == Key::Unknown)
-                                            res = Settings::getKey("key_slow");
-                                        Settings::setKey("key_slow", res);
+                                            res = Settings::getKey("slow");
+                                        Settings::setKey("slow", res);
                                         slow.setString(key_to_str(res));
                                         }, delta},
                          {"Back", [&] {in_loop = false; back_pressed = true;}}});
@@ -293,9 +293,9 @@ void Game::gamepad() {
 
         sf::Vector2f delta = {-100, 0};
 
-        CenteredText shoot(std::to_string(Settings::getButton("joy_shoot")), window.getCenter() + 
+        CenteredText shoot(std::to_string(Settings::getButton("shoot")), window.getCenter() + 
                                sf::Vector2f(130, -45));
-        CenteredText slow(std::to_string(Settings::getButton("joy_slow")), shoot.getPosition() + 
+        CenteredText slow(std::to_string(Settings::getButton("slow")), shoot.getPosition() + 
                               sf::Vector2f(0, 100));
 
         // TODO: Убрать копипасту
@@ -307,9 +307,9 @@ void Game::gamepad() {
                                          DrawableObject::draw_all(window);
                                          auto res = get_button(window);
                                          if (res == Gamepad::ERR) {
-                                            res = Settings::getButton("joy_shoot");
+                                            res = Settings::getButton("shoot");
                                          }
-                                         Settings::setButton("joy_shoot", res);
+                                         Settings::setButton("shoot", res);
                                          shoot.setString(std::to_string(res));
                                          timer.restart();}, 
                                          delta},
@@ -319,9 +319,9 @@ void Game::gamepad() {
                                          DrawableObject::draw_all(window);
                                          auto res = get_button(window);
                                          if (res == Gamepad::ERR) {
-                                            res = Settings::getButton("joy_slow");
+                                            res = Settings::getButton("slow");
                                          }
-                                         Settings::setButton("joy_slow", res);
+                                         Settings::setButton("slow", res);
                                          slow.setString(std::to_string(res));
                                          timer.restart();}, 
                                          delta},

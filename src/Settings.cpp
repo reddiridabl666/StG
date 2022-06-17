@@ -10,12 +10,38 @@ using json = nlohmann::json;
 json Settings::settings;
 sf::Uint16 Settings::volume_;
 
+static void error_prompt(const json::exception& e) {
+    std::ofstream err("error.log");
+    err << "Something bad happened with your settings file!" << std::endl;
+    err << e.what() << std::endl;
+    err << "Settings have been reset!"<< std::endl;
+}
+
+void Settings::rebuild_json() {
+    settings = R"({
+                    "key": {
+                        "shoot": 57,
+                        "slow": 38
+                    },
+                    "joy": {
+                        "shoot": 0,
+                        "slow": 5
+                    },
+                    "volume": 100
+                })"_json;
+}
+
 void Settings::init() {
     std::ifstream in("settings.json");
-
-    in >> settings;
-
-    volume_ = settings["volume"];
+    try {
+        in >> settings;
+        volume_ = settings["volume"];
+    }
+    catch(const json::exception& e) {
+        rebuild_json();
+        error_prompt(e);
+        volume_ = settings["volume"];
+    }
 }
 
 void Settings::volumeUp(sf::Uint8 vol) {
@@ -33,19 +59,33 @@ sf::Uint16 Settings::volume() {
 }
 
 Key::Key Settings::getKey(const std::string& action) {
-    return settings[action];
+    try {
+        return settings["key"][action];
+    }
+    catch(const json::exception& e) {
+        rebuild_json();
+        error_prompt(e);
+        return getKey(action);
+    }
 }
 
 Gamepad::Button Settings::getButton(const std::string& action) {
-    return static_cast<Gamepad::Button>(getKey(action));
+    try {
+        return settings["joy"][action];
+    } 
+    catch (const json::exception& e) {
+        rebuild_json();
+        error_prompt(e);
+        return getButton(action);
+    }
 }
 
 void Settings::setKey(const std::string& action, Key::Key k) {
-    settings[action] = k;
+    settings["key"][action] = k;
 }
 
 void Settings::setButton(const std::string& action, Gamepad::Button g) {
-    setKey(action, static_cast<Key::Key>(g));
+    settings["joy"][action] = g;
 }
 
 void Settings::update() {
