@@ -43,14 +43,15 @@ private:
 
     bool in_loop = false;
     bool paused = false;
-    bool in_menu = false;
+    bool in_main_menu = false;
     bool in_game = false;
+    bool back_pressed = false;
 
     sf::Clock clock;
     float deltaTime = 0;
 
 private:
-    void menu(sf::String text, const std::vector<Button::Info>& infos);
+    void menu(sf::String text, const std::vector<Button::Info>& infos, const std::function<void()>& func = [] {});
     // void settings_menu(sf::String text, const std::vector<Button::Info>& infos);
 
     void main_menu();

@@ -30,6 +30,13 @@ void Window::reset_menu(Menu* menu) {
     pointer_ = -1;
 }
 
+void Window::back() {
+    if (!game.in_main_menu) {
+        game.in_loop = false;
+        game.back_pressed = true;
+    }
+}
+
 void Window::pause() {
     if (game.paused) {
         game.in_loop = false;
@@ -87,9 +94,12 @@ void Window::sys_event_loop() {
                 close();
                 break;
 
-            case sf::Event::JoystickButtonReleased:
+            case sf::Event::JoystickButtonPressed:
                 if (event.joystickButton.button == Gamepad::START) {
                     pause();
+                }
+                if (event.joystickButton.button == Gamepad::B) {
+                    back();
                 }
                 break;
             case sf::Event::MouseMoved:

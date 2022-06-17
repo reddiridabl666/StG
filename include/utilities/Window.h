@@ -29,6 +29,7 @@ private:
     Menu* menu_ = nullptr;
     sf::Clock menu_timer_;
 
+    void back();
     void pause();
     void switch_view_mode();
 

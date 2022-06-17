@@ -24,6 +24,7 @@ void Game::Manager::refresh() {
 
 void Game::event_loop(const std::function<void()>& action) {
     in_loop = true;
+    back_pressed = false;
     
     while (window.isOpen() && in_loop) {
         Ui::update_all();
@@ -104,22 +105,28 @@ void Game::game_over() {
     start();
 }
 
-void Game::menu(sf::String text, const std::vector<Button::Info>& infos) {
+void Game::menu(sf::String text, const std::vector<Button::Info>& infos, const std::function<void()>& func) {
     Background gray = gray_if_paused();
 
     LabeledMenu menu_(text, Resources::textures["menu_large"], window.getCenter(), window, infos);
 
-    event_loop();
+    event_loop(func);
 }
 
 void Game::main_menu() {
     bool settings_pressed = false;
+    in_main_menu = true;
 
     menu("Main menu", {
          {"Start", [this] {in_loop = false;}},
          {"Settings", [&] {in_loop = false; settings_pressed = true;}},
-         {"Exit", [this] {window.close();}}});
+         {"Exit", [this] {window.close();}}}/* ,
+         [this] {if (back_pressed) {
+            in_loop = true;
+         }} */);
 
+    in_main_menu = false;
+    
     if (settings_pressed) {
         settings();
     }
@@ -156,31 +163,25 @@ void Game::settings() {
     menu("Settings", {
          {"Volume", [&] {in_loop = false; action = 0;}},
          {"Controls", [&] {in_loop = false; action = 1;}},
-         {"Back", [&] {in_loop = false; action = 2;}}}); 
+         {"Back", [&] {in_loop = false; back_pressed = true;}}}); 
 
-    switch (action) {
-        case 0:
-            volume();
-            Settings::update();
-            break;
-        case 1:
-            controls();
-            Settings::update();
-            break;
-        case 2:
-            if (paused)
-                pause_menu();
-            else
-                main_menu();
-            break;
-        default:
-            break;
+    if (action == 0) {
+        volume();
+        Settings::update();
+    }
+    if (action == 1) {
+        controls();
+        Settings::update();
+    }
+    if (back_pressed) {
+        if (paused)
+            pause_menu();
+        else
+            main_menu();
     }
 }
 
 void Game::volume() {
-    bool back_pressed = false;
-
     {
         Background gray = gray_if_paused();
 
@@ -214,7 +215,7 @@ void Game::controls() {
     menu("Controls", {
          {"Keyboard", [&] {in_loop = false; action = 0;}},
          {"Gamepad", [&] {in_loop = false; action = 1;}},
-         {"Back", [&] {in_loop = false; action = 2;}}}); 
+         {"Back", [&] {in_loop = false; back_pressed = true;}}}); 
 
     if (action == 0) {
         keyboard();
@@ -224,31 +225,14 @@ void Game::controls() {
         gamepad();
     }
 
-    if (action == 2) {
+    if (back_pressed) {
         settings();
     }
 }
 
-// void Game::settings_menu(sf::String text, const std::vector<Button::Info>& infos) {
-    // Background gray = gray_if_paused();
-
-    // LabeledMenu menu_(text, Resources::textures["menu_large"], window.getCenter(), window, infos);
-    // std::vector<Log<std::string>> logs;
-
-    // for (auto it = menu_.getButtons().begin(); it != std::prev(menu_.getButtons().end()); ++it) {
-    //     logs.emplace_back("", Settings::);
-    // }
-
-    // event_loop();
-// }
-
 void Game::keyboard() {
-    bool back_pressed = false;
     {
         Background gray = gray_if_paused();
-
-        // bool shoot_changed = false;
-        // bool slow_changed = false;
 
         sf::Vector2f delta = {-100, 0};
 
@@ -280,13 +264,11 @@ void Game::keyboard() {
 
         event_loop();
     }
-
     if (back_pressed)
         controls();
 }
 
 void Game::gamepad() {
-    bool back_pressed = false;
     {
         Background gray = gray_if_paused();
         sf::Clock timer;
