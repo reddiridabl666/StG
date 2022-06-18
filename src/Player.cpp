@@ -8,6 +8,9 @@
 static const sf::Vector2f player_hitbox_size = {30, 45};
 static constexpr float player_size = 32 * 4.4;
 
+std::pair<Key::Key, Gamepad::Button> Player::shoot_;
+std::pair<Key::Key, Gamepad::Button> Player::slow_;
+
 static Animated::Sprites init_sprites(const sf::Image& sprite_sheet) {
     std::unordered_map<std::string, std::vector<sf::Texture>> sprites_;
     sprites_["idle"] = load_row(sprite_sheet, 4, {0, 0});
@@ -16,7 +19,6 @@ static Animated::Sprites init_sprites(const sf::Image& sprite_sheet) {
     sprites_["death"] = load_row(sprite_sheet, 9, {0, 96});
     return sprites_;
 }
-
 
 static float vertical_movement(unsigned int gamepad_num = 0) {
     float vertical = 0;
@@ -83,8 +85,8 @@ void Player::control() {
         return;
     }
 
-    if (Key::isKeyPressed(Settings::getKey("slow")) || 
-        Joy::isButtonPressed(0, Settings::getButton("slow"))) {
+    if (Key::isKeyPressed(slow_.first) || 
+        Joy::isButtonPressed(0, slow_.second)) {
         speed_ = slow_speed_;
         if (!is_invincible()) hitbox_->show();
     } else {
@@ -97,8 +99,8 @@ void Player::control() {
     setVelocity(speed_ * (horizontal_movement() * right + vertical_movement() * down));
 
     if (shoot_clock_ >= shot_interval && 
-            (Key::isKeyPressed(Settings::getKey("shoot")) || 
-             Joy::isButtonPressed(0, Settings::getButton("shoot")))) {
+            (Key::isKeyPressed(shoot_.first) || 
+             Joy::isButtonPressed(0, shoot_.second))) {
         Player::shoot(normal_shot_);
     }
 }
@@ -143,7 +145,7 @@ void Player::update() {
 
 void Player::shoot(BulletType name) {
     shoot_clock_ = 0;
-    play_sound("player_shoot", 0.5);
+    play_sound("player_shoot", 1);
 
     // auto& bullet = 
     gen_.shoot(Bullet::Types[name], getPosition() - sf::Vector2f{15, 70});

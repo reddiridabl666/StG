@@ -1,9 +1,8 @@
 #pragma once
 
 #include "Ui.hpp"
+#include "Utils.hpp"
 #include "Resources.hpp"
-
-#include <sstream>
 
 class Text : public Ui, public sf::Text {
 public:
@@ -51,13 +50,6 @@ public:
         setOrigin(sf::Vector2f{getLocalBounds().width, getLocalBounds().height} / 2.f);
     }
 };
-
-template <typename T>
-std::string to_string(const T& item) {
-    std::stringstream stream;
-    stream << item;
-    return stream.str();
-}
 
 template <typename T>
 class Log : public Text {

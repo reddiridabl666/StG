@@ -12,9 +12,18 @@ protected:
     const std::unordered_map<std::string, sf::SoundBuffer>& buffers_;
     std::string name_;
     sf::Sound sound_;
+    static inline sf::Uint16 volume_;
 
 public:
     Audible() : buffers_(Resources::sounds) {}
+
+    static void setVolume(sf::Uint16 volume) {
+        volume_ = volume;
+    }
+    
+    static sf::Uint16 getVolume() {
+        return volume_;
+    }
 
     Audible(const std::unordered_map<std::string, sf::SoundBuffer>& buffers) : buffers_(buffers) {}
 
@@ -24,7 +33,7 @@ public:
             sound_ = sf::Sound(buffers_.at(name));
         }
 
-        sound_.setVolume(Settings::volume() * volume_mod);
+        sound_.setVolume(volume_ * volume_mod);
         sound_.play();
         return sound_;
     }

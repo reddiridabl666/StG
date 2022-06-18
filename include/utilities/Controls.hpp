@@ -42,7 +42,7 @@ namespace Gamepad {
 
 #include <cassert>
 
-inline std::string key_to_str(Key::Key key) {
+inline std::string to_string(Key::Key key) {
     if (key >= Key::A && key <= Key::Z) {
         return std::string{static_cast<char>(key - Key::A + 'A')};
     }

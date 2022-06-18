@@ -3,11 +3,10 @@
 #include <array>
 #include <filesystem>
 #include <iostream>
+#include <fstream>
 #include <unordered_map>
 
 #include <SFML/Graphics.hpp>
-
-static constexpr sf::Uint16 texture_num = 20;  // ???
 
 namespace fs = std::filesystem;
 
@@ -33,3 +32,4 @@ inline std::vector<sf::Texture> load_row(const sf::Image& image, int num,
     }
     return res;
 }
+

@@ -11,10 +11,10 @@ private:
     static json settings;
     static sf::Uint16 volume_;
 
-    static void rebuild_json();
-
 public:
     static void init();
+
+    static void rebuild_json();
 
     static void volumeUp(sf::Uint8 vol = 1);
     static void volumeDown(sf::Uint8 vol = 1);
@@ -23,9 +23,11 @@ public:
 
     static Key::Key getKey(const std::string& action);
     static Gamepad::Button getButton(const std::string& action);
+    static int get(const std::string& what, const std::string& action);
 
     static void setKey(const std::string& action, Key::Key k);
     static void setButton(const std::string& action, Gamepad::Button g);
+    static void set(const std::string& what, const std::string& action, int k);
 
     static void update();
 };

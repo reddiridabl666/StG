@@ -32,7 +32,9 @@ protected:
     Log<sf::Int32> health_bar_;
     bool flag = false;
 
-    // void init_sprites(sf::Image sprite_sheet) override;
+    static std::pair<Key::Key, Gamepad::Button> shoot_;
+    static std::pair<Key::Key, Gamepad::Button> slow_;
+
     void control();
 
 public:
@@ -44,8 +46,13 @@ public:
            sf::Vector2f hitbox_size = {0, 0}, float speed = 800, 
            float mass = 0, Layer layer = Layer::Character);
 
-    // void on_collide(DynamicObject* obj) override;
-    // void on_collide_stop() override;
+    static void setShoot(Key::Key k, Gamepad::Button g) {
+        shoot_ = {k, g};
+    }
+
+    static void setSlow(Key::Key k, Gamepad::Button g) {
+        slow_ = {k, g};
+    }
 
     void setTexture(const sf::Texture& texture) override {
         ShootingObject::setTexture(texture);

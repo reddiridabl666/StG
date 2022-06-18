@@ -65,7 +65,7 @@ void TestBoss::ChessHoming::shoot() {
     }
 }
 
-TestBoss::Circular_1::Circular_1(Boss* parent) : Phase(parent, 5500) {
+TestBoss::Circular_1::Circular_1(Boss* parent) : Phase(parent, 5000) {
     num = 46;
     speed = -400;
 }
@@ -142,7 +142,7 @@ void TestBoss::Chaos::shoot() {
     }
 }
 
-TestBoss::StreamsRandom::StreamsRandom(Boss* parent) : Phase(parent, 7000, 0.1) {
+TestBoss::StreamsRandom::StreamsRandom(Boss* parent) : Phase(parent, 6500, 0.1) {
     num = 6;
     delta = 2 * constants::pi / num;
     speed = 300;

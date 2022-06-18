@@ -31,7 +31,7 @@ void Window::reset_menu(Menu* menu) {
 }
 
 void Window::back() {
-    if (!game.in_main_menu) {
+    if (!game.in_main_menu && !((game.in_game + game.paused) % 2)) {
         game.in_loop = false;
         game.back_pressed = true;
     }

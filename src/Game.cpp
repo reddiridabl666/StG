@@ -55,8 +55,7 @@ void Game::game_loop() {
     in_game = true;
 
 #ifdef DEBUG
-    Text timer(std::to_string(player.lock()->get_invinc_time()),
-                Resources::fonts["ARIAL"], 48, {1650, 450});
+    Text timer(std::to_string(player.lock()->get_invinc_time()), {1650, 450});
 #endif
 
     event_loop([&] {
@@ -120,10 +119,7 @@ void Game::main_menu() {
     menu("Main menu", {
          {"Start", [this] {in_loop = false;}},
          {"Settings", [&] {in_loop = false; settings_pressed = true;}},
-         {"Exit", [this] {window.close();}}}/* ,
-         [this] {if (back_pressed) {
-            in_loop = true;
-         }} */);
+         {"Exit", [this] {window.close();}}});
 
     in_main_menu = false;
     
@@ -218,11 +214,11 @@ void Game::controls() {
          {"Back", [&] {in_loop = false; back_pressed = true;}}}); 
 
     if (action == 0) {
-        keyboard();
+        controls_menu("Keyboard", {"shoot", "slow"});
     }
 
     if (action == 1) {
-        gamepad();
+        controls_menu("Gamepad", {"shoot", "slow"}, true);
     }
 
     if (back_pressed) {
@@ -230,91 +226,82 @@ void Game::controls() {
     }
 }
 
-void Game::keyboard() {
+void Game::controls_menu(const std::string& label, const std::vector<std::string>& actions, bool gamepad) {
+    const static sf::Vector2f start_pos = window.getCenter() + sf::Vector2f(130, -45);
+    const static sf::Vector2f delta = {0, 100};
+
+    sf::Clock timer;
+
     {
-        Background gray = gray_if_paused();
+        std::map<std::string, CenteredText> keys;
 
-        sf::Vector2f delta = {-100, 0};
+        size_t i = 0;
+        for (auto& name : actions) {
+            std::string str;
 
-        CenteredText shoot(key_to_str(Settings::getKey("shoot")), window.getCenter() + 
-                               sf::Vector2f(130, -45));
-        CenteredText slow(key_to_str(Settings::getKey("slow")), shoot.getPosition() + 
-                              sf::Vector2f(0, 100));
+            if (!gamepad) {
+                str = to_string(static_cast<Key::Key>(Settings::get(label, name)));
+            } else {
+                str = to_string(Settings::get(label, name));
+            }
+            
+            keys[name] =  CenteredText(str, start_pos + delta * static_cast<float>(i));
+            ++i;
+        }
 
-        // TODO: Убрать копипасту
-        LabeledMenu menu("Keyboard", Resources::textures["menu_large"], 
-                        window.getCenter(), window, 
-                        {{"Shoot:", [&] {shoot.setString("---");
-                                         DrawableObject::draw_all(window);
-                                         auto res = get_key(window);
-                                         if (res == Key::Unknown)
-                                            res = Settings::getKey("shoot");
-                                         Settings::setKey("shoot", res);
-                                         shoot.setString(key_to_str(res));
-                                         }, delta},
-                         {"Slow:", [&] {slow.setString("---");
-                                        DrawableObject::draw_all(window);
-                                        auto res = get_key(window);
-                                        if (res == Key::Unknown)
-                                            res = Settings::getKey("slow");
-                                        Settings::setKey("slow", res);
-                                        slow.setString(key_to_str(res));
-                                        }, delta},
-                         {"Back", [&] {in_loop = false; back_pressed = true;}}});
-
-        event_loop();
-    }
-    if (back_pressed)
-        controls();
-}
-
-void Game::gamepad() {
-    {
-        Background gray = gray_if_paused();
-        sf::Clock timer;
-
-        sf::Vector2f delta = {-100, 0};
-
-        CenteredText shoot(std::to_string(Settings::getButton("shoot")), window.getCenter() + 
-                               sf::Vector2f(130, -45));
-        CenteredText slow(std::to_string(Settings::getButton("slow")), shoot.getPosition() + 
-                              sf::Vector2f(0, 100));
-
-        // TODO: Убрать копипасту
-        LabeledMenu menu("Gamepad", Resources::textures["menu_large"], 
-                        window.getCenter(), window, 
-                        {{"Shoot:", [&] {if (timer.getElapsedTime().asSeconds() < 0.5)
-                                            return;
-                                         shoot.setString("---");
-                                         DrawableObject::draw_all(window);
-                                         auto res = get_button(window);
-                                         if (res == Gamepad::ERR) {
-                                            res = Settings::getButton("shoot");
-                                         }
-                                         Settings::setButton("shoot", res);
-                                         shoot.setString(std::to_string(res));
-                                         timer.restart();}, 
-                                         delta},
-                         {"Slow:", [&] {if (timer.getElapsedTime().asSeconds() < 0.7)
-                                            return;
-                                         slow.setString("---");
-                                         DrawableObject::draw_all(window);
-                                         auto res = get_button(window);
-                                         if (res == Gamepad::ERR) {
-                                            res = Settings::getButton("slow");
-                                         }
-                                         Settings::setButton("slow", res);
-                                         slow.setString(std::to_string(res));
-                                         timer.restart();}, 
-                                         delta},
-                         {"Back", [&] {in_loop = false; back_pressed = true;}}});
-
-        event_loop();
+        menu(label, getControls(keys, gamepad, timer));
     }
 
     if (back_pressed)
         controls();
 }
+static std::function<void()> getKeyFunc(const std::string& name, CenteredText& text, Window& window) {
+    return [&] {
+        text.setString("---");
+        DrawableObject::draw_all(window);
+        auto res = get_key(window);
+        if (res == Key::Unknown)
+            res = Settings::getKey(name);
+        Settings::setKey(name, res);
+        text.setString(to_string(res));
+    };
+}
+
+static std::function<void()> getButtonFunc(const std::string& name, CenteredText& text, 
+                                            Window& window, sf::Clock& timer) {
+    return [&] {
+        if (timer.getElapsedTime().asSeconds() < 0.5)
+            return;
+        text.setString("---");
+        DrawableObject::draw_all(window);
+        auto res = get_button(window);
+        if (res == Gamepad::ERR) {
+            res = Settings::getButton(name);
+        }
+        Settings::setButton(name, res);
+        text.setString(to_string(res));
+        timer.restart();};
+} 
+
+inline std::vector<Button::Info> Game::getControls(std::map<std::string, CenteredText>& keys, 
+                                                        bool gamepad, sf::Clock& timer) {
+    std::vector<Button::Info> res(keys.size() + 1);
+    const static sf::Vector2f delta = {-100, 0};
+
+    size_t i = 0;
+    for (auto& [name, text] : keys) {
+        const std::function<void()> func = gamepad ? 
+            getButtonFunc(name, text, window, timer) : 
+            getKeyFunc(name, text, window);
+        res[i] = {name + ":", func, delta};
+        ++i;
+    }
+
+    res[i] = {"Back", [this] {in_loop = false; back_pressed = true;}};
+
+    return res;
+}
+
 
 void Game::check_collisions() {
     DynamicObject::refresh_collision_num();

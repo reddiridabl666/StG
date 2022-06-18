@@ -1,9 +1,9 @@
 {
-    "joy": {
+    "Gamepad": {
         "shoot": 0,
         "slow": 5
     },
-    "key": {
+    "Keyboard": {
         "shoot": 57,
         "slow": 38
     },

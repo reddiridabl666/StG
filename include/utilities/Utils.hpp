@@ -1,5 +1,22 @@
 #pragma once
 
+#include <sstream>
+
+template <typename T>
+inline std::string to_string(const T& item) {
+    if (std::is_arithmetic<T>()) {
+        return std::to_string(item);
+    }
+    std::stringstream stream;
+    stream << item;
+    return stream.str();
+}
+
+template <>
+inline std::string to_string(const std::string& item) {
+    return item;
+}
+
 template <typename T>
 inline T max(sf::Vector2<T> a) {
     return a.x > a.y ? a.x : a.y;

@@ -11,8 +11,6 @@
 #include "Window.h"
 #include "Button.hpp"
 
-#include <thread>
-
 class Menu;
 
 class Game {
@@ -56,14 +54,15 @@ private:
 
     void main_menu();
 
+    // template <typename T>
+    void controls_menu(const std::string& label, const std::vector<std::string>& actions, bool gamepad = false);
+
+    std::vector<Button::Info> getControls(std::map<std::string, CenteredText>& keys, bool gamepad, sf::Clock& timer);
     void pause_menu();
 
     void settings();
     void volume();
     void controls();
-
-    void gamepad();
-    void keyboard();
 
     void event_loop(const std::function<void()>& action = [] {});
 
