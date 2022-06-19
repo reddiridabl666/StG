@@ -1,5 +1,8 @@
 #include "Wall.hpp"
 #include "Player.hpp"
+#include "Math.hpp"
+
+#include <iostream>
 
 static inline float diag_y(const sf::Transformable* obj, float x, float tan) {
         return obj->getPosition().y - (x - obj->getPosition().x) * tan;
@@ -86,7 +89,7 @@ void Wall::on_collide(FramedObject& obj) {
             obj.setVelocity(-obj.getVelocity().x, obj.getVelocity().y);
         }
 
-        float offset = 15;
+        float offset = abs(obj.getVelocity()) / 90;
 
         if (is_in_left_sector(obj)) {
             obj.setPosition(getPosition().x - getHalfSize().x - obj.getFrame()->getHalfSize().x - offset, obj.getPosition().y);

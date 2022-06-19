@@ -27,11 +27,6 @@ inline T arctan(sf::Vector2<T> a) {
 }
 
 template <typename T>
-inline T abs(sf::Vector2<T> a) {
-    return distance(a, sf::Vector2<T>{0, 0});
-}
-
-template <typename T>
 inline T squared_distance(sf::Vector2<T> a, sf::Vector2<T> b) {
     return pow(a.x - b.x, 2) + pow(a.y - b.y, 2);
 }
@@ -39,6 +34,11 @@ inline T squared_distance(sf::Vector2<T> a, sf::Vector2<T> b) {
 template <typename T>
 inline T distance(sf::Vector2<T> a, sf::Vector2<T> b) {
     return sqrt(squared_distance(a, b));
+}
+
+template <typename T>
+inline T abs(sf::Vector2<T> a) {
+    return distance(a, sf::Vector2<T>{0, 0});
 }
 
 template <typename T>
