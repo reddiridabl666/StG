@@ -29,7 +29,10 @@ static std::string read_name(std::ifstream& in) {
 
     std::string res;
     int c;
-    while ((c = in.get()) != '\0' && c != in.eof()) {
+    while ((c = in.get()) != '\0') {
+        if (in.eof()) {
+            throw std::runtime_error("End of file");
+        }
         res += (char)c;
     }
     return res;
@@ -46,17 +49,23 @@ inline std::unordered_map<std::string, T> load_from_file(fs::path file_name){
     std::vector<char> buff;
 
     while (!in.eof()) {
-        name = read_name(in);
-        std::cout<< name << " was read!\n";
-
+        try {
+            name = read_name(in);
+        }
+        catch(std::runtime_error& e) {
+            break;
+        }
+        
         std::cout << "Reading filesize...\n";
         in.read((char*)&size, sizeof(size));
         buff.resize(size);
 
         std::cout << "Reading file...\n";
         in.read(buff.data(), size);
-        std::cout << "Loading file...\n\n";
+        std::cout << "Loading file...\n";
         result[name].loadFromMemory(buff.data(), size);
+
+        std::cout<< name << " was loaded!\n\n";
     }
 
     return result;

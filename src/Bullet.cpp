@@ -1,12 +1,35 @@
 #include "Bullet.hpp"
-#include "UpdateFunctions.hpp"
 #include "Resources.hpp"
 #include "Player.hpp"
+#include "GameState.hpp"
+#include "Math.hpp"
 
 void delete_when_out_of_bounds(Bullet* bullet, float) {
     if (GameState::is_out_of_bounds(bullet)) {
         bullet->deactivate();
     }
+}
+
+const UpdateFunc delete_timed(float time_in_seconds) {
+    return std::function<void(Bullet*, float)>([time_in_seconds] (Bullet* bullet, float) {
+        if (bullet->getTime().asMilliseconds() > time_in_seconds) {
+            bullet->deactivate();
+        }
+    });
+}
+
+const UpdateFunc gravity([] (Bullet* bullet, float deltaTime) {
+    auto y = bullet->getVelocity().y + constants::g * deltaTime;
+    auto x = bullet->getVelocity().x;
+    bullet->setVelocity(x, y);
+});
+
+const UpdateFunc circular(sf::Vector2f center, float speed) {
+    return std::function<void(Bullet*, float)>([center, speed] (Bullet* bullet, float deltaTime) {
+        auto a = unit_vector(center, bullet->getPosition()) * deltaTime * speed;
+        a = {a.y, -a.x};
+        bullet->setVelocity(bullet->getVelocity() + a);
+    });
 }
 
 void delete_if_near_player(Bullet* bullet, float) {

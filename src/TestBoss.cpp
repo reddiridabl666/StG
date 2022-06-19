@@ -1,7 +1,7 @@
 #include "TestBoss.hpp"
 #include "Math.hpp"
 #include "Random.hpp"
-#include "UpdateFunctions.hpp"
+#include "GameState.hpp"
 #include "Window.h"
 
 Animated::Sprites TestBoss::init_sprites(const sf::Image& sprite_sheet)  {

@@ -2,10 +2,16 @@
 
 #include <functional>
 
+#include "SFML/System.hpp"
+
 class Bullet;
 
 void delete_when_out_of_bounds(Bullet*, float);
 void delete_if_near_player(Bullet* bullet, float);
+
+namespace constants {
+    inline constexpr float g = 9.8 * 100;
+}
 
 class UpdateFunc {
 private:
@@ -27,6 +33,10 @@ public:
         });
     }
 };
+
+const UpdateFunc delete_timed(float time_in_seconds);
+extern const UpdateFunc gravity;
+const UpdateFunc circular(sf::Vector2f center, float speed);
 
 enum class BulletType {
     BigCircle_Red,
