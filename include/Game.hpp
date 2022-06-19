@@ -30,12 +30,12 @@ private:
             return obj;
         }
     };
-    
+
     Manager manager;
     Window window;
     Frame frame;
     Background bg;
-    
+
     std::weak_ptr<Player> player;
     std::weak_ptr<Boss> boss;
 
@@ -50,11 +50,9 @@ private:
 
 private:
     void menu(sf::String text, const std::vector<Button::Info>& infos, const std::function<void()>& func = [] {});
-    // void settings_menu(sf::String text, const std::vector<Button::Info>& infos);
 
     void main_menu();
 
-    // template <typename T>
     void controls_menu(const std::string& label, const std::vector<std::string>& actions, bool gamepad = false);
 
     std::vector<Button::Info> getControls(std::map<std::string, CenteredText>& keys, bool gamepad, sf::Clock& timer);
@@ -75,7 +73,7 @@ private:
     Background gray_if_paused();
 
 public:
-    Game() : 
+    Game() :
         manager(), 
         window(*this),
         frame(Wall::get_frame(window)),

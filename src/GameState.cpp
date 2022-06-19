@@ -6,24 +6,6 @@
 
 GameState GameState::state;
 
-// void GameState::Settings_::volumeUp(sf::Uint8 vol) {
-//     volume = volume + vol > 100 ? 100 : volume + vol;
-// }
-
-// void GameState::Settings_::volumeDown(sf::Uint8 vol) {
-//     volume = volume - vol < 0 ? 0 : volume - vol;
-// }
-
-// void GameState::Settings_::setShoot(Key::Key k, Gamepad::Button g) {
-//     k_shoot = k;
-//     g_shoot = g;
-// }
-
-// void GameState::Settings_::setSlow(Key::Key k, Gamepad::Button g) {
-//     k_slow = k;
-//     g_slow = g;
-// }
-
 void GameState::init(const Window* window, const Frame& frame, float offset) {
     state.window_ = window;
 

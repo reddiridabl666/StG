@@ -6,7 +6,7 @@
 
 class Text : public Ui, public sf::Text {
 public:
-    static inline const sf::Font& DefaultFont = Resources::fonts["Nova+"];
+    static const sf::Font& DefaultFont;
     
     Text() : Ui(), sf::Text() {}
 

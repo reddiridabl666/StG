@@ -62,12 +62,11 @@ std::unordered_map<BulletType, sf::Texture> Bullet::getBulletTextures() {
     std::unordered_map<BulletType, sf::Texture> res;
     sf::Image &bullets = Resources::sprite_sheets["bullets"];
 
-    res[BulletType::BigCircle_Red].loadFromImage(bullets, {6, 466, 62, 62});
-    res[BulletType::Talisman_RB].loadFromImage(bullets, {23, 119, 12, 14});
-    // res[BulletType::Player].loadFromImage(bullets, {233, 71, 8, 14});
-    res[BulletType::Player].loadFromImage(bullets, {233, 134, 8, 16});
-    res[BulletType::Seed_Red].loadFromImage(bullets, {/* 25 */41, 71, 8, 14});
-    res[BulletType::Circle_Red].loadFromImage(bullets, {40, 308, 28, 28});
+    res[BulletType::BigCircle_Red].loadFromImage(bullets, {6, 3/* 466 */, 62, 62});
+    res[BulletType::Talisman_RB].loadFromImage(bullets, {/* 23, 119, */89, 41, 12, 14});
+    res[BulletType::Player].loadFromImage(bullets, {/* 233, 134 */113, 11, 8, 16});
+    res[BulletType::Seed_Red].loadFromImage(bullets, {/* 41, 71 */113, 41, 8, 14});
+    res[BulletType::Circle_Red].loadFromImage(bullets, {/* 40, 308 */82, 3, 28, 28});
 
     return res;
 }
@@ -97,5 +96,3 @@ std::unordered_map<BulletType, Bullet::Info> Bullet::getBulletTypes() {
     
     return res;
 }
-
-std::unordered_map<BulletType, Bullet::Info> Bullet::Types = Bullet::getBulletTypes();

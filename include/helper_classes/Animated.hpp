@@ -2,6 +2,15 @@
 
 #include "SFML/Graphics.hpp"
 
+inline std::vector<sf::Texture> load_row(const sf::Image& image, int num, 
+                                         sf::Vector2i pos, sf::Vector2i size = {32, 32}) {
+    std::vector<sf::Texture> res(num);
+    for (int i = 0; i < num; ++i) {
+        res[i].loadFromImage(image, {pos.x + size.x * i, pos.y, size.x, size.y});
+    }
+    return res;
+}
+
 class Animated {
 public:
     using Sprites = std::unordered_map<std::string, std::vector<sf::Texture>>;

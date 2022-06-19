@@ -54,4 +54,6 @@ public:
     }
 
     template<typename> friend class BulletGenerator;
+
+    friend class Game;
 };

@@ -24,12 +24,40 @@ inline std::unordered_map<std::string, T> load_from_folder(fs::path folder_name)
     return result;
 }
 
-inline std::vector<sf::Texture> load_row(const sf::Image& image, int num, 
-                                         sf::Vector2i pos, sf::Vector2i size = {32, 32}) {
-    std::vector<sf::Texture> res(num);
-    for (int i = 0; i < num; ++i) {
-        res[i].loadFromImage(image, {pos.x + size.x * i, pos.y, size.x, size.y});
+static std::string read_name(std::ifstream& in) {
+    std::cout << "Reading filename...\n";
+
+    std::string res;
+    int c;
+    while ((c = in.get()) != '\0' && c != in.eof()) {
+        res += (char)c;
     }
     return res;
 }
 
+template<typename T>
+inline std::unordered_map<std::string, T> load_from_file(fs::path file_name){
+    std::unordered_map<std::string, T> result;
+
+    std::ifstream in(file_name, std::ios::binary);
+
+    std::string name;
+    uintmax_t size;
+    std::vector<char> buff;
+
+    while (!in.eof()) {
+        name = read_name(in);
+        std::cout<< name << " was read!\n";
+
+        std::cout << "Reading filesize...\n";
+        in.read((char*)&size, sizeof(size));
+        buff.resize(size);
+
+        std::cout << "Reading file...\n";
+        in.read(buff.data(), size);
+        std::cout << "Loading file...\n\n";
+        result[name].loadFromMemory(buff.data(), size);
+    }
+
+    return result;
+}
