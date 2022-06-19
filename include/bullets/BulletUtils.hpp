@@ -35,7 +35,7 @@ public:
 };
 
 const UpdateFunc delete_timed(float time_in_seconds);
-extern const UpdateFunc gravity;
+const UpdateFunc gravity();
 const UpdateFunc circular(sf::Vector2f center, float speed);
 
 enum class BulletType {

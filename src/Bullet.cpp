@@ -18,11 +18,13 @@ const UpdateFunc delete_timed(float time_in_seconds) {
     });
 }
 
-const UpdateFunc gravity([] (Bullet* bullet, float deltaTime) {
-    auto y = bullet->getVelocity().y + constants::g * deltaTime;
-    auto x = bullet->getVelocity().x;
-    bullet->setVelocity(x, y);
-});
+const UpdateFunc gravity() {
+    return std::function<void(Bullet*, float)>([] (Bullet* bullet, float deltaTime) {
+        auto y = bullet->getVelocity().y + constants::g * deltaTime;
+        auto x = bullet->getVelocity().x;
+        bullet->setVelocity(x, y);
+    });
+}
 
 const UpdateFunc circular(sf::Vector2f center, float speed) {
     return std::function<void(Bullet*, float)>([center, speed] (Bullet* bullet, float deltaTime) {
@@ -99,7 +101,7 @@ std::unordered_map<BulletType, Bullet::Info> Bullet::getBulletTypes() {
     std::unordered_map<BulletType, Bullet::Info> res;
 
     auto type = BulletType::BigCircle_Red;
-    res[type] = Bullet::Info{&textures[type], 36, {0, 0}, gravity, 
+    res[type] = Bullet::Info{&textures[type], 36, {0, 0}, gravity(), 
                              1, 1, {150, 150}, textures[type].getSize().x / 2};
 
     type = BulletType::Player;

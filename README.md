@@ -11,7 +11,7 @@ A simple bullet-hell game made using SFML and nlohmann/json
 - Slow down/show hitbox: 
   - Shift
   - RB
--Pause
+- Pause
   - Esc
   - Start
 
