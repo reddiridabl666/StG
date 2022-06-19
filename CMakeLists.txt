@@ -6,9 +6,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
 
 set(ERROR_FLAGS -Wall -Wextra -Werror -Wpedantic)
-set(FLAGS -pthread)
-add_compile_options(${ERROR_FLAGS} ${FLAGS})
-add_link_options(-no-pie)
+set(COMPILE_FLAGS -pthread)
+add_compile_options(${ERROR_FLAGS} ${COMPILE_FLAGS})
+
+set(LINK_FLAGS -no-pie -static-libstdc++)
+add_link_options(${LINK_FLAGS})
 
 option(DEBUG "Debug mode" OFF)
 
