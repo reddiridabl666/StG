@@ -116,7 +116,7 @@ void Game::main_menu() {
     bool settings_pressed = false;
     in_main_menu = true;
 
-    menu("Main menu", {
+    menu("StG", {
          {"Start", [this] {in_loop = false;}},
          {"Settings", [&] {in_loop = false; settings_pressed = true;}},
          {"Exit", [this] {window.close();}}});
