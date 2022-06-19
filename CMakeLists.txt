@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED on)
 set(ERROR_FLAGS -Wall -Wextra -Werror -Wpedantic)
 set(FLAGS -pthread)
 add_compile_options(${ERROR_FLAGS} ${FLAGS})
+add_link_options(-no-pie)
 
 option(DEBUG "Debug mode" OFF)
 
