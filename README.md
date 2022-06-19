@@ -1,5 +1,5 @@
 # STG
-A simple bullet-hell game
+A simple bullet-hell game made using SFML and nlohmann/json
 
 ### Controls:
 - Movement:  
@@ -11,8 +11,8 @@ A simple bullet-hell game
 - Slow down/show hitbox: 
   - Shift
   - RB
+-Pause
+  - Esc
+  - Start
 
-Only X-input gamepads are supported
-
-
-
+Only X-input gamepads are supported, mouse is supported only in menus
