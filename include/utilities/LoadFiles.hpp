@@ -10,6 +10,7 @@
 
 namespace fs = std::filesystem;
 
+#ifndef RELEASE
 template<typename T>
 inline std::unordered_map<std::string, T> load_from_folder(fs::path folder_name){
     std::unordered_map<std::string, T> result;
@@ -23,10 +24,8 @@ inline std::unordered_map<std::string, T> load_from_folder(fs::path folder_name)
     }
     return result;
 }
-
+#else
 static std::string read_name(std::ifstream& in) {
-    std::cout << "Reading filename...\n";
-
     std::string res;
     int c;
     while ((c = in.get()) != '\0') {
@@ -38,11 +37,27 @@ static std::string read_name(std::ifstream& in) {
     return res;
 }
 
+template <typename T>
+void load(T& asset, const char* buff, size_t size) {
+    asset.loadFromMemory(buff, size);
+}
+
+template <>
+void load(sf::Font& asset, const char* buff, size_t size) {
+    static std::vector<std::string> static_buff;
+    static_buff.emplace_back(buff, size);
+    asset.loadFromMemory(static_buff.back().c_str(), size);
+}
+
 template<typename T>
 inline std::unordered_map<std::string, T> load_from_file(fs::path file_name){
     std::unordered_map<std::string, T> result;
 
     std::ifstream in(file_name, std::ios::binary);
+
+    if (!in) {
+        throw std::runtime_error("Missing assets");
+    }
 
     std::string name;
     uintmax_t size;
@@ -56,17 +71,13 @@ inline std::unordered_map<std::string, T> load_from_file(fs::path file_name){
             break;
         }
         
-        std::cout << "Reading filesize...\n";
         in.read((char*)&size, sizeof(size));
         buff.resize(size);
 
-        std::cout << "Reading file...\n";
         in.read(buff.data(), size);
-        std::cout << "Loading file...\n";
-        result[name].loadFromMemory(buff.data(), size);
-
-        std::cout<< name << " was loaded!\n\n";
+        load<T>(result[name], buff.data(), size);
     }
 
     return result;
 }
+#endif

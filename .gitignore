@@ -31,6 +31,7 @@
 *.out
 *.app
 main
+encode/encode
 
 # Clion
 cmake-build-debug

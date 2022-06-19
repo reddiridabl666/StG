@@ -27,7 +27,7 @@ void fix(const json::exception& e) {
 
 void Settings::rebuild_json() {
     settings = R"({
-                    "keyboard: {
+                    "Keyboard": {
                         "shoot": 57,
                         "slow": 38
                     },
@@ -41,10 +41,17 @@ void Settings::rebuild_json() {
 
 void Settings::init() {
     std::ifstream in("settings.json");
+    
     try {
-        in >> settings;
+        if (!in) {
+            rebuild_json();
+            in.close();
+            update();
+        } else {
+            in >> settings;
+        }
     }
-    catch(const json::exception& e) {
+    catch (const json::exception& e) {
         fix(e);
     }
 
@@ -54,7 +61,7 @@ void Settings::init() {
     try {
         volume_ = settings["volume"];
     }
-    catch(const json::exception& e) {
+    catch (const json::exception& e) {
         fix(e);
         volume_ = settings["volume"];
     }
@@ -80,7 +87,7 @@ int Settings::get(const std::string& what, const std::string& action) {
     try {
         return settings[what][action];
     } 
-    catch(const json::exception& e) {
+    catch (const json::exception& e) {
         fix(e);
         return get(what, action);
     }

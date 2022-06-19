@@ -15,6 +15,12 @@ if (DEBUG)
     add_compile_options(-DDEBUG)
 endif()
 
+option(RELEASE "Release mode" OFF)
+
+if (RELEASE)
+    add_compile_options(-DRELEASE)
+endif()
+
 # Add memcheck
 add_custom_target(memcheck COMMAND valgrind --suppressions=/lib/valgrind/sfml.supp ./main)
 
